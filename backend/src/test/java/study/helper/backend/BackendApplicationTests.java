@@ -1,10 +1,10 @@
-package com.studion.service_server;
+package study.helper.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ServiceServerApplicationTests {
+class BackendApplicationTests {
 
 	@Test
 	void contextLoads() {
