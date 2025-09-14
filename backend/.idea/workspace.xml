@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="ALL" />
+    <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="772beeea-d01b-493a-80ab-f550adb39969" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    <list default="true" id="2dfa1c42-c995-4d14-8e42-dcc76247a7f7" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/modules/apigateway-service.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/board-service.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/videoRoom-service.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/gradle_wrapper.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apigateway-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/apigateway-service/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apigateway-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/apigateway-service/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,35 +25,26 @@
     <projectState path="$PROJECT_DIR$/apigateway-service">
       <ProjectState />
     </projectState>
+    <projectState path="$PROJECT_DIR$/board-service">
+      <ProjectState />
+    </projectState>
     <projectState path="$PROJECT_DIR$/service-server">
       <ProjectState />
     </projectState>
     <projectState path="$PROJECT_DIR$/user-service">
       <ProjectState />
     </projectState>
-    <projectState path="$PROJECT_DIR$/../backends/service-server">
+    <projectState path="$PROJECT_DIR$/videoRoom">
       <ProjectState />
     </projectState>
-    <projectState path="$PROJECT_DIR$/../backends/user-service">
-      <ProjectState />
-    </projectState>
-    <projectState path="$PROJECT_DIR$/../../../service-server">
-      <ProjectState />
-    </projectState>
-    <projectState path="$PROJECT_DIR$/../../../user-service">
+    <projectState path="$PROJECT_DIR$/videoRoom-service">
       <ProjectState />
     </projectState>
   </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <task path="$PROJECT_DIR$/../backends/user-service">
-          <activation />
-        </task>
         <task path="$PROJECT_DIR$/apigateway-service">
-          <activation />
-        </task>
-        <task path="$PROJECT_DIR$/service-server">
           <activation />
         </task>
         <task path="$PROJECT_DIR$/user-service">
@@ -61,79 +59,159 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 2
+  &quot;associatedIndex&quot;: 6
 }</component>
-  <component name="ProjectId" id="32dFUMXPYjqmJst6jpXMikDNKQV" />
+  <component name="ProjectId" id="32dPzZCu8DBJkGFrPHjp3YHrWmW" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.user-service [clean].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "JSH",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/jayji/OneDrive/Desktop/Project/StudiOn/backend",
-    "project.structure.last.edited": "모듈",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.build.tools.auto.reload": "ALL",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Gradle.apigateway-service [:com.studion.apiservice.apigateway_service.ApigatewayServiceApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.board-service [:com.studion.board_service.BoardServiceApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.service-server [:com.studion.service_server.ServiceServerApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.user-service [:com.studion.user_service.UserServiceApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.user-service [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.user-service [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.videoRoom-service [:com.studion.videoRoom_service.VideoRoomServiceApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;JSH&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jayji/OneDrive/Desktop/Project/StudiOn/backend/videoRoom-service/src/main/resources/templates&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\videoRoom-service\src\main\resources\templates" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\board-service\src\main\resources\templates" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\videoRoom-service\src\main\resources" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend" />
-      <recent name="C:\Users\jayji\OneDrive\바탕 화면\Project\StudiOn\backend" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\board-service\src\main\resources\templates" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\board-service\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.studion.apiservice.apigateway_service.filter" />
+      <recent name="com.studion.videoRoom_service.controller" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="user-service [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/../backends/user-service" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="clean" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
+  <component name="RunManager" selected="애플리케이션.VideoRoomServiceApplication">
+    <configuration name="ApigatewayServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.apiservice.apigateway_service.ApigatewayServiceApplication" />
+      <module name="apigateway-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.apiservice.apigateway_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BoardServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.board_service.BoardServiceApplication" />
+      <module name="board-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.board_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServiceServerApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.service_server.ServiceServerApplication" />
+      <module name="service-server.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.service_server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.user_service.UserServiceApplication" />
+      <module name="user-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.user_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VideoRoomServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.videoRoom_service.VideoRoomServiceApplication" />
+      <module name="videoRoom-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.videoRoom_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.user-service [clean]" />
+        <item itemvalue="애플리케이션.ApigatewayServiceApplication" />
+        <item itemvalue="애플리케이션.VideoRoomServiceApplication" />
+        <item itemvalue="애플리케이션.BoardServiceApplication" />
+        <item itemvalue="애플리케이션.UserServiceApplication" />
+        <item itemvalue="애플리케이션.ServiceServerApplication" />
       </list>
     </recent_temporary>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="772beeea-d01b-493a-80ab-f550adb39969" name="변경" comment="" />
-      <created>1757742557711</created>
+      <changelist id="2dfa1c42-c995-4d14-8e42-dcc76247a7f7" name="변경" comment="" />
+      <created>1757747739914</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1757742557711</updated>
+      <updated>1757747739914</updated>
     </task>
     <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/apigateway-service/src/main/java/com/studion/apiservice/apigateway_service/ApigatewayServiceApplication.java</url>
+          <line>6</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
