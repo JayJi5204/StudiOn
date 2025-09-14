@@ -5,6 +5,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/apigateway-service" />
+        <option name="gradleHome" value="" />
         <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
@@ -13,7 +14,17 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/board-service" />
+        <option name="gradleJvm" value="21" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/board-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/service-server" />
+        <option name="gradleHome" value="" />
         <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
@@ -23,6 +34,7 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/user-service" />
+        <option name="gradleHome" value="" />
         <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
@@ -31,20 +43,11 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/../backends/service-server" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/videoRoom-service" />
         <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../backends/service-server" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/../backends/user-service" />
-        <option name="gradleJvm" value="21" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/../backends/user-service" />
+            <option value="$PROJECT_DIR$/videoRoom-service" />
           </set>
         </option>
       </GradleProjectSettings>

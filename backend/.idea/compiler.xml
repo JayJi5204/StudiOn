@@ -7,14 +7,16 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.38/57f8f5e02e92a30fd21b80cbd426a4172b5f8e29/lombok-1.18.38.jar" />
         </processorPath>
-        <module name="user-service.main" />
+        <module name="board-service.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="com.studion.service-server.main" target="21" />
-      <module name="com.studion.service-server.test" target="21" />
-      <module name="service-server" target="21" />
-      <module name="user-service" target="21" />
+      <module name="demo" target="21" />
+      <module name="demo.main" target="21" />
+      <module name="demo.test" target="21" />
+      <module name="videoRoom" target="21" />
+      <module name="videoRoom.main" target="21" />
+      <module name="videoRoom.test" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -22,14 +24,21 @@
       <module name="apigateway-service" options="-parameters" />
       <module name="apigateway-service.main" options="-parameters" />
       <module name="apigateway-service.test" options="-parameters" />
-      <module name="com.studion.service-server.main" options="-parameters" />
-      <module name="com.studion.service-server.test" options="-parameters" />
+      <module name="board-service" options="-parameters" />
+      <module name="board-service.main" options="-parameters" />
+      <module name="board-service.test" options="-parameters" />
+      <module name="demo" options="-parameters" />
+      <module name="demo.main" options="-parameters" />
+      <module name="demo.test" options="-parameters" />
       <module name="service-server" options="-parameters" />
       <module name="service-server.main" options="-parameters" />
       <module name="service-server.test" options="-parameters" />
       <module name="user-service" options="-parameters" />
       <module name="user-service.main" options="-parameters" />
       <module name="user-service.test" options="-parameters" />
+      <module name="videoRoom-service" options="-parameters" />
+      <module name="videoRoom-service.main" options="-parameters" />
+      <module name="videoRoom-service.test" options="-parameters" />
     </option>
   </component>
 </project>
