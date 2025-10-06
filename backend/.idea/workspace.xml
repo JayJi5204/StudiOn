@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2dfa1c42-c995-4d14-8e42-dcc76247a7f7" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/apigateway-service">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/board-service">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/eureka-server">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/service-server">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/user-service">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/videoRoom">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/videoRoom-service">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/apigateway-service">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/user-service">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/service-server">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Interface" />
+        <option value="Record" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "JayJi5204"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/JayJi5204/StudiOn.git",
+    "accountId": "3c9d4772-fbac-48b3-93d7-7e22215dfc79"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="32dPzZCu8DBJkGFrPHjp3YHrWmW" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Gradle.UserTest.createUserTest.executor": "Run",
+    "Gradle.apigateway-service [:com.studion.apiservice.apigateway_service.ApigatewayServiceApplication.main()].executor": "Run",
+    "Gradle.board-service [:com.studion.board_service.BoardServiceApplication.main()].executor": "Run",
+    "Gradle.eureka-server [:com.studion.eureka_server.EurekaServerApplication.main()].executor": "Run",
+    "Gradle.eureka-server [:com.studion.eureka_server.ServiceServerApplication.main()].executor": "Run",
+    "Gradle.service-server [:com.studion.service_server.ServiceServerApplication.main()].executor": "Run",
+    "Gradle.service-server [clean].executor": "Run",
+    "Gradle.user-service [:com.studion.user_service.UserServiceApplication.main()].executor": "Run",
+    "Gradle.user-service [:com.studion.user_service.util.Utils.main()].executor": "Run",
+    "Gradle.user-service [build].executor": "Run",
+    "Gradle.user-service [clean].executor": "Run",
+    "Gradle.videoRoom-service [:com.studion.videoRoom_service.VideoRoomServiceApplication.main()].executor": "Run",
+    "Gradle.소스 다운로드.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ToolWindow.Debug.ShowToolbar": "false",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/jayji/Desktop/Project/StudiOn/backend",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.studion.user_service.dto.response" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\videoRoom-service\src\main\resources\templates" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\board-service\src\main\resources\templates" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\videoRoom-service\src\main\resources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\board-service\src\main\resources\templates" />
+      <recent name="C:\Users\jayji\OneDrive\Desktop\Project\StudiOn\backend\board-service\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.studion.apiservice.apigateway_service.filter" />
+      <recent name="com.studion.videoRoom_service.controller" />
+    </key>
+  </component>
+  <component name="RunManager" selected="애플리케이션.UserServiceApplication">
+    <configuration name="ApigatewayServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.apiservice.apigateway_service.ApigatewayServiceApplication" />
+      <module name="apigateway-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.apiservice.apigateway_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaServerApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.eureka_server.EurekaServerApplication" />
+      <module name="eureka-server.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.eureka_server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.user_service.UserServiceApplication" />
+      <module name="user-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.user_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VideoRoomServiceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.studion.videoRoom_service.VideoRoomServiceApplication" />
+      <module name="videoRoom-service.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.studion.videoRoom_service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="애플리케이션.UserServiceApplication" />
+        <item itemvalue="애플리케이션.EurekaServerApplication" />
+        <item itemvalue="애플리케이션.ApigatewayServiceApplication" />
+        <item itemvalue="애플리케이션.VideoRoomServiceApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="2dfa1c42-c995-4d14-8e42-dcc76247a7f7" name="변경" comment="" />
+      <created>1757747739914</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1757747739914</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/apigateway-service/src/main/java/com/studion/apiservice/apigateway_service/ApigatewayServiceApplication.java</url>
+          <line>6</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
