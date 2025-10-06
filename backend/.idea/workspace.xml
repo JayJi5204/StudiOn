@@ -5,41 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2dfa1c42-c995-4d14-8e42-dcc76247a7f7" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/modules/user-service.test.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apigateway-service/src/main/java/com/studion/apiservice/apigateway_service/filter/AuthorizationHeaderFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/dto/request/LoginRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/dto/request/UserRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/dto/response/BoardResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/dto/response/UserResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/entity/UserEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/repository/UserRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/security/AuthenticationFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/security/WebSecurity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/service/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/serviceImpl/UserServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/util/Utils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user-service/src/test/java/com/studion/user_service/SeviceTest/UserTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apigateway-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/apigateway-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apigateway-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/apigateway-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/gradlew" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/gradlew.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/settings.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/src/main/java/com/studion/service_server/ServiceServerApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/src/main/java/com/studion/eureka_server/EurekaServerApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service-server/src/test/java/com/studion/service_server/ServiceServerApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/src/test/java/com/studion/service_server/EurekaServerApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/UserServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/com/studion/user_service/UserServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,6 +72,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "JayJi5204"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/JayJi5204/StudiOn.git",
+    "accountId": "3c9d4772-fbac-48b3-93d7-7e22215dfc79"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
@@ -114,37 +95,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Gradle.UserTest.createUserTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.apigateway-service [:com.studion.apiservice.apigateway_service.ApigatewayServiceApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.board-service [:com.studion.board_service.BoardServiceApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.eureka-server [:com.studion.eureka_server.EurekaServerApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.eureka-server [:com.studion.eureka_server.ServiceServerApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.service-server [:com.studion.service_server.ServiceServerApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.service-server [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.user-service [:com.studion.user_service.UserServiceApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.user-service [:com.studion.user_service.util.Utils.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.user-service [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.user-service [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.videoRoom-service [:com.studion.videoRoom_service.VideoRoomServiceApplication.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.소스 다운로드.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ToolWindow.Debug.ShowToolbar&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jayji/OneDrive/Desktop/Project/StudiOn/backend/videoRoom-service/src/main/resources/templates&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Gradle.UserTest.createUserTest.executor": "Run",
+    "Gradle.apigateway-service [:com.studion.apiservice.apigateway_service.ApigatewayServiceApplication.main()].executor": "Run",
+    "Gradle.board-service [:com.studion.board_service.BoardServiceApplication.main()].executor": "Run",
+    "Gradle.eureka-server [:com.studion.eureka_server.EurekaServerApplication.main()].executor": "Run",
+    "Gradle.eureka-server [:com.studion.eureka_server.ServiceServerApplication.main()].executor": "Run",
+    "Gradle.service-server [:com.studion.service_server.ServiceServerApplication.main()].executor": "Run",
+    "Gradle.service-server [clean].executor": "Run",
+    "Gradle.user-service [:com.studion.user_service.UserServiceApplication.main()].executor": "Run",
+    "Gradle.user-service [:com.studion.user_service.util.Utils.main()].executor": "Run",
+    "Gradle.user-service [build].executor": "Run",
+    "Gradle.user-service [clean].executor": "Run",
+    "Gradle.videoRoom-service [:com.studion.videoRoom_service.VideoRoomServiceApplication.main()].executor": "Run",
+    "Gradle.소스 다운로드.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ToolWindow.Debug.ShowToolbar": "false",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/jayji/Desktop/Project/StudiOn/backend",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.studion.user_service.dto.response" />
