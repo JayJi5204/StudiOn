@@ -7,13 +7,16 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.38/57f8f5e02e92a30fd21b80cbd426a4172b5f8e29/lombok-1.18.38.jar" />
         </processorPath>
-        <module name="board-service.main" />
+        <module name="apigateway-service.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="demo" target="21" />
       <module name="demo.main" target="21" />
       <module name="demo.test" target="21" />
+      <module name="service-server" target="21" />
+      <module name="service-server.main" target="21" />
+      <module name="service-server.test" target="21" />
       <module name="videoRoom" target="21" />
       <module name="videoRoom.main" target="21" />
       <module name="videoRoom.test" target="21" />
@@ -30,6 +33,9 @@
       <module name="demo" options="-parameters" />
       <module name="demo.main" options="-parameters" />
       <module name="demo.test" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="eureka-server.main" options="-parameters" />
+      <module name="eureka-server.test" options="-parameters" />
       <module name="service-server" options="-parameters" />
       <module name="service-server.main" options="-parameters" />
       <module name="service-server.test" options="-parameters" />

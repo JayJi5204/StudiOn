@@ -14,7 +14,7 @@ spring:
   output:
     ansi:
       enabled: "always"
-  cloud :
+  cloud:
     gateway:
       server:
         webflux:
@@ -25,24 +25,53 @@ spring:
                 preLogger: true
                 postLogger: true
           routes:
+            - id: user-service-register
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/users
+                - Method=POST
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+            - id: user-service-login
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/login
+                - Method=POST
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/**
+                - Method=GET
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+                - AuthorizationHeaderFilter
             - id: board-service
               uri: lb://BOARD-SERVICE
               predicates:
-               - Path=/board-service/**
+                - Path=/board-service/**
               filters:
-#                - AddRequestHeader=board-request, board-request-header
-#                - AddResponseHeader=board-response, board-response-header
+                #                - AddRequestHeader=board-request, board-request-header
+                #                - AddResponseHeader=board-response, board-response-header
                 - CustomFilter
             - id: videoroom-service
               uri: lb://VIDEOROOM-SERVICE
               predicates:
                 - Path=/videoroom-service/**
               filters:
-#                - AddRequestHeader=videoroom-request, videoroom-request-header
-#                - AddResponseHeader=videoroom-response, videoroom-response-header
+                #                - AddRequestHeader=videoroom-request, videoroom-request-header
+                #                - AddResponseHeader=videoroom-response, videoroom-response-header
                 - name: CustomFilter
                 - name: LoggingFilter
                   args:
                     baseMessage: Hi, there,
                     preLogger: true
                     postLogger: true
+
+
+token:
+  secret: my-secret-key-23472841604583465812934782394
