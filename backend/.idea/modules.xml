@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/backend.iml" filepath="$PROJECT_DIR$/backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/board-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/board-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/videoRoom-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/videoRoom-service.main.iml" />
     </modules>
   </component>
