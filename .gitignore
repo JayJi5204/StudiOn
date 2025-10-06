@@ -1,0 +1,80 @@
+# =========================================
+# Global ignores
+# =========================================
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Logs
+*.log
+
+# =========================================
+# Backend (Spring Boot / Gradle)
+# =========================================
+
+# Build outputs
+backend/build/
+backend/out/
+backend/target/
+
+# Gradle
+.gradle/
+**/gradle-app.setting
+gradle-app.setting
+
+# Local environment configs
+backend/.env
+backend/*.local.properties
+backend/*.env
+
+# Temporary files
+backend/*.tmp
+backend/*.bak
+backend/*.orig
+
+# =========================================
+# Frontend (React + TypeScript)
+# =========================================
+
+# Node modules
+frontend/node_modules/
+
+# Build outputs
+frontend/build/
+frontend/dist/
+
+# Dependency and cache
+frontend/.npm/
+frontend/.yarn/
+frontend/.pnpm/
+frontend/.turbo/
+frontend/.cache/
+
+# Local environment
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Lock and debug
+frontend/yarn-error.log
+frontend/npm-debug.log*
+
+# =========================================
+# Common temporary or backup files
+# =========================================
+
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+
