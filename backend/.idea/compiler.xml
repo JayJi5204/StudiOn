@@ -1,41 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
-      <module name="demo" target="21" />
-      <module name="demo.main" target="21" />
-      <module name="demo.test" target="21" />
-      <module name="service-server" target="21" />
-      <module name="service-server.main" target="21" />
-      <module name="service-server.test" target="21" />
-      <module name="videoRoom" target="21" />
-      <module name="videoRoom.main" target="21" />
-      <module name="videoRoom.test" target="21" />
-    </bytecodeTargetLevel>
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.40/398c6d2d7c42c96b65e78d2ddc9be0058c163453/lombok-1.18.40.jar" />
+        </processorPath>
+        <module name="backend.server.api-gateway.main" />
+        <module name="backend.server.main" />
+        <module name="backend.server.eureka.main" />
+        <module name="backend.common.main" />
+        <module name="backend.service.main" />
+        <module name="backend.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="21" />
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="apigateway-service" options="-parameters" />
-      <module name="apigateway-service.main" options="-parameters" />
-      <module name="apigateway-service.test" options="-parameters" />
-      <module name="board-service" options="-parameters" />
-      <module name="board-service.main" options="-parameters" />
-      <module name="board-service.test" options="-parameters" />
-      <module name="demo" options="-parameters" />
-      <module name="demo.main" options="-parameters" />
-      <module name="demo.test" options="-parameters" />
-      <module name="eureka-server" options="-parameters" />
-      <module name="eureka-server.main" options="-parameters" />
-      <module name="eureka-server.test" options="-parameters" />
-      <module name="service-server" options="-parameters" />
-      <module name="service-server.main" options="-parameters" />
-      <module name="service-server.test" options="-parameters" />
-      <module name="user-service" options="-parameters" />
-      <module name="user-service.main" options="-parameters" />
-      <module name="user-service.test" options="-parameters" />
-      <module name="videoRoom-service" options="-parameters" />
-      <module name="videoRoom-service.main" options="-parameters" />
-      <module name="videoRoom-service.test" options="-parameters" />
-    </option>
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
   </component>
 </project>

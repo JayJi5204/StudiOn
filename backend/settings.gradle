@@ -1,0 +1,13 @@
+rootProject.name = 'backend'
+
+
+include 'common'
+include 'common:snowflake'
+
+include 'server'
+include 'server:api-gateway'
+include 'server:eureka'
+
+include 'service'
+include 'service:user'
+include 'service:board'
