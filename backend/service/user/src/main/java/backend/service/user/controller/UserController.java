@@ -15,27 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
 @Log4j2
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-
     private final Environment env;
 
     // 상태 체크
-    @GetMapping("/health-check") // http://localhost:60000/health-check
+    @GetMapping("/health-check")
     public String status() {
         return String.format("Port(local.server.port) = " + env.getProperty("local.server.port") +
                 ", Port(server.port) = " + env.getProperty("server.port")
         );
-    }
-
-    @GetMapping("/test")
-    public String test(){
-        return "Test Ok";
     }
 
     @PostMapping("/users")
