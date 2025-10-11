@@ -24,7 +24,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public BoardResponseDto create(BoardCreateRequestDto boardCreateRequestDto) {
         BoardEntity boardEntity = boardRepository.save(
-                BoardEntity.create(snowflake.nextId(), boardCreateRequestDto.getBoardKey(), boardCreateRequestDto.getTitle(), boardCreateRequestDto.getContent())
+                BoardEntity.create(snowflake.nextId(), boardCreateRequestDto.getBoardKey(), boardCreateRequestDto.getUserId(), boardCreateRequestDto.getTitle(), boardCreateRequestDto.getContent())
 
         );
         return BoardResponseDto.from(boardEntity);
