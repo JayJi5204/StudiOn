@@ -25,7 +25,9 @@ spring:
                 preLogger: true
                 postLogger: true
           routes:
-            - id: user-service-register
+            #USER-SERVICE
+            #create
+            - id: user-service-create
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/user-service/users
@@ -33,15 +35,8 @@ spring:
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-            - id: user-service-login
-              uri: lb://USER-SERVICE
-              predicates:
-                - Path=/user-service/login
-                - Method=POST
-              filters:
-                - RemoveRequestHeader=Cookie
-                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-            - id: user-service
+            #read
+            - id: user-service-read
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/user-service/**
@@ -50,28 +45,35 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
                 - AuthorizationHeaderFilter
-            - id: board-service
+            #login
+            - id: user-service-login
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/login
+                - Method=POST
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+            #BOARD-SERVICE
+            #create
+            - id: board-service-create
               uri: lb://BOARD-SERVICE
               predicates:
                 - Path=/board-service/**
+#                - Method=POST
               filters:
-                #                - AddRequestHeader=board-request, board-request-header
-                #                - AddResponseHeader=board-response, board-response-header
-                - CustomFilter
-            - id: videoroom-service
-              uri: lb://VIDEOROOM-SERVICE
-              predicates:
-                - Path=/videoroom-service/**
-              filters:
-                #                - AddRequestHeader=videoroom-request, videoroom-request-header
-                #                - AddResponseHeader=videoroom-response, videoroom-response-header
-                - name: CustomFilter
-                - name: LoggingFilter
-                  args:
-                    baseMessage: Hi, there,
-                    preLogger: true
-                    postLogger: true
-
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+#            #read
+#            - id: board-service-read
+#              uri: lb://BOARD-SERVICE
+#              predicates:
+#                - Path=/board-service/**
+#                - Method=GET
+#              filters:
+#                - RemoveRequestHeader=Cookie
+#                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
 
 token:
-  secret: my-secret-key-23472841604583465812934782394
+  secret: ${TOKEN_SECRET}

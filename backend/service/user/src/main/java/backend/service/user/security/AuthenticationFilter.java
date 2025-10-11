@@ -1,6 +1,6 @@
 package backend.service.user.security;
 
-import backend.service.user.dto.request.LoginRequest;
+import backend.service.user.dto.request.LoginRequestDto;
 import backend.service.user.dto.request.UserRequestDto;
 import backend.service.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
         try {
-            LoginRequest creds = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);
+            LoginRequestDto creds = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
 
             return getAuthenticationManager().authenticate(
 
