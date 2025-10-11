@@ -57,11 +57,10 @@ spring:
 
             #BOARD-SERVICE
             #create
-            - id: board-service-create
+            - id: board-service
               uri: lb://BOARD-SERVICE
               predicates:
                 - Path=/board-service/**
-#                - Method=POST
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/board-service/(?<segment>.*),/$\{segment}
@@ -74,6 +73,14 @@ spring:
 #              filters:
 #                - RemoveRequestHeader=Cookie
 #                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+            #create
+            - id: comment-service
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comment-service/**
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
 
 token:
   secret: ${TOKEN_SECRET}
