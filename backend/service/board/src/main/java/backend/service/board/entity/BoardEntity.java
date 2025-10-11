@@ -18,15 +18,17 @@ public class BoardEntity {
     @Id
     private Long boardId;
     private Long boardKey;
+    private Long userId;
     private String title;
     private String content;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
 
-    public static BoardEntity create(Long boardId, Long boardKey, String title, String content) {
+    public static BoardEntity create(Long boardId, Long boardKey,Long userId, String title, String content) {
         BoardEntity boardEntity = new BoardEntity();
         boardEntity.boardId = boardId;
         boardEntity.boardKey = boardKey;
+        boardEntity.userId=userId;
         boardEntity.title = title;
         boardEntity.content = content;
         boardEntity.createAt = LocalDateTime.now();
