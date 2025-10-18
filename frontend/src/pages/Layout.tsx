@@ -35,7 +35,9 @@ export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-blue-500 text-white p-4 flex justify-between">
-        <h1 className="text-xl font-bold">온라인 공부 플랫폼</h1>
+        <h1 className="text-xl font-bold">
+          <Link to="/">온라인 공부 플랫폼</Link>
+        </h1>
         <nav className="flex gap-4">
           {showModeratorBoard && (
             <li>
