@@ -5,7 +5,8 @@ import Layout from "../pages/Layout.tsx";
 const Main = lazy(() => import("../pages/MainPage.tsx"));
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
-const Login = lazy(() => import("../components/Login.tsx"));
+const FreeBulletinBoard = lazy(() => import("../pages/FreeBulletinBoard.tsx"));
+const Login = lazy(() => import("../pages/Login.tsx"));
 const Register = lazy(() => import("../components/Register.tsx"));
 const Profile = lazy(() => import("../components/Profile.tsx"));
 const BoardUser = lazy(() => import("../components/BoardUser.tsx"));
@@ -34,6 +35,14 @@ const Router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path:"/bulletin-board",
+    element: (
+      <Suspense fallback={<Loading />}>
+        <FreeBulletinBoard />
+      </Suspense>
+    )
   },
   {
     path: "/login",
