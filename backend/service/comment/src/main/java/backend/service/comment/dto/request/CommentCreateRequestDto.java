@@ -7,6 +7,6 @@ public class CommentCreateRequestDto {
     private Long userId;
     private Long boardId;
     private String content;
-    private Long parentCommentId;
+    private String parentPath;
 
 }
