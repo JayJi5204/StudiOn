@@ -1,5 +1,6 @@
 package backend.service.comment.entity;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -17,30 +18,31 @@ public class CommentEntity {
     @Id
     private Long commentId;
     private String content;
-    private Long parentCommentId;
+    @Embedded
+    private CommentPath commentPath;
     private Long userId;
     private Long boardId;
     private Boolean isDelete;
     private LocalDateTime createAt;
 
-    public static CommentEntity create(Long commentId, String content, Long parentCommentId,Long userId, Long boardId) {
-        CommentEntity commentEntity=new CommentEntity();
+    public static CommentEntity create(Long commentId, String content, CommentPath commentPath, Long userId, Long boardId) {
+        CommentEntity commentEntity = new CommentEntity();
         commentEntity.commentId = commentId;
         commentEntity.content = content;
-        commentEntity.parentCommentId = parentCommentId==null?commentId:parentCommentId;
-        commentEntity.userId=userId;
+        commentEntity.commentPath=commentPath;
+        commentEntity.userId = userId;
         commentEntity.boardId = boardId;
         commentEntity.createAt = LocalDateTime.now();
-        commentEntity.isDelete=false;
+        commentEntity.isDelete = false;
         return commentEntity;
     }
 
 
-    public boolean isRoot(){
-        return parentCommentId.longValue()==commentId;
+    public boolean isRoot() {
+        return commentPath.isRoot();
     }
 
-    public void delete(){
-        isDelete=true;
+    public void delete() {
+        isDelete = true;
     }
 }
