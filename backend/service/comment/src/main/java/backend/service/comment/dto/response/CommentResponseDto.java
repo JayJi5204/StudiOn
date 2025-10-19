@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class CommentResponseDto {
     private Long commentId;
     private String content;
-    private Long parentCommentId;
+    private String commentPath;
     private Long userId;
     private Long boardId;
     private Boolean isDelete;
@@ -19,8 +19,8 @@ public class CommentResponseDto {
         CommentResponseDto commentResponseDto = new CommentResponseDto();
 
         commentResponseDto.commentId = commentEntity.getCommentId();
-        commentResponseDto.content = commentResponseDto.getContent();
-        commentResponseDto.parentCommentId = commentEntity.getParentCommentId();
+        commentResponseDto.content = commentEntity.getContent();
+        commentResponseDto.commentPath = commentEntity.getCommentPath().getPath();
         commentResponseDto.userId = commentEntity.getUserId();
         commentResponseDto.boardId = commentEntity.getBoardId();
         commentResponseDto.isDelete = commentEntity.getIsDelete();
