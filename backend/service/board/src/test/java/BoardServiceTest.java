@@ -1,3 +1,4 @@
+import backend.service.board.dto.request.BoardCreateRequestDto;
 import backend.service.board.entity.BoardEntity;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardService;
