@@ -1,48 +1,96 @@
-import React, { useState } from 'react';
+import React,{ useState } from 'react';
+import {useNavigate } from 'react-router';
+import {Formik,Field,Form,ErrorMessage} from 'formik';
+import * as Yup from 'yup';
+import {login} from "../services/auth.sevice";
+
 import { Eye, EyeOff, User, Lock, BookOpen, ArrowRight, Loader2 } from 'lucide-react';
 
-const LoginPage = () => {
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({ username: '', password: '' });
+type Props = {};
 
-    const validateForm = () => {
-        const newErrors = { username: '', password: '' };
+const LoginPage:React.FC<Props> = () => {
+
+    let navigate= useNavigate();
+    
+    const [loading, setLoading] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [errors, setErrors] = useState<{ username: string; password: string }>({ username: '', password: '' });
+
+    /* Formik을 사용한 폼 유효성 검사 설정 
+        const initialValues: {
+            username: string;
+            password: string;
+        } = {
+            username: '',
+            password: ''
+        };
         
-        if (!username.trim()) {
-        newErrors.username = '사용자명을 입력해주세요';
+        const validationSchema = Yup.object().shape({
+            username:Yup.string().required('사용자명을 입력해주세요'),
+            password:Yup.string().required('비밀번호를 입력해주세요'),
+        });
+    
+    */
+    const validationForm = () => {
+        const newErrors: { username: string; password: string } = { username: '', password: '' };
+
+        if (!username) {
+            newErrors.username = '사용자명을 입력해주세요';
         }
-        if (!password.trim()) {
-        newErrors.password = '비밀번호를 입력해주세요';
+
+        if (!password) {
+            newErrors.password = '비밀번호를 입력해주세요';
         }
-        
+
         setErrors(newErrors);
-        return !newErrors.username && !newErrors.password;
-    };
 
-    const handleLogin = (e) => {
+        return !newErrors.username && !newErrors.password;
+    }
+
+    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
-        if (!validateForm()) {
-        return;
+
+        if (!validationForm()) {
+            return;
         }
 
         setMessage('');
         setLoading(true);
+        
+        {/* 실제 API 호출
+        login(username,password).then(
+            () => {
+                navigate("/profile");
+                window.location.reload();
+            },
+            (error) => {
+                const resMessage =
+                    (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                    error.message ||
+                    error.toString();
 
-        // 데모용 로그인 (실제로는 API 호출)
+                setLoading(false);
+                setMessage(resMessage);
+            }
+        )
+        */}
+
+        // 임시 로그인 처리
         setTimeout(() => {
-        if (username === 'demo' && password === 'password') {
-            setMessage('');
-            alert('로그인 성공!');
-        } else {
-            setMessage('사용자명 또는 비밀번호가 올바르지 않습니다.');
-        }
-        setLoading(false);
-        }, 1500);
+            if (username === 'testuser' && password === 'password123') {
+                sessionStorage.setItem("user", JSON.stringify({username: 'testuser', accessToken: 'dummy-token'}));
+                navigate("/profile");
+                window.location.reload();
+            } else {
+                setLoading(false);
+                setMessage('사용자명 또는 비밀번호가 올바르지 않습니다.');
+            }
+        }, 1000);
     };
 
     return (
@@ -140,10 +188,10 @@ const LoginPage = () => {
 
                 {/* Submit Button */}
                 <button
-                type="button"
-                onClick={handleLogin}
-                disabled={loading}
-                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2"
+                    type="button"
+                    onClick={handleLogin}
+                    disabled={loading}
+                    className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2"
                 >
                 {loading ? (
                     <>
