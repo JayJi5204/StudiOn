@@ -9,7 +9,7 @@ import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
 import backend.service.comment.service.CommentService;
 import jakarta.transaction.Transactional;
-import kuke.board.common.snowflake.Snowflake;
+import backend.security.common.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
