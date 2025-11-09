@@ -2,18 +2,18 @@ package backend.service.user.service;
 
 
 import backend.service.user.dto.request.UserRequestDto;
-import backend.service.user.entity.UserEntity;
+import backend.service.user.dto.response.UserResponseDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    UserRequestDto createUser(UserRequestDto userRequestDto);
+    UserResponseDto createUser(UserRequestDto userRequestDto);
 
-    UserRequestDto getUserByUserId(String userId);
+    UserResponseDto getUserByUserKey(String userKey);
 
-    List<UserEntity> getUserByAll();
+    List<UserResponseDto> getUserByAll();
 
     UserRequestDto getUserDetailsByEmail(String email);
 }

@@ -67,14 +67,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
         Instant now = Instant.now();
         String token = Jwts.builder()
-                .subject(userRequestDto.getUserId())
+                .subject(userRequestDto.getUserKey())
                 .expiration(Date.from(now.plusMillis(Long.parseLong(env.getProperty("token.expiration-time")))))
                 .issuedAt(Date.from(now))
                 .signWith(secretKey)
                 .compact();
 
         response.addHeader("token",token);
-        response.addHeader("userId",userRequestDto.getUserId());
+        response.addHeader("userId",userRequestDto.getUserKey());
 
     }
 }

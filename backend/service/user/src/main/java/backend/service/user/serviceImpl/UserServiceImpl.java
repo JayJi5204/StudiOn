@@ -1,6 +1,7 @@
 package backend.service.user.serviceImpl;
 
 import backend.service.user.dto.request.UserRequestDto;
+import backend.service.user.dto.response.UserResponseDto;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.service.UserService;
@@ -10,59 +11,48 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import kuke.board.common.snowflake.Snowflake;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+
+    private final Snowflake snowflake = new Snowflake();
     private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder encoder;
 
     @Override
-    public UserRequestDto createUser(UserRequestDto dto) {
+    public UserResponseDto createUser(UserRequestDto dto) {
 
-        UserEntity user = UserEntity.builder()
-                .userId(UUID.randomUUID().toString())
-                .userName(dto.getUserName())
-                .email(dto.getEmail())
-                .encryptedPwd(passwordEncoder.encode(dto.getPassword()))
-                .build();
+        UserEntity entity=userRepository.save(
+                UserEntity.create(snowflake.nextId(), dto.getUserKey(), dto.getUserName(), encoder.encode(dto.getPassword()), dto.getEmail())
+        );
 
-        userRepository.save(user);
-
-
-        return UserRequestDto.builder()
-                .userId(user.getUserId())
-                .userName(user.getUserName())
-                .email(user.getEmail())
-                .password(user.getEncryptedPwd())
-                .build();
+        return UserResponseDto.from(entity);
     }
 
     @Override
-    public UserRequestDto getUserByUserId(String userId) {
-        UserEntity userEntity = userRepository.findUserByUserId(userId);
+    public UserResponseDto getUserByUserKey(String userKey) {
+        UserEntity entity = userRepository.findUserByUserKey(userKey);
 
-        if (userEntity == null)
+        if (entity == null)
             throw new UsernameNotFoundException("User Not Found");
 
-        return UserRequestDto.builder()
-                .userId(userEntity.getUserId())
-                .userName(userEntity.getUserName())
-                .email(userEntity.getEmail())
-                .password(passwordEncoder.encode(userEntity.getEncryptedPwd()))
-                .build();
+       return UserResponseDto.from(entity);
     }
 
     @Override
-    public List<UserEntity> getUserByAll() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getUserByAll() {
+        List<UserEntity> entities = userRepository.findAll();
+        return entities.stream()
+                .map(UserResponseDto::from)
+                .toList();
     }
 
     @Override
@@ -71,10 +61,10 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByEmail(email);
 
         return UserRequestDto.builder()
-                .userId(userEntity.getUserId())
+                .userKey(userEntity.getUserKey())
                 .userName(userEntity.getUserName())
                 .email(userEntity.getEmail())
-                .password(userEntity.getEncryptedPwd())
+                .password(userEntity.getPassword())
                 .build();
 
     }
@@ -86,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
         if (userEntity == null)
             throw new UsernameNotFoundException(username + ": not found");
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(), true, true, true, true, new ArrayList<>());
+        return new User(userEntity.getEmail(), userEntity.getPassword(), true, true, true, true, new ArrayList<>());
 
     }
 }
