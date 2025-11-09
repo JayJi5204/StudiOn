@@ -41,8 +41,8 @@ public class UserController {
 
 
     @GetMapping("/users/{userId}")
-    public CreateResponseDto findUser(@PathVariable("userId") String userId) {
-        return userService.getUserByUserKey(userId);
+    public CreateResponseDto findUser(@PathVariable("userId") Long userId) {
+        return userService.getUserByUserId(userId);
     }
 
     @PostMapping("/users/{userId}")

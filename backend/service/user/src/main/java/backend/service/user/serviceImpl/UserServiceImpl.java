@@ -34,14 +34,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public CreateResponseDto create(CreateRequestDto dto) {
 
-        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUserKey(), dto.getUserName(), encoder.encode(dto.getPassword()), dto.getEmail()));
+        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUserName(), encoder.encode(dto.getPassword()), dto.getEmail()));
 
         return CreateResponseDto.from(entity);
     }
 
     @Override
-    public CreateResponseDto getUserByUserKey(String userKey) {
-        UserEntity entity = userRepository.findUserByUserKey(userKey);
+    public CreateResponseDto getUserByUserId(Long userId) {
+        UserEntity entity = userRepository.findUsersByUserId(userId);
 
 //        if (entity == null) throw new UsernameNotFoundException("User Not Found");
 
@@ -59,13 +59,13 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userRepository.findByEmail(email);
 
-        return CreateRequestDto.builder().userKey(userEntity.getUserKey()).userName(userEntity.getUserName()).email(userEntity.getEmail()).password(userEntity.getPassword()).build();
+        return CreateRequestDto.builder().userName(userEntity.getUserName()).email(userEntity.getEmail()).password(userEntity.getPassword()).build();
 
     }
 
     @Override
     public UpdateResponseDto update(UpdateRequestDto dto, Long userId) {
-        UserEntity entity = userRepository.findByUserId(userId);
+        UserEntity entity = userRepository.findUsersByUserId(userId);
         log.info(userId);
         entity.update(dto.getUserName(), dto.getUserName(), dto.getPassword());
         userRepository.save(entity);
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DeletedResponseDto delete(DeleteRequestDto dto, Long userId) {
-        UserEntity entity = userRepository.findByUserId(userId);
+        UserEntity entity = userRepository.findUsersByUserId(userId);
         entity.delete();
         return DeletedResponseDto.from(entity);
     }
