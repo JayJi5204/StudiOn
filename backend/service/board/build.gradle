@@ -5,5 +5,5 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    implementation project(':common:snowflake')
+    implementation project(':common:security')
 }

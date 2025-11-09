@@ -8,21 +8,17 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserRequestDto {
+public class CreateRequestDto {
 
 
     @NotNull(message = "아이디는 null일 수 없습니다.")
     @Size(min = 1, message ="아이디를 입력해주세요")
-    private String userKey;
+    private String userName;
 
     @NotNull(message = "이메일은 null일 수 없습니다.")
     @Size(min = 2, message = "이메일이 너무 짧습니다.")
     @Email
     private String email;
-
-    @NotNull(message = "이메일은 null일 수 없습니다.")
-    @Size(min = 2, message = "이름이 너무 짧습니다.")
-    private String userName;
 
     @NotNull(message = "이메일은 null일 수 없습니다.")
     @Size(min = 8, message = "비밀번호가 너무 짧습니다.")
