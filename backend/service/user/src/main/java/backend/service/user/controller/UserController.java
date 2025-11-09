@@ -1,7 +1,11 @@
 package backend.service.user.controller;
 
-import backend.service.user.dto.request.UserRequestDto;
-import backend.service.user.dto.response.UserResponseDto;
+import backend.service.user.dto.request.CreateRequestDto;
+import backend.service.user.dto.request.DeleteRequestDto;
+import backend.service.user.dto.request.UpdateRequestDto;
+import backend.service.user.dto.response.CreateResponseDto;
+import backend.service.user.dto.response.DeletedResponseDto;
+import backend.service.user.dto.response.UpdateResponseDto;
 import backend.service.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,18 +30,28 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public UserResponseDto createUser(@RequestBody UserRequestDto dto) {
-        return userService.createUser(dto);
+    public CreateResponseDto createUser(@RequestBody CreateRequestDto dto) {
+        return userService.create(dto);
     }
 
     @GetMapping("/users")
-    public List<UserResponseDto> getUsers() {
+    public List<CreateResponseDto> getUsers() {
         return userService.getUserByAll();
     }
 
 
     @GetMapping("/users/{userId}")
-    public UserResponseDto findUser(@PathVariable("userId") String userId) {
+    public CreateResponseDto findUser(@PathVariable("userId") String userId) {
         return userService.getUserByUserKey(userId);
+    }
+
+    @PostMapping("/users/{userId}")
+    public DeletedResponseDto delete(@PathVariable("userId") Long userId,@RequestBody DeleteRequestDto dto){
+        return userService.delete(dto,userId);
+    }
+
+    @PutMapping("/users/{userId}")
+    public UpdateResponseDto update(@PathVariable("userId") Long userId, @RequestBody UpdateRequestDto dto){
+        return userService.update(dto,userId);
     }
 }

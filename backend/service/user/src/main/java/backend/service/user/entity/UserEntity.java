@@ -1,5 +1,6 @@
 package backend.service.user.entity;
 
+import backend.service.user.enumType.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,16 +19,16 @@ import java.time.LocalDateTime;
 public class UserEntity {
 
     @Id
-    private Long id;
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String userKey;
 
+    @Column(nullable = false)
+    private String password;
+
     @Column(nullable = false, length = 50)
     private String userName;
-
-    @Column(nullable = false,  unique = true)
-    private String password;
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
@@ -35,22 +36,34 @@ public class UserEntity {
     @CreatedDate
     private LocalDateTime createAt;
 
-    public static UserEntity create(Long id, String userId, String userName, String encryptedPwd, String email) {
+    private Boolean isDeleted;
 
-        UserEntity entity=new UserEntity();
-        entity.id = id;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public static UserEntity create(Long id, String userId, String userName, String password, String email) {
+
+        UserEntity entity = new UserEntity();
+        entity.userId = id;
         entity.userKey = userId;
         entity.userName = userName;
-        entity.password = encryptedPwd;
+        entity.password = password;
         entity.email = email;
         entity.createAt = LocalDateTime.now();
+        entity.isDeleted = false;
+        entity.role = UserRole.USER;
 
-        return  entity;
+        return entity;
     }
 
-    public void  update(String userName, String encryptedPwd,String email){
-        this.userName=userName;
-        this.password =encryptedPwd;
-        this.email=email;
+    public void update(String userName, String password, String email) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
     }
+
+    public void delete(){
+        this.isDeleted=true;
+    }
+
 }

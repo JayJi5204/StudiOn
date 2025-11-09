@@ -9,7 +9,7 @@ import backend.service.board.entity.BoardEntity;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardService;
 import jakarta.transaction.Transactional;
-import kuke.board.common.snowflake.Snowflake;
+import backend.security.common.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
