@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserRequestDto {
+public class CreateRequestDto {
 
 
     @NotNull(message = "아이디는 null일 수 없습니다.")

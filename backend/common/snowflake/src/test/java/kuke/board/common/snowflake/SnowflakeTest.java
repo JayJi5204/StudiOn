@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import backend.security.common.Snowflake;
 import org.junit.jupiter.api.Test;
 
 class SnowflakeTest {

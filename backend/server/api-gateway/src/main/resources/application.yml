@@ -26,7 +26,15 @@ spring:
                 postLogger: true
           routes:
             #USER-SERVICE
-            #create
+            - id: health-check
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/health-check
+                - Method=GET
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
             - id: user-service-create
               uri: lb://USER-SERVICE
               predicates:
@@ -45,6 +53,25 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
                 - AuthorizationHeaderFilter
+
+            - id: user-service-update
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/users/**
+                - Method=PUT
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+            - id: user-service-delete
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/users/**
+                - Method=POST
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
             #login
             - id: user-service-login
               uri: lb://USER-SERVICE
