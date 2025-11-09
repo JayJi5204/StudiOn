@@ -18,18 +18,16 @@ import java.time.LocalDateTime;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false, unique = true)
-    private String userId;
+    private String userKey;
 
     @Column(nullable = false, length = 50)
     private String userName;
 
     @Column(nullable = false,  unique = true)
-    private String encryptedPwd;
+    private String password;
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
@@ -37,4 +35,22 @@ public class UserEntity {
     @CreatedDate
     private LocalDateTime createAt;
 
+    public static UserEntity create(Long id, String userId, String userName, String encryptedPwd, String email) {
+
+        UserEntity entity=new UserEntity();
+        entity.id = id;
+        entity.userKey = userId;
+        entity.userName = userName;
+        entity.password = encryptedPwd;
+        entity.email = email;
+        entity.createAt = LocalDateTime.now();
+
+        return  entity;
+    }
+
+    public void  update(String userName, String encryptedPwd,String email){
+        this.userName=userName;
+        this.password =encryptedPwd;
+        this.email=email;
+    }
 }
