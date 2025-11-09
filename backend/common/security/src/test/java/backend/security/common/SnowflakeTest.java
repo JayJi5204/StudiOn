@@ -1,4 +1,4 @@
-package kuke.board.common.snowflake;
+package backend.security.common;
 
 import static org.assertj.core.api.Assertions.*;
 

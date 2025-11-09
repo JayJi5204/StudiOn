@@ -8,8 +8,6 @@ public class UpdateRequestDto {
 
     private Long userId;
 
-    private String userKey;
-
     @Email
     private String email;
 

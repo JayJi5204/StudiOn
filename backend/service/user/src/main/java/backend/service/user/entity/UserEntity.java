@@ -15,20 +15,17 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class UserEntity {
 
     @Id
     private Long userId;
 
-    @Column(nullable = false, unique = true)
-    private String userKey;
+    @Column(nullable = false, length = 50)
+    private String userName;
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false, length = 50)
-    private String userName;
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
@@ -41,11 +38,10 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static UserEntity create(Long id, String userId, String userName, String password, String email) {
+    public static UserEntity create(Long id, String userName, String password, String email) {
 
         UserEntity entity = new UserEntity();
         entity.userId = id;
-        entity.userKey = userId;
         entity.userName = userName;
         entity.password = password;
         entity.email = email;

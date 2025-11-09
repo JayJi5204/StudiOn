@@ -15,7 +15,7 @@ public interface UserService {
 
     CreateResponseDto create(CreateRequestDto dto);
 
-    CreateResponseDto getUserByUserKey(String userKey);
+    CreateResponseDto getUserByUserId(Long userId);
 
     List<CreateResponseDto> getUserByAll();
 
