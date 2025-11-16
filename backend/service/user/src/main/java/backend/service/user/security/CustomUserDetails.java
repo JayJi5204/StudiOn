@@ -1,4 +1,4 @@
-package backend.security.common.security;
+package backend.service.user.security;
 
 import backend.service.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
