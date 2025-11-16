@@ -8,12 +8,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CreateRequestDto {
+public class CreateRequest {
 
 
-    @NotNull(message = "아이디는 null일 수 없습니다.")
-    @Size(min = 1, message ="아이디를 입력해주세요")
-    private String userName;
 
     @NotNull(message = "이메일은 null일 수 없습니다.")
     @Size(min = 2, message = "이메일이 너무 짧습니다.")
@@ -23,5 +20,9 @@ public class CreateRequestDto {
     @NotNull(message = "이메일은 null일 수 없습니다.")
     @Size(min = 8, message = "비밀번호가 너무 짧습니다.")
     private String password;
+
+    @NotNull(message = "이름은 null일 수 없습니다.")
+    @Size(min = 1, message ="이름을 입력해주세요")
+    private String username;
 
 }

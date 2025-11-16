@@ -1,27 +1,25 @@
 package backend.service.user.service;
 
 
-import backend.service.user.dto.request.CreateRequestDto;
-import backend.service.user.dto.request.DeleteRequestDto;
-import backend.service.user.dto.request.UpdateRequestDto;
-import backend.service.user.dto.response.CreateResponseDto;
-import backend.service.user.dto.response.DeletedResponseDto;
-import backend.service.user.dto.response.UpdateResponseDto;
-//import org.springframework.security.core.userdetails.UserDetailsService;
+import backend.service.user.dto.request.CreateRequest;
+import backend.service.user.dto.request.DeleteRequest;
+import backend.service.user.dto.request.UpdateRequest;
+import backend.service.user.dto.response.CreateResponse;
+import backend.service.user.dto.response.DeletedResponse;
+import backend.service.user.dto.response.UpdateResponse;
 
 import java.util.List;
 
 public interface UserService {
 
-    CreateResponseDto create(CreateRequestDto dto);
+    CreateResponse create(CreateRequest dto);
 
-    CreateResponseDto getUserByUserId(Long userId);
+    CreateResponse getUserByUserId(Long userId);
 
-    List<CreateResponseDto> getUserByAll();
+    List<CreateResponse> getUserByAll();
 
-    CreateRequestDto getUserDetailsByEmail(String email);
 
-    UpdateResponseDto update(UpdateRequestDto dto,Long userId);
+    UpdateResponse update(UpdateRequest dto, Long userId);
 
-    DeletedResponseDto delete(DeleteRequestDto dto,Long userId);
+    DeletedResponse delete(DeleteRequest dto, Long userId);
 }

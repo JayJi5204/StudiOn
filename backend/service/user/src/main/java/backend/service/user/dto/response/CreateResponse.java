@@ -7,20 +7,18 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CreateResponseDto {
+public class CreateResponse {
 
-    private Long userId;
-    private String userName;
     private String email;
+    private String username;
     private LocalDateTime createAt;
     private Boolean isDeleted;
     private UserRole role;
 
 
-    public static CreateResponseDto from(UserEntity entity) {
-        CreateResponseDto dto = new CreateResponseDto();
-        dto.userId=entity.getUserId();
-        dto.userName = entity.getUserName();
+    public static CreateResponse from(UserEntity entity) {
+        CreateResponse dto = new CreateResponse();
+        dto.username = entity.getUsername();
         dto.email = entity.getEmail();
         dto.createAt = entity.getCreateAt();
         dto.isDeleted = entity.getIsDeleted();
