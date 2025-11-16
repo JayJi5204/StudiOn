@@ -54,12 +54,15 @@ public class UserServiceImpl implements UserService {
         return DeletedResponse.from(entity);
     }
 
+    @Override
     public LoginResponse login(LoginRequest dto) {
-
-        boolean check = userRepository.existsByPassword(dto.getPassword());
         UserEntity entity = userRepository.findByEmail(dto.getEmail());
 
-        if (!check || entity == null) {
+        if (entity == null) {
+            throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
+        }
+
+        if (!encoder.matches(dto.getPassword(), entity.getPassword())) {
             throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
         }
 

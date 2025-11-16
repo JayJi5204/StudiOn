@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class CreateResponse {
 
+    private Long userId;
     private String email;
     private String username;
     private LocalDateTime createAt;
@@ -18,6 +19,7 @@ public class CreateResponse {
 
     public static CreateResponse from(UserEntity entity) {
         CreateResponse dto = new CreateResponse();
+        dto.userId=entity.getUserId();
         dto.username = entity.getUsername();
         dto.email = entity.getEmail();
         dto.createAt = entity.getCreateAt();
