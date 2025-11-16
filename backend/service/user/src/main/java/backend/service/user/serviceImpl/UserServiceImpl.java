@@ -1,20 +1,19 @@
 package backend.service.user.serviceImpl;
 
-import backend.service.user.dto.request.CreateRequestDto;
-import backend.service.user.dto.request.DeleteRequestDto;
-import backend.service.user.dto.request.UpdateRequestDto;
-import backend.service.user.dto.response.CreateResponseDto;
-import backend.service.user.dto.response.DeletedResponseDto;
-import backend.service.user.dto.response.UpdateResponseDto;
+import backend.security.common.Snowflake;
+import backend.service.user.dto.request.CreateRequest;
+import backend.service.user.dto.request.DeleteRequest;
+import backend.service.user.dto.request.LoginRequest;
+import backend.service.user.dto.request.UpdateRequest;
+import backend.service.user.dto.response.CreateResponse;
+import backend.service.user.dto.response.DeletedResponse;
+import backend.service.user.dto.response.LoginResponse;
+import backend.service.user.dto.response.UpdateResponse;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.service.UserService;
-import backend.security.common.Snowflake;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,60 +31,52 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder;
 
     @Override
-    public CreateResponseDto create(CreateRequestDto dto) {
+    public CreateResponse create(CreateRequest dto) {
 
-        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUserName(), encoder.encode(dto.getPassword()), dto.getEmail()));
+        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUsername(), encoder.encode(dto.getPassword()), dto.getEmail()));
 
-        return CreateResponseDto.from(entity);
+        return CreateResponse.from(entity);
     }
 
     @Override
-    public CreateResponseDto getUserByUserId(Long userId) {
-        UserEntity entity = userRepository.findUsersByUserId(userId);
-
-//        if (entity == null) throw new UsernameNotFoundException("User Not Found");
-
-        return CreateResponseDto.from(entity);
-    }
-
-    @Override
-    public List<CreateResponseDto> getUserByAll() {
-        List<UserEntity> entities = userRepository.findAll();
-        return entities.stream().map(CreateResponseDto::from).toList();
-    }
-
-    @Override
-    public CreateRequestDto getUserDetailsByEmail(String email) {
-
-        UserEntity userEntity = userRepository.findByEmail(email);
-
-        return CreateRequestDto.builder().userName(userEntity.getUserName()).email(userEntity.getEmail()).password(userEntity.getPassword()).build();
-
-    }
-
-    @Override
-    public UpdateResponseDto update(UpdateRequestDto dto, Long userId) {
+    public UpdateResponse update(UpdateRequest dto, Long userId) {
         UserEntity entity = userRepository.findUsersByUserId(userId);
         log.info(userId);
-        entity.update(dto.getUserName(), dto.getUserName(), dto.getPassword());
+        entity.update(dto.getUsername(), dto.getUsername(), dto.getPassword());
         userRepository.save(entity);
-        return UpdateResponseDto.from(entity);
+        return UpdateResponse.from(entity);
     }
 
     @Override
-    public DeletedResponseDto delete(DeleteRequestDto dto, Long userId) {
+    public DeletedResponse delete(DeleteRequest dto, Long userId) {
         UserEntity entity = userRepository.findUsersByUserId(userId);
         entity.delete();
-        return DeletedResponseDto.from(entity);
+        return DeletedResponse.from(entity);
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//
-//        UserEntity userEntity = userRepository.findByEmail(username);
-//
-//        if (userEntity == null) throw new UsernameNotFoundException(username + ": not found");
-//        return new User(userEntity.getEmail(), userEntity.getPassword(), true, true, true, true, new ArrayList<>());
-//
-//    }
+    public LoginResponse login(LoginRequest dto) {
+
+        boolean check = userRepository.existsByPassword(dto.getPassword());
+        UserEntity entity = userRepository.findByEmail(dto.getEmail());
+
+        if (!check || entity == null) {
+            throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
+        }
+
+        return LoginResponse.from(entity);
+    }
+
+
+    @Override
+    public CreateResponse getUserByUserId(Long userId) {
+        UserEntity entity = userRepository.findUsersByUserId(userId);
+        return CreateResponse.from(entity);
+    }
+
+    @Override
+    public List<CreateResponse> getUserByAll() {
+        List<UserEntity> entities = userRepository.findAll();
+        return entities.stream().map(CreateResponse::from).toList();
+    }
+
 }

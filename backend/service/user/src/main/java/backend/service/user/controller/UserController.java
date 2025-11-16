@@ -1,11 +1,11 @@
 package backend.service.user.controller;
 
-import backend.service.user.dto.request.CreateRequestDto;
-import backend.service.user.dto.request.DeleteRequestDto;
-import backend.service.user.dto.request.UpdateRequestDto;
-import backend.service.user.dto.response.CreateResponseDto;
-import backend.service.user.dto.response.DeletedResponseDto;
-import backend.service.user.dto.response.UpdateResponseDto;
+import backend.service.user.dto.request.CreateRequest;
+import backend.service.user.dto.request.DeleteRequest;
+import backend.service.user.dto.request.UpdateRequest;
+import backend.service.user.dto.response.CreateResponse;
+import backend.service.user.dto.response.DeletedResponse;
+import backend.service.user.dto.response.UpdateResponse;
 import backend.service.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,28 +30,28 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public CreateResponseDto createUser(@RequestBody CreateRequestDto dto) {
+    public CreateResponse createUser(@RequestBody CreateRequest dto) {
         return userService.create(dto);
     }
 
     @GetMapping("/users")
-    public List<CreateResponseDto> getUsers() {
+    public List<CreateResponse> getUsers() {
         return userService.getUserByAll();
     }
 
 
     @GetMapping("/users/{userId}")
-    public CreateResponseDto findUser(@PathVariable("userId") Long userId) {
+    public CreateResponse findUser(@PathVariable("userId") Long userId) {
         return userService.getUserByUserId(userId);
     }
 
     @PostMapping("/users/{userId}")
-    public DeletedResponseDto delete(@PathVariable("userId") Long userId,@RequestBody DeleteRequestDto dto){
+    public DeletedResponse delete(@PathVariable("userId") Long userId, @RequestBody DeleteRequest dto){
         return userService.delete(dto,userId);
     }
 
     @PutMapping("/users/{userId}")
-    public UpdateResponseDto update(@PathVariable("userId") Long userId, @RequestBody UpdateRequestDto dto){
+    public UpdateResponse update(@PathVariable("userId") Long userId, @RequestBody UpdateRequest dto){
         return userService.update(dto,userId);
     }
 }
