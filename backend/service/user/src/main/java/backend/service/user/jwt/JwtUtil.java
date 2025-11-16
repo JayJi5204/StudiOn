@@ -1,7 +1,7 @@
-package backend.security.common.jwt;
+package backend.service.user.jwt;
 
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -10,19 +10,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 public class JwtUtil {
 
     private final SecretKey secretKey;
-    private final JwtProperties jwtProperties;
 
-    public JwtUtil(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
-        this.secretKey = new SecretKeySpec(
-                jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8),
-                Jwts.SIG.HS256.key().build().getAlgorithm()
-        );
-    }
+  public JwtUtil(@Value("${token.secret}")String secret){
+      secretKey=new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),Jwts.SIG.HS256.key().build().getAlgorithm());
+  }
 
     // 이메일 추출
     public String getEmail(String token) {
@@ -46,7 +40,7 @@ public class JwtUtil {
                 .claim("email", email)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessExpiration()))
+                .expiration(new Date(System.currentTimeMillis()))
                 .signWith(secretKey)
                 .compact();
     }
@@ -57,7 +51,7 @@ public class JwtUtil {
                 .claim("email", email)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshExpiration()))
+                .expiration(new Date(System.currentTimeMillis()))
                 .signWith(secretKey)
                 .compact();
     }
