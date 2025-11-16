@@ -1,6 +1,7 @@
-package backend.security.common.security;
+package backend.service.user.security;
 
-import backend.security.common.jwt.LoginFilter;
+import backend.service.user.jwt.JwtUtil;
+import backend.service.user.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,9 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JwtUtil jwtUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtUtil jwtUtil) {
         this.authenticationConfiguration = authenticationConfiguration;
+        this.jwtUtil=jwtUtil;
     }
 
     @Bean
@@ -39,9 +42,9 @@ public class SecurityConfig {
         http.formLogin((auth) -> auth.disable());
         http.httpBasic((auth) -> auth.disable());
 
-        http.authorizeHttpRequests((auth) -> auth.requestMatchers("/", "/login").permitAll().requestMatchers("/admin").hasRole("ADMIN").anyRequest().authenticated());
+        http.authorizeHttpRequests((auth) -> auth.requestMatchers("/", "/api/**").permitAll().requestMatchers("/admin").hasRole("ADMIN").anyRequest().authenticated());
 
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration),jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
