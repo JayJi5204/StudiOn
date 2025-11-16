@@ -5,18 +5,16 @@ import backend.service.user.enumType.UserRole;
 import lombok.Getter;
 
 @Getter
-public class UpdateResponseDto {
+public class UpdateResponse {
 
-    private Long userId;
-    private String userName;
     private String email;
+    private String username;
     private UserRole role;
 
 
-    public static UpdateResponseDto from(UserEntity entity){
-        UpdateResponseDto dto=new UpdateResponseDto();
-        dto.userId = entity.getUserId();;
-        dto.userName= entity.getUserName();
+    public static UpdateResponse from(UserEntity entity){
+        UpdateResponse dto=new UpdateResponse();
+        dto.username = entity.getUsername();
         dto.email= entity.getEmail();
         dto.role=entity.getRole();
         return dto;

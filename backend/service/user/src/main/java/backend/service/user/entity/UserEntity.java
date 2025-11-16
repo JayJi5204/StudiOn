@@ -21,14 +21,14 @@ public class UserEntity {
     @Id
     private Long userId;
 
-    @Column(nullable = false, length = 50)
-    private String userName;
+    @Column(nullable = false, length = 50, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, length = 50, unique = true)
-    private String email;
+    @Column(nullable = false, length = 50)
+    private String username;
 
     @CreatedDate
     private LocalDateTime createAt;
@@ -38,11 +38,11 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static UserEntity create(Long id, String userName, String password, String email) {
+    public static UserEntity create(Long id, String username, String password, String email) {
 
         UserEntity entity = new UserEntity();
         entity.userId = id;
-        entity.userName = userName;
+        entity.username = username;
         entity.password = password;
         entity.email = email;
         entity.createAt = LocalDateTime.now();
@@ -53,7 +53,7 @@ public class UserEntity {
     }
 
     public void update(String userName, String password, String email) {
-        this.userName = userName;
+        this.username = userName;
         this.password = password;
         this.email = email;
     }

@@ -3,7 +3,7 @@ package backend.service.user.dto.request;
 import lombok.Data;
 
 @Data
-public class LoginRequestDto {
+public class LoginRequest {
 
     private String email;
     private String password;

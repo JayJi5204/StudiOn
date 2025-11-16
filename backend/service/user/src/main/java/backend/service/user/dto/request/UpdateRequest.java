@@ -4,14 +4,14 @@ import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 @Data
-public class UpdateRequestDto {
+public class UpdateRequest {
 
     private Long userId;
 
     @Email
     private String email;
 
-    private String userName;
+    private String username;
 
     private String password;
 }
