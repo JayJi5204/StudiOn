@@ -24,13 +24,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private final Environment env;
 
-    // 상태 체크
-    @GetMapping("/health-check")
-    public String status() {
-        return String.format("Port(local.server.port) = " + env.getProperty("local.server.port") + ", Port(server.port) = " + env.getProperty("server.port"));
-    }
 
     @PostMapping("/create")
     public CreateResponse createUser(@RequestBody CreateRequest dto) {
@@ -49,17 +43,17 @@ public class UserController {
     }
 
     @PostMapping("/delete/{userId}")
-    public DeletedResponse delete(@PathVariable("userId") Long userId, @RequestBody DeleteRequest dto){
-        return userService.delete(dto,userId);
+    public DeletedResponse delete(@PathVariable("userId") Long userId, @RequestBody DeleteRequest dto) {
+        return userService.delete(dto, userId);
     }
 
     @PutMapping("/update/{userId}")
-    public UpdateResponse update(@PathVariable("userId") Long userId, @RequestBody UpdateRequest dto){
-        return userService.update(dto,userId);
+    public UpdateResponse update(@PathVariable("userId") Long userId, @RequestBody UpdateRequest dto) {
+        return userService.update(dto, userId);
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest dto){
+    public LoginResponse login(@RequestBody LoginRequest dto) {
         return userService.login(dto);
     }
 }
