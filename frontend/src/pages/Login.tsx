@@ -2,7 +2,7 @@ import React,{ useState } from 'react';
 import {useNavigate } from 'react-router';
 import {Formik,Field,Form,ErrorMessage} from 'formik';
 import * as Yup from 'yup';
-import {login} from "../services/auth.sevice";
+import {login} from "../services/auth.service";
 
 import { Eye, EyeOff, User, Lock, BookOpen, ArrowRight, Loader2 } from 'lucide-react';
 
@@ -79,12 +79,12 @@ const LoginPage:React.FC<Props> = () => {
             }
         )
         */}
-
+        
         // 임시 로그인 처리
         setTimeout(() => {
             if (username === 'testuser' && password === 'password123') {
-                sessionStorage.setItem("user", JSON.stringify({username: 'testuser', accessToken: 'dummy-token'}));
-                navigate("/profile");
+                sessionStorage.setItem("user", JSON.stringify({id: 1, username: 'testuser', accessToken: 'dummy-token'}));
+                navigate('/');
                 window.location.reload();
             } else {
                 setLoading(false);
