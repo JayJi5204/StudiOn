@@ -5,9 +5,14 @@ spring:
   application:
     name: config-server
 
+  output:
+    ansi:
+      enabled: "always"
+
+
   cloud:
     config:
       server:
         git:
-          uri:
+          uri: file:///Users/jayji/Desktop/testRepo
           default-label: master

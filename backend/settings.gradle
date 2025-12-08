@@ -2,7 +2,7 @@ rootProject.name = 'backend'
 
 
 include 'common'
-include 'common:security'
+include 'common:snowFlake'
 
 
 include 'server'
