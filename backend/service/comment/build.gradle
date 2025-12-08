@@ -8,5 +8,5 @@ dependencies {
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
-    implementation project(':common:security')
+    implementation project(':common:snowFlake')
 }

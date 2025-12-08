@@ -2,12 +2,13 @@ rootProject.name = 'backend'
 
 
 include 'common'
-include 'common:security'
+include 'common:snowFlake'
 
 
 include 'server'
 include 'server:api-gateway'
 include 'server:eureka'
+include 'server:config'
 
 include 'service'
 include 'service:user'
