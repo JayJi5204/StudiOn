@@ -16,6 +16,9 @@ public class HealthCheckController {
     public String status() {
         return String.format("Port(local.server.port) = " + env.getProperty("local.server.port") +
                 ", Port(server.port) = " + env.getProperty("server.port") +
-                ", token secret key: " + env.getProperty("token.secret"));
+                ", Test = " + env.getProperty("greeting.message")+
+                ", Secret= "+env.getProperty("token.secret")
+
+        );
     }
 }

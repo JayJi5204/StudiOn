@@ -1,5 +1,6 @@
 package backend.service.user.jwt;
 
+import backend.service.user.entity.UserEntity;
 import backend.service.user.security.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,8 +47,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
 
+        String userId= String.valueOf(details.getUserId());
         String role = auth.getAuthority();
-        String token = jwtUtil.createAccessToken(username, role);
+        String token = jwtUtil.createAccessToken(userId,username, role);
         response.addHeader("Authorization", "Bearer " + token);
     }
 

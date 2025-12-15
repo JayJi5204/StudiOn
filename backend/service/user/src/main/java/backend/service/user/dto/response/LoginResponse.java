@@ -12,13 +12,15 @@ public class LoginResponse {
     private String email;
     private String username;
     private UserRole role;
+    private String accessToken;
 
 
-    public static LoginResponse from(UserEntity entity) {
+    public static LoginResponse from(UserEntity entity,String accessToken) {
         LoginResponse response = new LoginResponse();
         response.email = entity.getEmail();
         response.username = entity.getUsername();
         response.role = entity.getRole();
+        response.accessToken=accessToken;
 
         return response;
 

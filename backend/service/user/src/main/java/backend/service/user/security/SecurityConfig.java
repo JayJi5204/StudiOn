@@ -64,7 +64,8 @@ public class SecurityConfig {
         http.httpBasic((auth) -> auth.disable());
 
         http.authorizeHttpRequests((auth) -> auth.
-                requestMatchers("/", "/api/**","/health-check","/actuator/**").permitAll().
+                requestMatchers("/", "/api/users/create", // 회원가입 경로
+                        "/api/users/login","/health-check","/actuator/**").permitAll().
                 requestMatchers("/api/auth/admin").hasRole("ADMIN").
                 anyRequest().
                 authenticated());
