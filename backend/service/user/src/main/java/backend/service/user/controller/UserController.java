@@ -9,6 +9,7 @@ import backend.service.user.dto.response.DeletedResponse;
 import backend.service.user.dto.response.LoginResponse;
 import backend.service.user.dto.response.UpdateResponse;
 import backend.service.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.env.Environment;
@@ -51,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest dto) {
-        return userService.login(dto);
+    public LoginResponse login(@RequestBody LoginRequest dto, HttpServletResponse response) {
+        return userService.login(dto,response);
     }
 }

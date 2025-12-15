@@ -9,6 +9,7 @@ import backend.service.user.dto.response.CreateResponse;
 import backend.service.user.dto.response.DeletedResponse;
 import backend.service.user.dto.response.LoginResponse;
 import backend.service.user.dto.response.UpdateResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -24,5 +25,5 @@ public interface UserService {
 
     DeletedResponse delete(DeleteRequest dto, Long userId);
 
-    LoginResponse login(LoginRequest dto);
+    LoginResponse login(LoginRequest dto, HttpServletResponse response);
 }

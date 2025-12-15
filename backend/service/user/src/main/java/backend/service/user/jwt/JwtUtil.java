@@ -1,11 +1,13 @@
 package backend.service.user.jwt;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys; // 💡 Keys 클래스 import
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
+
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
@@ -13,56 +15,81 @@ import java.util.Date;
 public class JwtUtil {
 
     private final SecretKey secretKey;
+    private final long accessTokenExpiration;
+    private final long refreshTokenExpiration;
 
-  public JwtUtil(@Value("${token.secret}")String secret){
-      secretKey=new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),Jwts.SIG.HS256.key().build().getAlgorithm());
-  }
+    public JwtUtil(
+            @Value("${token.secret}") String secret,
+            @Value("${token.access-expiration-time}") long accessTokenExpiration,
+            @Value("${token.refresh-expiration-time}") long refreshTokenExpiration
+    ) {
+        // 💡 수정된 부분: Keys.hmacShaKeyFor를 사용하여 SecretKey를 생성합니다.
+        // 이 방식이 String Secret을 안전하게 처리하는 최신 JJWT 권장 방식입니다.
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
-    // 이메일 추출
+        this.accessTokenExpiration = accessTokenExpiration;
+        this.refreshTokenExpiration = refreshTokenExpiration;
+    }
+
+    @PostConstruct
+    public void test() {
+        System.out.println("=== JwtUtil Loaded ===");
+        // Secret Key는 민감 정보이므로 전체 출력 대신 로드 성공 여부만 확인하는 것이 좋습니다.
+        System.out.println("SecretKey initialized successfully.");
+        System.out.println("accessTokenExpiration = " + accessTokenExpiration);
+        System.out.println("refreshTokenExpiration = " + refreshTokenExpiration);
+    }
+
     public String getEmail(String token) {
-        return Jwts.parser().verifyWith(secretKey).build()
-                .parseSignedClaims(token).getPayload().get("email", String.class);
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("email", String.class);
     }
 
     public String getRole(String token) {
-        return Jwts.parser().verifyWith(secretKey).build()
-                .parseSignedClaims(token).getPayload().get("role", String.class);
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
     }
 
-    public Boolean isExpired(String token) {
-        return Jwts.parser().verifyWith(secretKey).build()
-                .parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    public boolean isExpired(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .before(new Date());
     }
 
-    // Access Token 생성 (이메일 기반)
-    public String createAccessToken(String email, String role) {
+    // JwtUtil.java (수정 제안)
+
+    // 🚨 매개변수에 userId 추가
+    public String createAccessToken(String userId, String email, String role) {
         return Jwts.builder()
+                .subject(userId) // ✅ User ID를 Subject 클레임으로 설정
                 .claim("email", email)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()))
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(secretKey)
                 .compact();
     }
 
-    // Refresh Token 생성 (이메일 기반)
-    public String createRefreshToken(String email, String role) {
+    // 🚨 매개변수에 userId 추가
+    public String createRefreshToken(String userId, String email, String role) {
         return Jwts.builder()
+                .subject(userId) // ✅ User ID를 Subject 클레임으로 설정
                 .claim("email", email)
                 .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()))
-                .signWith(secretKey)
-                .compact();
-    }
-
-    // 기존 메서드 유지 (필요한 경우)
-    public String createJwt(String email, String role, Long expiredMs) {
-        return Jwts.builder()
-                .claim("email", email)
-                .claim("role", role)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(secretKey)
                 .compact();
     }

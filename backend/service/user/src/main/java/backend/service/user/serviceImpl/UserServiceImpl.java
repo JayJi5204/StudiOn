@@ -10,8 +10,10 @@ import backend.service.user.dto.response.DeletedResponse;
 import backend.service.user.dto.response.LoginResponse;
 import backend.service.user.dto.response.UpdateResponse;
 import backend.service.user.entity.UserEntity;
+import backend.service.user.jwt.JwtUtil;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +31,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder;
+
+    private final JwtUtil jwtUtil;
 
     @Override
     public CreateResponse create(CreateRequest dto) {
@@ -55,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest dto) {
+    public LoginResponse login(LoginRequest dto, HttpServletResponse response) {
         UserEntity entity = userRepository.findByEmail(dto.getEmail());
 
         if (entity == null) {
@@ -66,7 +70,15 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
         }
 
-        return LoginResponse.from(entity);
+        String userId= String.valueOf((Long) entity.getUserId());
+
+        String accessToken = jwtUtil.createAccessToken(userId,entity.getEmail(), entity.getRole().toString());
+
+        String refreshToken = jwtUtil.createRefreshToken(userId,entity.getEmail(), entity.getRole().toString());
+
+        response.addHeader("accessToken",accessToken);
+
+        return LoginResponse.from(entity, accessToken);
     }
 
 
