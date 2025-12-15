@@ -62,6 +62,7 @@ public class UserEntity {
         this.isDeleted=true;
     }
 
+
     public void jwtFilter(String email,UserRole role){
         this.email=email;
         this.role=role;
