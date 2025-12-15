@@ -5,15 +5,31 @@ spring:
   application:
     name: user-service
 
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+  profiles:
+    active: dev
+
+#  config:
+#    import: "optional:configserver:http://127.0.0.1:8888"
+
+#  cloud:
+#    config:
+#      name: test
+
   security:
     user:
-      name: user
-      password: 2a$10$SSlT1wUXkqVPNrB5yuoZZ.Uql.MxUClRp6IRJYgFpLCfIgC1zkbbC
+      name: ${SECURITY_USER_NAME}
+      password: ${SECURITY_USER_PASSWORD}
 
   datasource:
     url: jdbc:mysql://localhost:3306/user
-    username: root
-    password: 1234
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -34,6 +50,17 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-token:
-  secret: Ji_Sunghyun_And_Choi_Yongwons_Online_Cam_Study_Project
-  expiration-time: 86400000
+greeting:
+  message: Spring Boot
+
+
+#token:
+#  secret: ${TOKEN_SECRET}
+#  access-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME}
+#  refresh-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, busrefresh

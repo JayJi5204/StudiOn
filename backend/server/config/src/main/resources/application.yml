@@ -5,6 +5,12 @@ spring:
   application:
     name: config-server
 
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
   output:
     ansi:
       enabled: "always"
@@ -14,5 +20,11 @@ spring:
     config:
       server:
         git:
-          uri: file:///Users/jayji/Desktop/testRepo
+          uri: file:///Users/jayji/Desktop/StudiOn/config
           default-label: master
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, busrefresh
