@@ -12,6 +12,12 @@ spring:
   application:
     name: apigateway-service
 
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
   # 💡 요청하신 ANSI 컬러 출력 설정 추가
   output:
     ansi:
@@ -85,9 +91,4 @@ management:
   endpoints:
     web:
       exposure:
-        include:
-          - refresh
-          - health
-          - beans
-          - info
-          - httpexchanges
+        include: refresh, health, beans, info, httpexchanges, busrefresh

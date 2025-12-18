@@ -20,11 +20,14 @@ spring:
     config:
       server:
         git:
-          uri: file:///Users/jayji/Desktop/StudiOn/config
-          default-label: master
+          uri: https://github.com/JayJi5204/SpringCloudConfig
+          search-paths: StudiOn_Config
+          default-label: main
+#        native:
+#          search-locations: file:///Users/jayji/Desktop/StudiOn/config
 
 management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, info, busrefresh
+        include: refresh, health, beans, info, httpexchanges, busrefresh
