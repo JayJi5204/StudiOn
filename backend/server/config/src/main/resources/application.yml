@@ -22,6 +22,8 @@ spring:
         git:
           uri: https://github.com/JayJi5204/SpringCloudConfig
           search-paths: StudiOn_Config
+          username: ${GITHUB_USERNAME}
+          password: ${GITHUB_PASSWORD}
           default-label: main
 #        native:
 #          search-locations: file:///Users/jayji/Desktop/StudiOn/config

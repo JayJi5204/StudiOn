@@ -11,8 +11,8 @@ spring:
     username: guest
     password: guest
 
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev
 
 #  config:
 #    import: "optional:configserver:http://127.0.0.1:8888"
@@ -20,17 +20,6 @@ spring:
 #  cloud:
 #    config:
 #      name: config
-
-  security:
-    user:
-      name: ${SECURITY_USER_NAME}
-      password: ${SECURITY_USER_PASSWORD}
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/user
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -52,12 +41,6 @@ eureka:
 
 greeting:
   message: Spring Boot
-
-
-#token:
-#  secret: ${TOKEN_SECRET}
-#  access-expiration-time: ${ACCESS_TOKEN_EXPIRATION_TIME}
-#  refresh-expiration-time: ${REFRESH_TOKEN_EXPIRATION_TIME}
 
 management:
   endpoints:
