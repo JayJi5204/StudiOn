@@ -15,16 +15,15 @@ spring:
     ansi:
       enabled: "always"
 
-
   cloud:
     config:
       server:
         git:
-          uri: https://github.com/JayJi5204/SpringCloudConfig
+          uri: ${GITHUB_URL}
           search-paths: StudiOn_Config
+          username: ${GITHUB_USERNAME}
+          password: ${GITHUB_PASSWORD}
           default-label: main
-#        native:
-#          search-locations: file:///Users/jayji/Desktop/StudiOn/config
 
 management:
   endpoints:
