@@ -8,35 +8,43 @@ import backend.service.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@RequestMapping("/api/boards")
 @RequiredArgsConstructor
 public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/boards/{boardId}")
-    public BoardResponseDto read(@PathVariable Long boardId) {
-        return boardService.read(boardId);
+    @GetMapping("/{boardId}")
+    public BoardResponseDto get(@PathVariable Long boardId) {
+        return boardService.getBoards(boardId);
     }
 
-    @GetMapping("/boards")
-    public PageResponseDto readAll(@RequestParam("boardKey") Long boardKey, @RequestParam("page") Long page, @RequestParam("pageSize") Long pageSize) {
-        return boardService.readAll(boardKey, page, pageSize);
+    @GetMapping("/get/{userId}")
+    public List<BoardResponseDto> getBoardWhoCreate(@PathVariable("userId") Long userId) { // List로 변경
+        return boardService.getBoardWhoCreate(userId);
     }
 
+    @GetMapping("/getAll")
+    public PageResponseDto getAllBoards(@RequestParam("boardKey") Long boardKey, @RequestParam("page") Long page, @RequestParam("pageSize") Long pageSize) {
+        return boardService.getAllBoards(boardKey, page, pageSize);
+    }
 
-    @PostMapping("/boards")
+    @PostMapping("/create")
     public BoardResponseDto create(@RequestBody BoardCreateRequestDto boardCreateRequestDto) {
         return boardService.create(boardCreateRequestDto);
     }
 
-    @PutMapping("/boards/{boardId}")
+    @PutMapping("/update/{boardId}")
     public BoardResponseDto update(@PathVariable Long boardId, @RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
         return boardService.update(boardId, boardUpdateRequestDto);
     }
 
-    @DeleteMapping("/boards/{boardId}")
+    @DeleteMapping("/delete/{boardId}")
     public void delete(@PathVariable Long boardId) {
         boardService.delete(boardId);
     }
+
 }

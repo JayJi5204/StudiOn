@@ -39,8 +39,8 @@ spring:
               uri: lb://USER-SERVICE
               predicates:
                 # 회원가입 및 로그인 경로를 명시. POST 메서드만 받도록 합니다.
-                - Path=/user-service/api/users/create, /user-service/api/users/login
-                - Method=POST
+                - Path=/user-service/health-check, /user-service/api/users/create, /user-service/api/users/login
+                - Method=GET, POST
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
@@ -57,32 +57,23 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
 
-            # 3. 그 외 다른 서비스 라우팅 규칙들
-            - id: catalog-service
-              uri: lb://CATALOG-SERVICE
+            - id: board-service-public
+              uri: lb://BOARD-SERVICE
               predicates:
-                - Path=/catalog-service/**
-            - id: order-service
-              uri: lb://ORDER-SERVICE
-              predicates:
-                - Path=/order-service/**
-            - id: first-service
-              uri: lb://MY-FIRST-SERVICE
-              predicates:
-                - Path=/first-service/**
+                - Path=/board-service/health-check, /board-service/api/boards/create
+                - Method=GET, POST
               filters:
-                - CustomFilter
-            - id: second-service
-              uri: lb://MY-SECOND-SERVICE
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+
+            - id: board-service-secure
+              uri: lb://BOARD-SERVICE
               predicates:
-                - Path=/second-service/**
+                - Path=/board-service/**
               filters:
-                - name: CustomFilter
-                - name: LoggingFilter
-                  args:
-                    baseMessage: Hi, there.
-                    preLogger: true
-                    postLogger: true
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
 
 management:
   endpoints:
