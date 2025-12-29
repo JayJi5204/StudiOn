@@ -4,15 +4,11 @@ import backend.service.user.dto.request.CreateRequest;
 import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
-import backend.service.user.dto.response.CreateResponse;
-import backend.service.user.dto.response.DeletedResponse;
-import backend.service.user.dto.response.LoginResponse;
-import backend.service.user.dto.response.UpdateResponse;
+import backend.service.user.dto.response.*;
 import backend.service.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,22 +22,21 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/create")
-    public CreateResponse createUser(@RequestBody CreateRequest dto) {
+    public CreateResponse create(@RequestBody CreateRequest dto) {
         return userService.create(dto);
     }
 
     @GetMapping("/get")
-    public List<CreateResponse> getUsers() {
-        return userService.getUserByAll();
+    public List<CreateResponse> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-
-    @GetMapping("/find/{userId}")
-    public CreateResponse findUser(@PathVariable("userId") Long userId) {
-        return userService.getUserByUserId(userId);
+    @GetMapping("/get/{userId}")
+    public GetUserResponse getUser(@PathVariable("userId") Long userId) {
+        return userService.getUser(userId);
     }
 
-    @PostMapping("/delete/{userId}")
+    @DeleteMapping("/delete/{userId}")
     public DeletedResponse delete(@PathVariable("userId") Long userId, @RequestBody DeleteRequest dto) {
         return userService.delete(dto, userId);
     }

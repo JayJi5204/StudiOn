@@ -5,6 +5,8 @@ import backend.service.board.dto.response.PageResponseDto;
 import backend.service.board.dto.request.BoardUpdateRequestDto;
 import backend.service.board.dto.response.BoardResponseDto;
 
+import java.util.List;
+
 
 public interface BoardService {
 
@@ -12,10 +14,12 @@ public interface BoardService {
 
     BoardResponseDto update(Long boardId, BoardUpdateRequestDto boardUpdateRequestDto);
 
-    BoardResponseDto read(Long boardId);
+    BoardResponseDto getBoards(Long boardId);
 
     void delete(Long boardId);
 
-    PageResponseDto readAll(Long boardKey, Long page, Long pageSize);
+    PageResponseDto getAllBoards(Long boardKey, Long page, Long pageSize);
+
+    List<BoardResponseDto> getBoardWhoCreate(Long userId);
 
 }

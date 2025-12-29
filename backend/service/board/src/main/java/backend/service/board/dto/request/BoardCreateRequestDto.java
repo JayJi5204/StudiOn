@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class BoardCreateRequestDto {
     private Long boardKey;
-    private Long userKey;
+    private Long userId;
     private String title;
     private String content;
 }
