@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 public class BoardResponseDto {
 
     private Long boardId;
-    private Long boardKey;
     private Long userId;
     private String title;
     private String content;
@@ -20,7 +19,6 @@ public class BoardResponseDto {
     public static BoardResponseDto from(BoardEntity boardEntity) {
         BoardResponseDto boardResponseDto = new BoardResponseDto();
         boardResponseDto.boardId = boardEntity.getBoardId();
-        boardResponseDto.boardKey = boardEntity.getBoardKey();
         boardResponseDto.userId=boardEntity.getUserId();
         boardResponseDto.title = boardEntity.getTitle();
         boardResponseDto.content = boardEntity.getContent();

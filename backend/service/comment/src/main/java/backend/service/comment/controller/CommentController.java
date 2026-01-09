@@ -12,34 +12,44 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/comments/{commentId}")
-    public CommentResponseDto read(@PathVariable("commentId") Long commentId) {
-        return commentService.read(commentId);
+    @GetMapping("/get/{commentId}")
+    public CommentResponseDto get(@PathVariable("commentId") Long commentId) {
+        return commentService.get(commentId);
     }
 
-    @PostMapping("/comments")
+    @PostMapping("/create")
     public CommentResponseDto create(@RequestBody CommentCreateRequestDto commentCreateRequestDto) {
         return commentService.create(commentCreateRequestDto);
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/delete/{commentId}")
     public void delete(@PathVariable("commentId") Long commentId) {
         commentService.delete(commentId);
     }
 
-    @GetMapping("/comments")
-    public CommentPageResponse readAll(@RequestParam("boardId") Long boardId, @RequestParam("page") Long page, @RequestParam("pageSize") Long pageSize) {
-        return commentService.readAll(boardId, page, pageSize);
+    @GetMapping("/getAll")
+    public CommentPageResponse getAllComment(@RequestParam("boardId") Long boardId, @RequestParam("page") Long page, @RequestParam("pageSize") Long pageSize) {
+        return commentService.getAll(boardId, page, pageSize);
     }
 
-    @GetMapping("/comments/infinite-scroll")
+    @GetMapping("/infinite-scroll")
     public List<CommentResponseDto> readAllInfiniteScroll(@RequestParam("boardId") Long boardId, @RequestParam(value = "lastPath", required = false) String lastPath, @RequestParam("pageSize") Long pageSize) {
-        return commentService.readAllInfiniteScroll(boardId, lastPath, pageSize);
+        return commentService.getAllInfiniteScroll(boardId, lastPath, pageSize);
     }
 
+    @GetMapping("/getCommentWithBoardId/{boardId}")
+    public List<CommentResponseDto> getBoardWhoCreateWithBoardId(@PathVariable("boardId") Long boardId) { // List로 변경
+        return commentService.getBoardWhoCreateWithBoardId(boardId);
+    }
+
+    @GetMapping("/getCommentWithUserId/{userId}")
+    public List<CommentResponseDto> getBoardWhoCreateWithUserId(@PathVariable("userId") Long userId) { // List로 변경
+        return commentService.getBoardWhoCreateWithUserId(userId);
+    }
 
 }

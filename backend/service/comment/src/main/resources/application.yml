@@ -5,15 +5,9 @@ spring:
   application:
     name: comment-service
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/comment
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
 
   output:
@@ -28,6 +22,12 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-token:
-  secret: ${TOKEN_SECRET}
-  expiration-time: ${TOKEN_EXPIRATION_TIME}
+
+greeting:
+  message: Comment
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, httpexchanges, busrefresh

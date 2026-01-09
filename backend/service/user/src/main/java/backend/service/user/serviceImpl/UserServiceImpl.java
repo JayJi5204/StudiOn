@@ -1,6 +1,8 @@
 package backend.service.user.serviceImpl;
 
 import backend.security.common.Snowflake;
+import backend.service.board.dto.response.ResponseBoard;
+import backend.service.comment.dto.response.ResponseComment;
 import backend.service.user.dto.request.CreateRequest;
 import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
@@ -93,10 +95,16 @@ public class UserServiceImpl implements UserService {
     public GetUserResponse getUser(Long userId) {
         UserEntity entity = userRepository.findUsersByUserId(userId);
         String boardUrl = String.format(env.getProperty("board-service.url"), userId);
-        ResponseEntity<List<ResponseBoard>> responseEntity = restTemplate.exchange(boardUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseBoard>>() {
+        String commentUrl = String.format(env.getProperty("comment-service.url"), userId);
+
+        ResponseEntity<List<ResponseBoard>> responseBoardEntity = restTemplate.exchange(boardUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseBoard>>() {
         });
-        List<ResponseBoard> responseBoards = responseEntity.getBody();
-        return GetUserResponse.from(entity,responseBoards);
+        List<ResponseBoard> responseBoards = responseBoardEntity.getBody();
+
+        ResponseEntity<List<ResponseComment>> responseCommentEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseComment>>() {
+        });
+        List<ResponseComment> responseComments = responseCommentEntity.getBody();
+        return GetUserResponse.from(entity, responseBoards, responseComments);
     }
 
 }
