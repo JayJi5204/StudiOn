@@ -18,7 +18,6 @@ spring:
     username: guest
     password: guest
 
-  # 💡 요청하신 ANSI 컬러 출력 설정 추가
   output:
     ansi:
       enabled: "always"
@@ -60,8 +59,8 @@ spring:
             - id: board-service-public
               uri: lb://BOARD-SERVICE
               predicates:
-                - Path=/board-service/health-check, /board-service/api/boards/create
-                - Method=GET, POST
+                - Path=/board-service/health-check
+                - Method=GET
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/board-service/(?<segment>.*),/$\{segment}
@@ -74,6 +73,24 @@ spring:
                 - name: AuthorizationHeaderFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+
+            - id: comment-service-public
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comment-service/health-check
+                - Method=GET
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
+
+            - id: comment-service-secure
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comment-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
 
 management:
   endpoints:

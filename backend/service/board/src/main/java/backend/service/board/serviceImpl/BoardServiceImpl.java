@@ -1,17 +1,25 @@
 package backend.service.board.serviceImpl;
 
 import backend.service.board.dto.request.BoardCreateRequestDto;
+import backend.service.board.dto.response.GetBoardResponse;
 import backend.service.board.dto.response.PageResponseDto;
 import backend.service.board.common.PageLimitCalculator;
 import backend.service.board.dto.request.BoardUpdateRequestDto;
 import backend.service.board.dto.response.BoardResponseDto;
+import backend.service.board.dto.response.ResponseBoard;
 import backend.service.board.entity.BoardEntity;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardService;
+import backend.service.comment.dto.response.ResponseComment;
 import jakarta.transaction.Transactional;
 import backend.security.common.Snowflake;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -21,12 +29,14 @@ public class BoardServiceImpl implements BoardService {
 
     private final Snowflake snowflake = new Snowflake();
     private final BoardRepository boardRepository;
+    private final Environment env;
+    private final RestTemplate restTemplate;
 
 
     @Transactional
     public BoardResponseDto create(BoardCreateRequestDto dto) {
         BoardEntity boardEntity = boardRepository.save(
-                BoardEntity.create(snowflake.nextId(), dto.getBoardKey(), dto.getUserId(), dto.getTitle(), dto.getContent())
+                BoardEntity.create(snowflake.nextId(), dto.getUserId(), dto.getTitle(), dto.getContent())
 
         );
         return BoardResponseDto.from(boardEntity);
@@ -61,14 +71,21 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardResponseDto> getBoardWhoCreate(Long userId) {
-        // 1. DB에서 해당 유저의 게시글 엔터티 리스트 조회
         List<BoardEntity> entities = boardRepository.findAllByUserId(userId);
 
-        // 2. Entity 리스트를 DTO 리스트로 변환하여 반환
-        // 힌트: entities.stream().map(...) 형식을 사용해 보세요.
         return entities.stream()
                 .map(BoardResponseDto::from) // 혹은 직접 빌더/생성자 사용
                 .toList();
+    }
+
+    @Override
+    public GetBoardResponse getBoard(Long boardId) {
+        BoardEntity entity = boardRepository.findBoardsByBoardId(boardId);
+        String commentUrl = String.format(env.getProperty("comment-service.url"), boardId);
+        ResponseEntity<List<ResponseComment>> responseEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseComment>>() {
+        });
+        List<ResponseComment> responseComments = responseEntity.getBody();
+        return GetBoardResponse.from(entity,responseComments);
     }
 
 }

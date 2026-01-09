@@ -51,8 +51,10 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow();
     }
 
-    public CommentResponseDto read(Long commentId) {
-        return CommentResponseDto.from(commentRepository.findById(commentId).orElseThrow());
+    public CommentResponseDto get(Long commentId) {
+        return commentRepository.findById(commentId)
+                .map(CommentResponseDto::from)
+                .orElse(null); // 에러를 던지는 대신 null을 반환
     }
 
     @Transactional
@@ -81,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    public CommentPageResponse readAll(Long boardId, Long page, Long pageSize) {
+    public CommentPageResponse getAll(Long boardId, Long page, Long pageSize) {
         return CommentPageResponse.of(
                 commentRepository.findAll(boardId, (page - 1) * pageSize, pageSize).stream()
                         .map(CommentResponseDto::from)
@@ -90,12 +92,28 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
-    public List<CommentResponseDto> readAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
+    public List<CommentResponseDto> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
         List<CommentEntity> comments = lastPath == null ?
                 commentRepository.findAllInfiniteScroll(boardId, pageSize) :
                 commentRepository.findAllInfiniteScroll(boardId, lastPath, pageSize);
 
         return comments.stream()
+                .map(CommentResponseDto::from)
+                .toList();
+    }
+
+    @Override
+    public List<CommentResponseDto> getBoardWhoCreateWithBoardId(Long boardId) {
+        List<CommentEntity> entities = commentRepository.findAllByBoardId(boardId);
+
+        return entities.stream()
+                .map(CommentResponseDto::from) // 혹은 직접 빌더/생성자 사용
+                .toList();
+    }
+
+    @Override
+    public List<CommentResponseDto> getBoardWhoCreateWithUserId(Long userId) {
+        return commentRepository.findAllByUserId(userId).stream()
                 .map(CommentResponseDto::from)
                 .toList();
     }

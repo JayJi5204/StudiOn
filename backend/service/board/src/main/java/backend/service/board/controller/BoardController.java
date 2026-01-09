@@ -1,6 +1,7 @@
 package backend.service.board.controller;
 
 import backend.service.board.dto.request.BoardCreateRequestDto;
+import backend.service.board.dto.response.GetBoardResponse;
 import backend.service.board.dto.response.PageResponseDto;
 import backend.service.board.dto.request.BoardUpdateRequestDto;
 import backend.service.board.dto.response.BoardResponseDto;
@@ -17,12 +18,12 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/{boardId}")
-    public BoardResponseDto get(@PathVariable Long boardId) {
-        return boardService.getBoards(boardId);
+    @GetMapping("/get/{boardId}")
+    public GetBoardResponse getBoard(@PathVariable Long boardId) {
+        return boardService.getBoard(boardId);
     }
 
-    @GetMapping("/get/{userId}")
+    @GetMapping("/getBoard/{userId}")
     public List<BoardResponseDto> getBoardWhoCreate(@PathVariable("userId") Long userId) { // List로 변경
         return boardService.getBoardWhoCreate(userId);
     }
