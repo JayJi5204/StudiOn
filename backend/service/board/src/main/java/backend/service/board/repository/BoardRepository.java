@@ -43,4 +43,8 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
             @Param("boardKey") Long boardKey,
             @Param("limit") Long limit
     );
+
+    List<BoardEntity> findAllByUserId(Long userId);
+
+    BoardEntity findBoardsByBoardId(Long boardId);
 }

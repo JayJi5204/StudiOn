@@ -1,4 +1,4 @@
-package backend.service.user.controller;
+package backend.service.comment.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;

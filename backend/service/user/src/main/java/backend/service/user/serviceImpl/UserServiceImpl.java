@@ -1,14 +1,13 @@
 package backend.service.user.serviceImpl;
 
 import backend.security.common.Snowflake;
+import backend.service.board.dto.response.ResponseBoard;
+import backend.service.comment.dto.response.ResponseComment;
 import backend.service.user.dto.request.CreateRequest;
 import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
-import backend.service.user.dto.response.CreateResponse;
-import backend.service.user.dto.response.DeletedResponse;
-import backend.service.user.dto.response.LoginResponse;
-import backend.service.user.dto.response.UpdateResponse;
+import backend.service.user.dto.response.*;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.jwt.JwtUtil;
 import backend.service.user.repository.UserRepository;
@@ -16,8 +15,13 @@ import backend.service.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -26,13 +30,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-
+    private final Environment env;
     private final Snowflake snowflake = new Snowflake();
     private final UserRepository userRepository;
-
     private final BCryptPasswordEncoder encoder;
-
     private final JwtUtil jwtUtil;
+    private final RestTemplate restTemplate;
 
     @Override
     public CreateResponse create(CreateRequest dto) {
@@ -70,28 +73,38 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
         }
 
-        String userId= String.valueOf((Long) entity.getUserId());
+        String userId = String.valueOf(entity.getUserId());
 
-        String accessToken = jwtUtil.createAccessToken(userId,entity.getEmail(), entity.getRole().toString());
+        String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString());
 
-        String refreshToken = jwtUtil.createRefreshToken(userId,entity.getEmail(), entity.getRole().toString());
+        String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString());
 
-        response.addHeader("accessToken",accessToken);
+        response.addHeader("accessToken", accessToken);
 
         return LoginResponse.from(entity, accessToken);
     }
 
 
     @Override
-    public CreateResponse getUserByUserId(Long userId) {
-        UserEntity entity = userRepository.findUsersByUserId(userId);
-        return CreateResponse.from(entity);
+    public List<CreateResponse> getAllUsers() {
+        List<UserEntity> entities = userRepository.findAll();
+        return entities.stream().map(CreateResponse::from).toList();
     }
 
     @Override
-    public List<CreateResponse> getUserByAll() {
-        List<UserEntity> entities = userRepository.findAll();
-        return entities.stream().map(CreateResponse::from).toList();
+    public GetUserResponse getUser(Long userId) {
+        UserEntity entity = userRepository.findUsersByUserId(userId);
+        String boardUrl = String.format(env.getProperty("board-service.url"), userId);
+        String commentUrl = String.format(env.getProperty("comment-service.url"), userId);
+
+        ResponseEntity<List<ResponseBoard>> responseBoardEntity = restTemplate.exchange(boardUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseBoard>>() {
+        });
+        List<ResponseBoard> responseBoards = responseBoardEntity.getBody();
+
+        ResponseEntity<List<ResponseComment>> responseCommentEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseComment>>() {
+        });
+        List<ResponseComment> responseComments = responseCommentEntity.getBody();
+        return GetUserResponse.from(entity, responseBoards, responseComments);
     }
 
 }
