@@ -18,6 +18,8 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
     implementation project(':common:snowFlake')
+    implementation project(':service:board')
+    implementation project(':service:comment')
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.cloud:spring-cloud-starter-config'

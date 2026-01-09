@@ -10,11 +10,16 @@ public interface CommentService {
 
     CommentResponseDto create(CommentCreateRequestDto commentCreateRequestDto);
 
-    CommentResponseDto read(Long commentId);
+    CommentResponseDto get(Long commentId);
 
     void delete(Long commentId);
 
-    CommentPageResponse readAll(Long boardId, Long page, Long pageSize);
+    CommentPageResponse getAll(Long boardId, Long page, Long pageSize);
 
-    List<CommentResponseDto> readAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
-}
+    List<CommentResponseDto> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
+
+    List<CommentResponseDto> getBoardWhoCreateWithBoardId(Long boardId);
+
+    List<CommentResponseDto> getBoardWhoCreateWithUserId(Long userId);
+
+    }
