@@ -14,59 +14,34 @@ Thumbs.db
 
 # Logs
 *.log
-
-# =========================================
-# Backend (Spring Boot / Gradle)
-# =========================================
-
-# Build outputs
-backend/build/
-backend/out/
-backend/target/
-
-# Gradle
-.gradle/
-**/gradle-app.setting
-gradle-app.setting
-
-# Local environment configs
-backend/.env
-backend/*.local.properties
-backend/*.env
-
-# Temporary files
-backend/*.tmp
-backend/*.bak
-backend/*.orig
-
 # =========================================
 # Frontend (React + TypeScript)
 # =========================================
 
 # Node modules
-frontend/node_modules/
+node_modules
 
 # Build outputs
-frontend/build/
-frontend/dist/
+frontend/build
+frontend/dist
 
 # Dependency and cache
-frontend/.npm/
-frontend/.yarn/
-frontend/.pnpm/
-frontend/.turbo/
-frontend/.cache/
+.npm/
+.yarn/
+.pnpm/
+.turbo/
+.cache/
 
 # Local environment
-frontend/.env
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Lock and debug
-frontend/yarn-error.log
-frontend/npm-debug.log*
+yarn-error.log
+npm-debug.log*
 
 # =========================================
 # Common temporary or backup files
