@@ -1,12 +1,16 @@
-import { Outlet,useNavigate } from "react-router";
-import {BookOpen} from 'lucide-react';
+import React, {useEffect, useState } from "react";
 import {Link } from "react-router-dom";
+import { Outlet,useNavigate } from "react-router";
 import { getCurrentUser,logout } from "../services/auth.service";
-import {useEffect, useState } from "react";
 import useUserInfoStore from "../common/userInfoStore";
-import { LogOut } from "lucide-react";
+import { LogOut,BookOpen } from "lucide-react";
 
-function Layout() {
+
+const layout: React.FC = () => {
+  const signinUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN 
+  const signupUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP
+  const profileUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE
+  
   const currentUser = getCurrentUser()
   let navigate = useNavigate();
 
@@ -14,10 +18,8 @@ function Layout() {
   const {userInfo} = useUserInfoStore();
 
   useEffect(() => {
-      // 설정 코드
       setIsLoggedIn(!!currentUser);
       return () => {
-        //정리 코드  
         setIsLoggedIn(false);
       }
   }, [currentUser]);
@@ -25,24 +27,24 @@ function Layout() {
   const LogoutContent = () => {
     return (
       <div className="flex space-x-4">
-        <button className="text-gray-600 hover:text-indigo-600 transition-colors">
-          <Link to="/login">로그인</Link>
+        <button className="text-gray-600 border rounded-lg px-4 py-2 shadow-lg bg-white hover:bg-blue-950 hover:text-white transition-colors">
+          <Link to={signinUrl}>로그인</Link>
         </button>
-        <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-          <Link to="/signup">회원가입</Link>
+        <button className="bg-indigo-600 border text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+          <Link to={signupUrl}>회원가입</Link>
         </button>
       </div>
     );
   ;}
 
-  const LoginedContent = () => {
+  const LoginContent = () => {
     return (
       <div className="flex space-x-4">
         <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.username}님</div>
         
         <button
           onClick={() => {
-            navigate(`/profile/${userInfo.id}`);
+            navigate(`${profileUrl}/${userInfo.id}`);
           }}
           className="rounded-xl hover:bg-red-50 transition-colors font-medium"
         >
@@ -54,7 +56,7 @@ function Layout() {
         <button
             onClick={() => {
                 logout();
-                navigate('/login');
+                navigate(`${signinUrl}`);
             }}
             className='items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
         >
@@ -64,13 +66,8 @@ function Layout() {
     );
   };
 
-  const renderLoginContent = () => {
-    switch (isLoggedIn) {
-      case true:
-        return <LoginedContent/>
-      default:
-        return <LogoutContent/>
-    }
+  const renderLogInOutContent = () => {
+    return isLoggedIn ? <LoginContent/> : <LogoutContent/>;
   }
 
   return (
@@ -90,8 +87,9 @@ function Layout() {
               <a href="#" className="text-gray-600 hover:text-indigo-600 transition-colors">내 스터디</a>
               <a href="#" className="text-gray-600 hover:text-indigo-600 transition-colors">커뮤니티</a>
             </nav>
-            {}
-            {renderLoginContent()}
+            <div>
+            {renderLogInOutContent()}
+            </div>
           </div>
         </div>
       </header>
@@ -143,4 +141,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default layout;

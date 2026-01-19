@@ -1,18 +1,18 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/auth";
+const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN;
+const API_URL_SIGNUP = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNUP;
 
-
-export const register = (username:string,email:string,password:string) => {
-    return axios.post(API_URL + 'signup', {
+export const signup = (username:string,email:string,password:string) => {
+    return axios.post(API_URL_SIGNUP, {
         username,
         email,
         password,
     });
 };
-
-export const login = (username:string,password:string) => {
-    return axios.post(API_URL + 'login', {
+//
+export const signin = (username:string,password:string) => {
+    return axios.post(API_URL_SIGNIN, {
         username,
         password
         })

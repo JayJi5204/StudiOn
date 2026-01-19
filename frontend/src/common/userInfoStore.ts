@@ -12,9 +12,16 @@ const initialUserInfo = {
     avatar: '👨‍💻' // Emoji placeholder for avatar
 };
 
+interface UserInfoState {
+    userInfo: typeof initialUserInfo;
+    setUserInfo: (newUserInfo: typeof initialUserInfo) => void;
+    updateUserInfo: (key: keyof typeof initialUserInfo, value: any) => void;
+    updateAvatar: (newAvatar: string) => void;
+}
+
 // create 함수를 사용하여 스토어의 상태와 액션을 정의합니다.
 // set 함수를 사용하여 상태를 업데이트합니다.
-const useUserInfoStore = create((set) => ({
+const useUserInfoStore = create<UserInfoState>((set) => ({
     // 상태 (State)
     userInfo: initialUserInfo,
 

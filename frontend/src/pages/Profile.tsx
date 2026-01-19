@@ -27,8 +27,8 @@ import {
 } from 'lucide-react';
 
 // 스터디 진행도 바 컴포넌트
-const StudyProgressBar = ({ progress }) => {
-    const getColor = (p) => {
+const StudyProgressBar = ({ progress }: { progress: number }) => {
+    const getColor = (p:number) => {
         if (p === 100) return 'bg-green-500';
         if (p > 70) return 'bg-blue-500';
         if (p > 40) return 'bg-yellow-500';
@@ -47,7 +47,8 @@ const StudyProgressBar = ({ progress }) => {
 
 
 // 메인 컴포넌트
-const ProfilePage = () => {
+const ProfilePage: React.FC = () => {
+    const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
 
     const currentUser = getCurrentUser();
     let navigate = useNavigate();
@@ -133,7 +134,7 @@ const ProfilePage = () => {
     ];
     
     // 입력 필드 변경 핸들러
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setEditForm(prev => ({ ...prev, [name]: value }));
     };
@@ -394,7 +395,7 @@ const ProfilePage = () => {
                                 <button
                                     onClick={() => {
                                         logout();
-                                        navigate('/login');
+                                        navigate(redirectUrl);
                                     }}
                                     className='w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
                                 >
