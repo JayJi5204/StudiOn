@@ -1,24 +1,55 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# =========================================
+# Global ignores
+# =========================================
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# OS-specific files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Logs
+*.log
+# =========================================
+# Frontend (React + TypeScript)
+# =========================================
+
+# Node modules
+node_modules
+
+# Build outputs
+frontend/build
+frontend/dist
+
+# Dependency and cache
+.npm/
+.yarn/
+.pnpm/
+.turbo/
+.cache/
+
+# Local environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Lock and debug
+yarn-error.log
+npm-debug.log*
+
+# =========================================
+# Common temporary or backup files
+# =========================================
+
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+

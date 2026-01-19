@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, User, Filter, ChevronDown, Edit, Trash2, Bookmark, Share2 } from 'lucide-react';
+import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, Filter, ChevronDown, Bookmark, Share2 } from 'lucide-react';
 
 interface Post {
     id: number;
@@ -16,7 +16,7 @@ interface Post {
     isPopular: boolean;
 }
 
-const CommunityBoard = () => {
+const CommunityBoard: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
     const [sortBy, setSortBy] = useState('latest');
