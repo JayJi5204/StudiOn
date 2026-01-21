@@ -17,4 +17,7 @@ dependencies {
 
     implementation project(':common:snowFlake')
     implementation project(':service:comment')
+
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
