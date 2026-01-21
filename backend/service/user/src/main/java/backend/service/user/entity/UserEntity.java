@@ -1,6 +1,5 @@
 package backend.service.user.entity;
 
-import backend.service.user.dto.response.GetUserResponse;
 import backend.service.user.enumType.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
