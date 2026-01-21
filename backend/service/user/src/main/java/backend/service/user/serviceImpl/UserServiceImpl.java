@@ -3,6 +3,7 @@ package backend.service.user.serviceImpl;
 import backend.security.common.Snowflake;
 import backend.service.board.dto.response.ResponseBoard;
 import backend.service.comment.dto.response.ResponseComment;
+import backend.service.user.dto.kafka.KafkaUserDto;
 import backend.service.user.dto.request.CreateRequest;
 import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
@@ -10,6 +11,7 @@ import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.jwt.JwtUtil;
+import backend.service.user.messageQueue.KafkaProducer;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,11 +38,16 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
     private final RestTemplate restTemplate;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public CreateResponse create(CreateRequest dto) {
 
         UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUsername(), encoder.encode(dto.getPassword()), dto.getEmail()));
+
+        KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
+
+        kafkaProducer.send("user-create", kafkaUserDto);
 
         return CreateResponse.from(entity);
     }
@@ -49,8 +56,10 @@ public class UserServiceImpl implements UserService {
     public UpdateResponse update(UpdateRequest dto, Long userId) {
         UserEntity entity = userRepository.findUsersByUserId(userId);
         log.info(userId);
-        entity.update(dto.getUsername(), dto.getUsername(), dto.getPassword());
+        entity.update(dto.getUsername(), dto.getPassword(), dto.getEmail());
         userRepository.save(entity);
+        KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
+        kafkaProducer.send("user-update", kafkaUserDto);
         return UpdateResponse.from(entity);
     }
 
@@ -58,6 +67,8 @@ public class UserServiceImpl implements UserService {
     public DeletedResponse delete(DeleteRequest dto, Long userId) {
         UserEntity entity = userRepository.findUsersByUserId(userId);
         entity.delete();
+        KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
+        kafkaProducer.send("user-delete", kafkaUserDto);
         return DeletedResponse.from(entity);
     }
 
