@@ -1,10 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN
-
-export const handlers = [
-
-  http.post(API_URL_SIGNIN, async ({ request }) => {
+const testSignin = http.post(API_URL_SIGNIN, async ({ request }) => {
     const { username, password } = (await request.json()) as any;
 
     if (username === 'testuser' && password === 'password123@') {
@@ -22,5 +19,8 @@ export const handlers = [
         headers: { 'Content-Type': 'application/json' }
       }
     );
-  }),
+  })
+
+export const handlers = [
+  testSignin,
 ];
