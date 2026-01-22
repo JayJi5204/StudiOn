@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, User, Lock, Mail, BookOpen, ArrowRight, Loader2, Check, X } from 'lucide-react';
-import type IUser from '../types/user.type';
+import { Eye, EyeOff, User, Lock, Mail, ArrowRight, Loader2, Check, X } from 'lucide-react';
 import { signup } from '../services/auth.service';
 import SignUpHeader from '../components/header/Signup.component'
 
@@ -8,7 +7,6 @@ const SignUpPage:React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [message, setMessage] = useState<string>('');
     const [IsSuccessful,setIsSuccessful] = useState<boolean>(false);
-    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     
     const [formData, setFormData] = useState({
@@ -36,7 +34,7 @@ const SignUpPage:React.FC = () => {
         special: false
     });
 
-    const handelSignUp = (formValue:IUser) => {
+    const handleSignUp = (formValue:{username:string,email:string,password:string}) => {
         const {username,email,password} = formValue;
 
         signup(username,email,password).then(
@@ -165,22 +163,15 @@ const SignUpPage:React.FC = () => {
                     <div className="relative">
                         <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="비밀번호를 입력하세요 (8자 이상)"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        className={`w-full pl-12 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors ${
-                            errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
-                        }`}
+                            name="password"
+                            type="password"
+                            placeholder="비밀번호를 입력하세요 (8자 이상)"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors ${
+                                errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                            }`}
                         />
-                        <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
                     </div>
                     {errors.password && (
                         <div className="mt-2 text-sm text-red-600">{errors.password}</div>
@@ -198,24 +189,24 @@ const SignUpPage:React.FC = () => {
                                 style={{width: `${(Object.values(passwordStrength).filter(Boolean).length / 5) * 100}%`}}>
                             </div>
                         </div>
-                        <div className="mt-2 space-y-1">
-                            <div className={`text-xs flex items-center ${passwordStrength.length ? 'text-green-600' : 'text-gray-400'}`}>
-                            {passwordStrength.length ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
-                            8자 이상
+                            <div className="mt-2 space-y-1">
+                                <div className={`text-xs flex items-center ${passwordStrength.length ? 'text-green-600' : 'text-gray-400'}`}>
+                                {passwordStrength.length ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
+                                8자 이상
+                                </div>
+                                <div className={`text-xs flex items-center ${passwordStrength.uppercase ? 'text-green-600' : 'text-gray-400'}`}>
+                                {passwordStrength.uppercase ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
+                                대문자 포함
+                                </div>
+                                <div className={`text-xs flex items-center ${passwordStrength.number ? 'text-green-600' : 'text-gray-400'}`}>
+                                {passwordStrength.number ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
+                                숫자 포함
+                                </div>
+                                <div className={`text-xs flex items-center ${passwordStrength.special ? 'text-green-600' : 'text-gray-400'}`}>
+                                {passwordStrength.special ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
+                                특수문자 포함
+                                </div>
                             </div>
-                            <div className={`text-xs flex items-center ${passwordStrength.uppercase ? 'text-green-600' : 'text-gray-400'}`}>
-                            {passwordStrength.uppercase ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
-                            대문자 포함
-                            </div>
-                            <div className={`text-xs flex items-center ${passwordStrength.number ? 'text-green-600' : 'text-gray-400'}`}>
-                            {passwordStrength.number ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
-                            숫자 포함
-                            </div>
-                            <div className={`text-xs flex items-center ${passwordStrength.special ? 'text-green-600' : 'text-gray-400'}`}>
-                            {passwordStrength.special ? <Check className="w-3 h-3 mr-1" /> : <X className="w-3 h-3 mr-1" />}
-                            특수문자 포함
-                            </div>
-                        </div>
                         </div>
                     )}
                     </div>
@@ -229,21 +220,14 @@ const SignUpPage:React.FC = () => {
                         <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                         name="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
+                        type="password"
                         placeholder="비밀번호를 다시 입력하세요"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`w-full pl-12 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors ${
+                        className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors ${
                             errors.confirmPassword ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
                         }`}
                         />
-                        <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                        </button>
                     </div>
                     {errors.confirmPassword && (
                         <div className="mt-2 text-sm text-red-600">{errors.confirmPassword}</div>
@@ -251,7 +235,7 @@ const SignUpPage:React.FC = () => {
                     {!errors.confirmPassword && formData.confirmPassword && formData.password === formData.confirmPassword && (
                         <div className="mt-2 text-sm text-green-600 flex items-center">
                         <Check className="w-4 h-4 mr-1" />
-                        비밀번호가 일치합니다
+                            비밀번호가 일치합니다
                         </div>
                     )}
                     </div>
@@ -294,7 +278,7 @@ const SignUpPage:React.FC = () => {
                     {/* Submit Button */}
                     <button
                         type="button"
-                        onClick={handelSignUp}
+                        onClick={handleSignUp}
                         disabled={loading}
                         className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center space-x-2"
                     >

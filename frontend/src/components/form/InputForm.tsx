@@ -8,10 +8,9 @@ interface InputFormProps {
   placeholder?: string;
   icon?: React.ReactNode;
   type?: string;
-  rightElement?: React.ReactNode; //우측 버튼이나 아이콘을 위한 추가
 }
 
-const InputForm: React.FC<InputFormProps> = ({ name, label, placeholder, icon,rightElement,type = "text" }) => {
+const InputForm: React.FC<InputFormProps> = ({ name, label, placeholder, icon,type = "text" }) => {
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={name} className={InputFormStyles.label}>
@@ -38,12 +37,6 @@ const InputForm: React.FC<InputFormProps> = ({ name, label, placeholder, icon,ri
             );
           }}
         </Field>
-
-        {rightElement && (
-          <div className={InputFormStyles.rightElement}>
-            {rightElement}
-          </div>
-        )}
       </div>
 
       <ErrorMessage 
