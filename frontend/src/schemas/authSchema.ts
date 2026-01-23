@@ -33,8 +33,10 @@ export const signupSchema = Yup.object().shape({
     .min(8, '비밀번호는 최소 8자 이상입니다.')
     .required('비밀번호를 다시 입력하세요'),
   agreeTerms: Yup.boolean()
+    .oneOf([true],'[필수] 이용약관에 동의해주세요.')
     .required('[필수] 이용약관에 동의해주세요.'),
   agreePrivacy: Yup.boolean()
+    .oneOf([true],'[필수] 개인정보 수집 및 이용에 동의해주세요.')
     .required('[필수] 개인정보 수집 및 이용에 동의해주세요.'),
   rememberMe: Yup.boolean(),
 });

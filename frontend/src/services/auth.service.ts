@@ -8,6 +8,8 @@ export const signup = (username:string,email:string,password:string) => {
         username,
         email,
         password,
+    }).then((response) => {
+        return response.data;
     });
 };
 //
