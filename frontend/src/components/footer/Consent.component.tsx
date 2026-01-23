@@ -1,4 +1,4 @@
-const ConsentFooter = () => {
+const Consent = () => {
 
     const TERMS_URL = "/terms";
     const PRIVACY_URL = "/privacy";
@@ -6,7 +6,7 @@ const ConsentFooter = () => {
     return (
         <footer className="text-center mt-8 text-sm text-gray-500">
             <p>
-                로그인하면{' '}
+                회원가입 시{' '}
                 <a href={TERMS_URL} className="text-indigo-600 hover:text-indigo-500">이용약관</a>
                 {' 및 '}
                 <a href={PRIVACY_URL} className="text-indigo-600 hover:text-indigo-500">개인정보처리방침</a>
@@ -16,4 +16,4 @@ const ConsentFooter = () => {
     );
 }
 
-export default ConsentFooter
+export default Consent
