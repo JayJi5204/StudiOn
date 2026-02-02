@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { getCurrentUser } from '../services/auth.service';
 import { useNavigate } from 'react-router';
-import {logout} from '../services/auth.service';
+import {authService} from '../services/auth.service';
 import useUserInfoStore from '../common/userInfoStore';
 
 import {
@@ -50,12 +49,15 @@ const StudyProgressBar = ({ progress }: { progress: number }) => {
 const ProfilePage: React.FC = () => {
     const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
 
-    const currentUser = getCurrentUser();
     let navigate = useNavigate();
 
-    const userInfo = useUserInfoStore((state) => state.userInfo);
-    const setUserInfo = useUserInfoStore((state) => state.setUserInfo);
+    const {userInfo,setUserInfo} = useUserInfoStore();
     
+    if (!userInfo.loggedin) {
+        navigate(redirectUrl);
+        return null;
+    }
+
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [editForm,setEditForm] = useState(userInfo);
@@ -394,7 +396,13 @@ const ProfilePage: React.FC = () => {
                                 <QuickActionButton icon={Bell} label='알림' />
                                 <button
                                     onClick={() => {
-                                        logout();
+                                        authService.logout(userInfo).then(() => {
+                                            setUserInfo({
+                                                ...userInfo,
+                                                loggedin: false,
+                                            });
+                                            navigate('/');
+                                            });
                                         navigate(redirectUrl);
                                     }}
                                     className='w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'

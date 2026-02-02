@@ -1,22 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, Filter, ChevronDown, Bookmark, Share2 } from 'lucide-react';
-
-interface Post {
-    id: number;
-    title: string;
-    content: string;
-    author: string;
-    authorAvatar: string;
-    category: string;
-    createdAt: string;
-    views: number;
-    likes: number;
-    comments: number;
-    tags: string[];
-    isPopular: boolean;
-}
+import useUserInfoStore from '../common/userInfoStore';
+import { postService } from '../services/posts.service';
+import type Post from '../types/posts.type';
 
 const CommunityBoard: React.FC = () => {
+    const navigate = useNavigate();
+    const loggedIn = useUserInfoStore((state) => state.userInfo.loggedin);
+    const [posts,setPosts] = useState<Post[]>([]);
+    const [totalPosts,setTotalPosts] = useState<number>(0);
+    const [todayPosts,setTodayPosts] = useState<number>(0);
+    const [activeMembers,setActiveMembers] = useState<number>(0);
+
+    if (!loggedIn) {
+        alert('자유게시판은 로그인 후 이용 가능합니다.');
+        navigate('/signin');
+    }
+
+    useEffect(() => {
+        const loadPosts = async () => {
+            try {
+                const data = await postService.getPosts();
+                setPosts(data);
+                setTotalPosts(data.length);
+                
+                const today = new Date().toDateString();
+                const todayCount = data.filter(post => new Date(post.createdAt).toDateString() === today).length;
+                setTodayPosts(todayCount);
+                setActiveMembers(8934);
+                console.log('불러온 게시글 데이터:', data);
+            }
+            catch (error) {
+                console.error('게시글 불러오기 실패:', error);
+            }
+        }
+        loadPosts();
+    }, []);
+
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
     const [sortBy, setSortBy] = useState('latest');
@@ -24,93 +45,6 @@ const CommunityBoard: React.FC = () => {
 
     const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
     
-    const posts: Post[] = [
-    {
-        id: 1,
-        title: 'React 스터디 3개월 하고 나니 확실히 달라진 점',
-        content: '안녕하세요! 지난 3개월간 React 스터디를 진행하면서 느낀 점들을 공유하고 싶어서 글을 작성합니다. 처음에는 useState조차 헷갈렸는데...',
-        author: '개발새싹',
-        authorAvatar: '🌱',
-        category: '스터디 후기',
-        createdAt: '2024-10-18 14:30',
-        views: 342,
-        likes: 28,
-        comments: 15,
-        tags: ['React', '후기', '성장'],
-        isPopular: true
-    },
-    {
-        id: 2,
-        title: 'TOEIC 900점 달성! 3개월 공부법 공유합니다',
-        content: '드디어 목표했던 900점을 달성했습니다! 스터디 덕분에 꾸준히 할 수 있었어요. 제가 실천했던 방법들을 공유해봅니다...',
-        author: '영어마스터',
-        authorAvatar: '📚',
-        category: '정보공유',
-        createdAt: '2024-10-18 13:15',
-        views: 521,
-        likes: 45,
-        comments: 23,
-        tags: ['TOEIC', '영어', '합격후기'],
-        isPopular: true
-    },
-    {
-        id: 3,
-        title: '온라인 스터디 처음인데 어떻게 시작하면 좋을까요?',
-        content: '안녕하세요, 온라인 스터디가 처음이라 궁금한 점이 많아서 질문 드립니다. 줌으로 하는 게 좋을까요, 아니면 다른 플랫폼이 있을까요?',
-        author: '스터디초보',
-        authorAvatar: '🤔',
-        category: '질문답변',
-        createdAt: '2024-10-18 12:00',
-        views: 156,
-        likes: 12,
-        comments: 18,
-        tags: ['질문', '온라인스터디', '초보'],
-        isPopular: false
-    },
-    {
-        id: 4,
-        title: '정보처리기사 실기 합격! 공부 자료 공유합니다',
-        content: '정보처리기사 실기 시험에 합격했습니다! 제가 공부하면서 정리한 자료와 팁들을 공유하고자 합니다. 많은 도움이 되셨으면 좋겠습니다.',
-        author: 'IT개발자',
-        authorAvatar: '💻',
-        category: '정보공유',
-        createdAt: '2024-10-18 11:20',
-        views: 289,
-        likes: 34,
-        comments: 8,
-        tags: ['정보처리기사', '합격', '자료공유'],
-        isPopular: false
-    },
-    {
-        id: 5,
-        title: '독서 토론 스터디 정말 재미있어요!',
-        content: '매주 일요일마다 하는 독서 토론 스터디에 참여한 지 2달이 되었는데요, 정말 만족스럽습니다. 다양한 관점을 들을 수 있어서 좋아요.',
-        author: '책읽는사람',
-        authorAvatar: '📖',
-        category: '자유토론',
-        createdAt: '2024-10-18 10:45',
-        views: 198,
-        likes: 19,
-        comments: 11,
-        tags: ['독서', '토론', '추천'],
-        isPopular: false
-    },
-    {
-        id: 6,
-        title: '스터디 중간에 포기하고 싶을 때 극복하는 방법',
-        content: '스터디를 하다 보면 중간에 지치거나 포기하고 싶을 때가 있죠. 저도 그랬는데, 이렇게 극복했습니다...',
-        author: '끈기왕',
-        authorAvatar: '💪',
-        category: '자유토론',
-        createdAt: '2024-10-18 09:30',
-        views: 412,
-        likes: 56,
-        comments: 27,
-        tags: ['동기부여', '꿀팁', '멘탈관리'],
-        isPopular: true
-    }
-];
-
     const filteredPosts = posts.filter(post => {
     const matchesCategory = selectedCategory === '전체' || post.category === selectedCategory;
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -152,7 +86,9 @@ const CommunityBoard: React.FC = () => {
                 <h1 className="text-2xl font-bold text-gray-900">자유게시판</h1>
                 <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-2">
                 <Plus size={20} />
-                <span>글쓰기</span>
+                <Link to={'/freebulletinboard/writepost'}>
+                    <span>글쓰기</span>
+                </Link>
                 </button>
             </div>
             </div>
@@ -377,15 +313,15 @@ const CommunityBoard: React.FC = () => {
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
                     <span className="text-gray-600">전체 게시글</span>
-                    <span className="text-lg font-bold text-indigo-600">1,247</span>
+                    <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
                     </div>
                     <div className="flex justify-between items-center">
                     <span className="text-gray-600">오늘 작성</span>
-                    <span className="text-lg font-bold text-green-600">23</span>
+                    <span className="text-lg font-bold text-green-600">{todayPosts}</span>
                     </div>
                     <div className="flex justify-between items-center">
                     <span className="text-gray-600">활성 회원</span>
-                    <span className="text-lg font-bold text-blue-600">8,934</span>
+                    <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
                     </div>
                 </div>
                 </div>

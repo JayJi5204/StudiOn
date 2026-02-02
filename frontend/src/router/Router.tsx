@@ -6,6 +6,7 @@ const Layout = lazy(() => import('../pages/Layout.tsx'))
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
 const FreeBulletinBoard = lazy(() => import("../pages/FreeBulletinBoard.tsx"));
+const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'))
 const SignIn = lazy(() => import("../pages/SignIn.tsx"));
 const SignUp = lazy(() => import("../pages/SignUp.tsx"));
 const Profile = lazy(() => import("../pages/Profile.tsx"));
@@ -49,6 +50,20 @@ const Router = createBrowserRouter([
     ],
   },
   {
+    path:"/freebulletinboard/writepost",
+    Component: Layout,
+    children: [
+      {
+        index: true,
+        element: (
+          <Suspense fallback={<Loading/>}>
+              <WritePostPage/>
+          </Suspense>
+        )
+      }
+    ]
+  },
+  {
     path: import.meta.env.VITE_REACT_APP_URL_SIGNIN,
     Component: Layout,
     children: [
@@ -77,7 +92,7 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: `${import.meta.env.VITE_REACT_APP_URL_PROFILE}:id`,
+    path: `${import.meta.env.VITE_REACT_APP_URL_PROFILE}/:id`,
     Component: Layout,
     children: [
       {

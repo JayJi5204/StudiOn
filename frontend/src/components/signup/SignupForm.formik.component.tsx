@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
 import { Formik,Form } from 'formik';
-import { signup } from '../../services/auth.service';
-import { useNavigate } from 'react-router';
+import { authService } from '../../services/auth.service';
+import { Link, useNavigate } from 'react-router';
 import SignupUserField from './SignupUserField.formik.component';
 import SignupEmailField from './SignupEmailField.formik.component';
 import SignupPasswordField from './SignupPasswordField.formik.component';
@@ -13,32 +12,25 @@ import Consent from '../footer/Consent.component';
 import { signupInitialValues, signupSchema } from '../../schemas/authSchema';
 
 const SignupForm:React.FC = () => {
-    const [message, setMessage] = useState<string>('');
 
     let navigate = useNavigate();
     
     const handleSignUp = (formValue:{username:string,password:string,email:string}) => {
         const {username,email,password} = formValue;
-        setMessage('');
 
-        signup(username,email,password).then(
-            () => {   
-                navigate('/signin')
-            },
-            (error) => {
-                const resMessage = (
-                    error.response && 
-                    error.response.data &&
-                    error.response.data.message
-                ) ||
-                error.message ||
-                error.toString();
-
-                setMessage(resMessage);
+        authService
+            .creatUser(username,email,password).then(response => {
+            console.log('회원가입 성공:', response.data);
+            navigate('/signin');
+            })
+            .catch(error => {
+                if (error.response && error.response.data && error.response.data.message) {
+                    console.log('회원가입 실패 메시지:', error.response.data.message);
+                    alert(`회원가입 실패: ${error.response.data.message}`);
+                    navigate('/');
             }
-        )
-        console.log(message);
-    }
+        });
+    };
 
     return (
         <div className="bg-white rounded-2xl shadow-xl p-8">
@@ -76,9 +68,9 @@ const SignupForm:React.FC = () => {
                 <div className="text-center">
                 <p className="text-sm text-gray-600">
                     이미 계정이 있으신가요?{' '}
-                    <a href="#" className="text-indigo-600 hover:text-indigo-500 font-medium transition-colors">
+                    <Link to="/signin" className="text-indigo-600 hover:text-indigo-500 font-medium transition-colors">
                     로그인하기
-                    </a>
+                    </Link>
                 </p>
                 </div>
             </div>

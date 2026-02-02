@@ -3,9 +3,8 @@ import { useFormikContext } from 'formik';
 import { Loader2, ArrowRight } from 'lucide-react';
 
 interface ButtonProps {
-  label: string;      // 기본 버튼 텍스트 (예: "가입하기")
-  loadingText: string; // 로딩 시 텍스트 (예: "가입")
-  // btnOn(disabled)은 Formik의 isSubmitting과 연동하면 더 좋습니다.
+  label: string;      
+  loadingText: string;
 }
 
 // 컴포넌트 내부에서 사용할 작은 UI 조각들

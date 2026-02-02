@@ -1,28 +1,18 @@
-import React, {useEffect, useState } from "react";
 import {Link } from "react-router-dom";
 import { Outlet,useNavigate } from "react-router";
-import { getCurrentUser,logout } from "../services/auth.service";
+import { authService } from "../services/auth.service";
 import useUserInfoStore from "../common/userInfoStore";
 import { LogOut,BookOpen } from "lucide-react";
 
 
-const layout: React.FC = () => {
+const Layout: React.FC = () => {
   const signinUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN 
   const signupUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP
   const profileUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE
-  
-  const currentUser = getCurrentUser()
+
   let navigate = useNavigate();
-
-  const [isLoggedIn,setIsLoggedIn] = useState<boolean>(false);
-  const {userInfo} = useUserInfoStore();
-
-  useEffect(() => {
-      setIsLoggedIn(!!currentUser);
-      return () => {
-        setIsLoggedIn(false);
-      }
-  }, [currentUser]);
+  
+  const {userInfo,setUserInfo} = useUserInfoStore();
 
   const LogoutContent = () => {
     return (
@@ -55,8 +45,13 @@ const layout: React.FC = () => {
 
         <button
             onClick={() => {
-                logout();
-                navigate(`${signinUrl}`);
+                authService.logout(userInfo).then(() => {
+                  setUserInfo({
+                      ...userInfo,
+                      loggedin: false,
+                  });
+                  navigate(`${signinUrl}`);
+                });
             }}
             className='items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
         >
@@ -67,7 +62,7 @@ const layout: React.FC = () => {
   };
 
   const renderLogInOutContent = () => {
-    return isLoggedIn ? <LoginContent/> : <LogoutContent/>;
+    return userInfo.loggedin ? <LoginContent/> : <LogoutContent/>;
   }
 
   return (
@@ -141,4 +136,4 @@ const layout: React.FC = () => {
   );
 }
 
-export default layout;
+export default Layout;
