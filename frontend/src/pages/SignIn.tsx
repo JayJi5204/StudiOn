@@ -4,7 +4,6 @@ import SigninForm from '../components/signin/SigninForm.formik.component';
 import { Link } from 'react-router';
 
 const SigninPage:React.FC = () => {
-
     
     return (
         <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">

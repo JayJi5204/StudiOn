@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { Formik, Form} from 'formik';
 import SigninUserField from './SigninUserField.formik.component'; 
 import SigninPasswordField from './SigninPassworField.formik.component'; 
@@ -7,32 +7,44 @@ import SigninSubmitButton from '../button/SubmitButton';
 import GoogleLoginButton from '../button/GoogleLoginButton';
 import { signinSchema, signinInitialValues} from '../../schemas/authSchema'; 
 import { useNavigate } from 'react-router';
-import { signin } from '../../services/auth.service';
+import { authService } from '../../services/auth.service';
+import useUserInfoStore from '../../common/userInfoStore';
 
 const SigninForm: React.FC = () => {
     let navigate = useNavigate();
 
     const [message,setMessage] = useState<string>('');
+    const {userInfo,setUserInfo } = useUserInfoStore();
 
     const handleSignin = (formValue:{username:string,password:string}) => {
         const {username,password} = formValue;
         setMessage('');
-
-        signin(username,password).then(
-            () => {
-                navigate("/");
-            },
-            (error) => {
-                const resMessage =
-                    (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-
-                setMessage(resMessage);
+        
+        authService.login(username,password).then(response => {
+            const userData = response.data;
+            if (userData.accessToken !== 'mocked-jwt-token-xyz') {
+                setMessage('정상적인 로그인 응답이 아닙니다.');
+                navigate('/');
+                return;
             }
-        )
+            
+            setUserInfo({
+                ...userData.userInfo,
+                loggedin: true,
+            });
+
+            console.log('로그인 성공:', userInfo);
+            navigate('/');
+        }).catch(error => {
+            if (error.response && error.response.data && error.response.data.message) {
+                setMessage(error.response.data.message);
+                console.log('로그인 실패 메시지:', error.response.data.message);
+            } else {
+                setMessage('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+                console.log('로그인 중 알 수 없는 오류 발생:', error);
+            }
+        });
+        
         console.log(message)
     };
 

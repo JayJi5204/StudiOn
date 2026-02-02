@@ -1,41 +1,47 @@
 import axios from "axios";
+import type IUser from "../types/user.type";
+
 
 const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN;
 const API_URL_SIGNUP = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNUP;
 
-export const signup = (username:string,email:string,password:string) => {
-    return axios.post(API_URL_SIGNUP, {
-        username,
-        email,
-        password,
-    }).then((response) => {
-        return response.data;
-    });
+export const authService = {
+    creatUser: async (username:string,email:string,password:string) => {
+        const response = await axios.post(API_URL_SIGNUP, {
+            username,
+            email,
+            password,
+        });
+        return response;
+    },
+
+    getUser: async () => {
+        const response = await axios.get(API_URL_SIGNIN);
+        return response;
+    },
+
+    login: async (username:string,password:string) => {
+        const response = await axios.post(API_URL_SIGNIN, {
+            username,
+            password
+            });
+ 
+        return response;
+    },
+
+    logout: async(userinfo:IUser) => {
+        const response = await axios.post(import.meta.env.VITE_REACT_APP_AUTH_API_URL_LOGOUT, {
+            ...userinfo,
+            loggedin: false,
+        });
+        return response;
+    },
+
+    getCurrentUser: () => {
+        // const userStr = localStorage.getItem("user");
+        const userStr = sessionStorage.getItem("user");
+        if (userStr) return JSON.parse(userStr);
+
+        return null;
+    }
 };
-//
-export const signin = (username:string,password:string) => {
-    return axios.post(API_URL_SIGNIN, {
-        username,
-        password
-        })
-        .then((response) => {
-            if (response.data.accessToken) {
-                // localStorage.setItem("user", JSON.stringify(response.data));
-                sessionStorage.setItem("user", JSON.stringify(response.data));
-            }
-            return response.data;
-    });
-};
-
-export const logout = () => {
-    // localStorage.removeItem("user");
-    sessionStorage.removeItem("user");
-}
-
-export const getCurrentUser = () => {
-    // const userStr = localStorage.getItem("user");
-    const userStr = sessionStorage.getItem("user");
-    if (userStr) return JSON.parse(userStr);
-
-    return null;
-}

@@ -10,7 +10,7 @@ const SignInHeader  = () => {
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">StudyTogether</h1>
                 <p className="text-gray-600">함께 성장하는 스터디 플랫폼에 가입하세요</p>
-        </header> 
+        </header>
     );
 }
 

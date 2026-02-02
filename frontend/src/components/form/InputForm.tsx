@@ -42,6 +42,7 @@ const InputForm: React.FC<InputFormProps> = ({
                   type={type}
                   placeholder={placeholder}
                   className={InputFormStyles.input(hasError)}
+                  onKeyDown={(e)=>{e.key === 'Enter'}}
                 />
               );
             }}
@@ -53,16 +54,16 @@ const InputForm: React.FC<InputFormProps> = ({
           component="div" 
           className={InputFormStyles.error} 
         />
-
-          {apply && (
-          <div className="apply-container">
-            {apply.map(
-              (component,index) => (
-                <React.Fragment key={`${name}-apply-${index}`}>
-                  {component}
-                </React.Fragment>
-              ))}
-          </div>
+        
+        {apply && (
+        <div className="apply-container">
+          {apply.map(
+            (component,index) => (
+              <React.Fragment key={`${name}-apply-${index}`}>
+                {component}
+              </React.Fragment>
+            ))}
+        </div>
         )}
       </div>
     );
