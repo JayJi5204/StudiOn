@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class BoardResponseDto {
+public class BoardResponse {
 
     private Long boardId;
     private Long userId;
@@ -16,8 +16,8 @@ public class BoardResponseDto {
     private LocalDateTime modifiedAt;
 
 
-    public static BoardResponseDto from(BoardEntity boardEntity) {
-        BoardResponseDto boardResponseDto = new BoardResponseDto();
+    public static BoardResponse from(BoardEntity boardEntity) {
+        BoardResponse boardResponseDto = new BoardResponse();
         boardResponseDto.boardId = boardEntity.getBoardId();
         boardResponseDto.userId=boardEntity.getUserId();
         boardResponseDto.title = boardEntity.getTitle();
