@@ -1,17 +1,12 @@
 package backend.security.common;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
-import backend.security.common.Snowflake;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 class SnowflakeTest {
 	Snowflake snowflake = new Snowflake();
