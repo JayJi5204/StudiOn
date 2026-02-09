@@ -10,7 +10,7 @@ eureka:
 
 spring:
   application:
-    name: apigateway-service
+    name: api-gateway
 
   rabbitmq:
     host: 127.0.0.1
