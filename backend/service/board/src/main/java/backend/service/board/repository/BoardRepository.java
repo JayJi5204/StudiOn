@@ -48,5 +48,4 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
     BoardEntity findBoardsByBoardId(Long boardId);
 
-    BoardEntity findByBoardId(String boardId);
 }
