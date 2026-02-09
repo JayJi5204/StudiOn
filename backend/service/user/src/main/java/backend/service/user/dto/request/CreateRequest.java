@@ -6,8 +6,9 @@ import lombok.Data;
 public class CreateRequest {
     private String email;
 
+    private String username;
+
     private String password;
 
-    private String username;
 
 }

@@ -11,13 +11,13 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +30,6 @@ public class SecurityConfig {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
     }
-
 
 
     @Bean
@@ -47,7 +46,10 @@ public class SecurityConfig {
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration configuration = new CorsConfiguration();
 
-                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                configuration.setAllowedOriginPatterns(List.of(
+                        "http://localhost:5173",
+                        "http://localhost:8000"
+                ));
                 configuration.setAllowedMethods(Collections.singletonList("*"));
                 configuration.setAllowCredentials(true);
                 configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -62,7 +64,9 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth.
                 requestMatchers("/", "/api/users/create", // 회원가입 경로
-                        "/api/users/login","/health-check","/actuator/**").permitAll().
+                        "/api/users/login", "/health-check", "/actuator/**", "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html").permitAll().
                 requestMatchers("/api/auth/admin").hasRole("ADMIN").
                 anyRequest().
                 authenticated());

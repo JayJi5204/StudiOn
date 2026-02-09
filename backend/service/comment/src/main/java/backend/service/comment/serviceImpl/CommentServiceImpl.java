@@ -4,6 +4,7 @@ import backend.service.comment.common.PageLimitCalculator;
 import backend.service.comment.dto.request.CommentCreateRequestDto;
 import backend.service.comment.dto.response.CommentPageResponse;
 import backend.service.comment.dto.response.CommentResponseDto;
+import backend.service.comment.dto.response.DeletedResponse;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
@@ -12,7 +13,7 @@ import jakarta.transaction.Transactional;
 import backend.security.common.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import backend.service.comment.messageQueue.KafkaProducer;
 import java.util.List;
 
 import static java.util.function.Predicate.not;
@@ -23,6 +24,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final Snowflake snowflake = new Snowflake();
+    private final KafkaProducer kafkaProducer;
 
     @Transactional
     public CommentResponseDto create(CommentCreateRequestDto requestDto) {
@@ -38,6 +40,8 @@ public class CommentServiceImpl implements CommentService {
                                         requestDto.getBoardId(), parentCommentPath.getPath()).orElse(null)),
                         requestDto.getUserId(),
                         requestDto.getBoardId()));
+
+        kafkaProducer.send("create-comment-topic", requestDto);
         return CommentResponseDto.from(comment);
     }
 
@@ -58,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
-    public void delete(Long commentId) {
+    public DeletedResponse delete(Long commentId) {
         commentRepository.findById(commentId).filter(not(CommentEntity::getIsDelete)).ifPresent(commentEntity -> {
             if (hasChildren(commentEntity)) {
                 commentEntity.delete();
@@ -67,6 +71,7 @@ public class CommentServiceImpl implements CommentService {
             }
 
         });
+        return DeletedResponse.from();
     }
 
     private boolean hasChildren(CommentEntity commentEntity) {
