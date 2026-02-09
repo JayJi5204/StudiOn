@@ -97,6 +97,7 @@ springdoc:
     enabled: true   # 🔥 중요 (Gateway는 문서 생성 안 함)
 
   swagger-ui:
+    persistAuthorization: true
     urls:
       - name: user-service
         url: /user-service/v3/api-docs
