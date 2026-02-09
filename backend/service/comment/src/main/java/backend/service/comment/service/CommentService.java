@@ -1,0 +1,26 @@
+package backend.service.comment.service;
+
+import backend.service.comment.dto.request.CommentCreateRequestDto;
+import backend.service.comment.dto.response.CommentPageResponse;
+import backend.service.comment.dto.response.CommentResponseDto;
+import backend.service.comment.dto.response.DeletedResponse;
+
+import java.util.List;
+
+public interface CommentService {
+
+    CommentResponseDto create(CommentCreateRequestDto commentCreateRequestDto);
+
+    CommentResponseDto get(Long commentId);
+
+    DeletedResponse delete(Long commentId);
+
+    CommentPageResponse getAll(Long boardId, Long page, Long pageSize);
+
+    List<CommentResponseDto> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
+
+    List<CommentResponseDto> getBoardWhoCreateWithBoardId(Long boardId);
+
+    List<CommentResponseDto> getBoardWhoCreateWithUserId(Long userId);
+
+    }

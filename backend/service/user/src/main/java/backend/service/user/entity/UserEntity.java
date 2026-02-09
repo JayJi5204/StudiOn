@@ -1,5 +1,6 @@
 package backend.service.user.entity;
 
+import backend.service.user.enumType.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,23 +19,53 @@ import java.time.LocalDateTime;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-
-    @Column(nullable = false, unique = true)
-    private String userId;
-
-    @Column(nullable = false, length = 50)
-    private String userName;
-
-    @Column(nullable = false,  unique = true)
-    private String encryptedPwd;
+    private Long userId;
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false, length = 50)
+    private String username;
+
     @CreatedDate
     private LocalDateTime createAt;
+
+    private Boolean isDeleted;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    public static UserEntity create(Long id, String username, String password, String email) {
+
+        UserEntity entity = new UserEntity();
+        entity.userId = id;
+        entity.username = username;
+        entity.password = password;
+        entity.email = email;
+        entity.createAt = LocalDateTime.now();
+        entity.isDeleted = false;
+        entity.role = UserRole.USER;
+
+        return entity;
+    }
+
+    public void update(String userName, String password, String email) {
+        this.username = userName;
+        this.password = password;
+        this.email = email;
+    }
+
+    public void delete(){
+        this.isDeleted=true;
+    }
+
+
+    public void jwtFilter(String email,UserRole role){
+        this.email=email;
+        this.role=role;
+    }
 
 }

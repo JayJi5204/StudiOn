@@ -1,84 +1,72 @@
 package backend.service.user.controller;
 
-import backend.service.user.dto.request.UserRequestDto;
-import backend.service.user.dto.response.UserResponseDto;
-import backend.service.user.entity.UserEntity;
+import backend.service.user.dto.request.CreateRequest;
+import backend.service.user.dto.request.DeleteRequest;
+import backend.service.user.dto.request.LoginRequest;
+import backend.service.user.dto.request.UpdateRequest;
+import backend.service.user.dto.response.*;
 import backend.service.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Tag(name = "User", description = "사용자 관리 API")
 @RestController
-@RequestMapping("/")
 @Log4j2
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 
-
-    private final Environment env;
-
-    // 상태 체크
-    @GetMapping("/health-check") // http://localhost:60000/health-check
-    public String status() {
-        return String.format("Port(local.server.port) = " + env.getProperty("local.server.port") +
-                ", Port(server.port) = " + env.getProperty("server.port")
-        );
+    @Operation(summary = "회원 가입",description = "사용자의 정보를 받아 회원가입을 합니다.")
+    @SecurityRequirements
+    @PostMapping("/create")
+    public CreateResponse create(@RequestBody CreateRequest dto) {
+        return userService.create(dto);
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "Test Ok";
+    @Operation(summary = "로그인", description = "email과 비밀번호를 이용하여 로그인을 합니다.")
+    @SecurityRequirements
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest dto, HttpServletResponse response) {
+        return userService.login(dto, response);
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto dto) {
-
-        UserRequestDto userRequestDto = userService.createUser(dto);
-
-        UserResponseDto userResponseDto = UserResponseDto.builder()
-                .userId(userRequestDto.getUserId())
-                .userName(userRequestDto.getUserName())
-                .email(userRequestDto.getEmail())
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+    @Operation(summary = "전체 사용자 조회", description = "등록된 모든 사용자 목록을 가져옵니다.")
+    @GetMapping("/get")
+    public List<CreateResponse> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<UserResponseDto>> getUsers() {
-        List<UserEntity> userEntities = userService.getUserByAll();
-
-        List<UserResponseDto> responseDtoList = userEntities.stream()
-                .map(userEntity -> UserResponseDto.builder()
-                        .userId(userEntity.getUserId())
-                        .userName(userEntity.getUserName())
-                        .email(userEntity.getEmail())
-                        .build())
-                .toList();
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
+    @Operation(summary = "특정 사용자 조회", description = "ID를 통해 특정 사용자의 정보를 조회합니다.")
+    @GetMapping("/get/{userId}")
+    public GetUserResponse getUser(
+            @Parameter(description = "조회할 사용자의 ID", example = "279294608354758660")
+            @PathVariable("userId") Long userId) {
+        return userService.getUser(userId);
     }
 
+    @Operation(summary = "회원 정보 수정", description = "기존 사용자의 정보를 업데이트합니다.")
+    @PutMapping("/update/{userId}")
+    public UpdateResponse update(
+            @Parameter(description = "수정할 사용자의 ID", example = "279294608354758660") @PathVariable("userId") Long userId,
+            @RequestBody UpdateRequest dto) {
+        return userService.update(dto, userId);
+    }
 
-    @GetMapping("/users/{userId}")
-    public  ResponseEntity<UserResponseDto> findUser(@PathVariable("userId") String userId,@RequestBody UserRequestDto dto){
-
-      UserRequestDto userRequestDto=userService.getUserByUserId(userId);
-
-      UserResponseDto userResponseDto = UserResponseDto.builder()
-              .userId(userRequestDto.getUserId())
-              .userName(userRequestDto.getUserName())
-              .email(userRequestDto.getEmail())
-              .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+    @Operation(summary = "회원 탈퇴", description = "사용자 계정을 삭제합니다.")
+    @DeleteMapping("/delete/{userId}")
+    public DeletedResponse delete(
+            @Parameter(description = "삭제할 사용자의 ID", example = "279294608354758660") @PathVariable("userId") Long userId,
+            @RequestBody DeleteRequest dto) {
+        return userService.delete(dto, userId);
     }
 }

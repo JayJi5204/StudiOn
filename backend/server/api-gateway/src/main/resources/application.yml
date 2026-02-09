@@ -11,9 +11,17 @@ eureka:
 spring:
   application:
     name: api-gateway
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
   output:
     ansi:
       enabled: "always"
+
   cloud:
     gateway:
       server:
@@ -25,53 +33,75 @@ spring:
                 preLogger: true
                 postLogger: true
           routes:
-            - id: user-service-register
+            # 1. USER-SERVICE
+            - id: user-service-public
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/users
-                - Method=POST
+                - Path=/user-service/health-check, /user-service/api/users/create, /user-service/api/users/login, /user-service/v3/api-docs/**, /user-service/swagger-ui/**, /user-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-            - id: user-service-login
-              uri: lb://USER-SERVICE
-              predicates:
-                - Path=/user-service/login
-                - Method=POST
-              filters:
-                - RemoveRequestHeader=Cookie
-                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-            - id: user-service
+
+            - id: user-service-secure
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/user-service/**
-                - Method=GET
               filters:
+                - name: AuthorizationHeaderFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-                - AuthorizationHeaderFilter
-            - id: board-service
+
+            # 2. BOARD-SERVICE
+            - id: board-service-public
+              uri: lb://BOARD-SERVICE
+              predicates:
+                - Path=/board-service/health-check, /board-service/v3/api-docs/**, /board-service/swagger-ui/**, /board-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+
+            - id: board-service-secure
               uri: lb://BOARD-SERVICE
               predicates:
                 - Path=/board-service/**
               filters:
-                #                - AddRequestHeader=board-request, board-request-header
-                #                - AddResponseHeader=board-response, board-response-header
-                - CustomFilter
-            - id: videoroom-service
-              uri: lb://VIDEOROOM-SERVICE
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+
+            # 3. COMMENT-SERVICE
+            - id: comment-service-public
+              uri: lb://COMMENT-SERVICE
               predicates:
-                - Path=/videoroom-service/**
+                - Path=/comment-service/health-check, /comment-service/v3/api-docs/**, /comment-service/swagger-ui/**, /comment-service/swagger-ui.html
               filters:
-                #                - AddRequestHeader=videoroom-request, videoroom-request-header
-                #                - AddResponseHeader=videoroom-response, videoroom-response-header
-                - name: CustomFilter
-                - name: LoggingFilter
-                  args:
-                    baseMessage: Hi, there,
-                    preLogger: true
-                    postLogger: true
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
 
+            - id: comment-service-secure
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comment-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, httpexchanges, busrefresh
 
-token:
-  secret: my-secret-key-23472841604583465812934782394
+springdoc:
+  api-docs:
+    enabled: true   # 🔥 중요 (Gateway는 문서 생성 안 함)
+
+  swagger-ui:
+    persistAuthorization: true
+    urls:
+      - name: user-service
+        url: /user-service/v3/api-docs
+      - name: board-service
+        url: /board-service/v3/api-docs
+      - name: comment-service
+        url: /comment-service/v3/api-docs
