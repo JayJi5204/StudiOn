@@ -33,34 +33,29 @@ spring:
                 preLogger: true
                 postLogger: true
           routes:
-            # 1. 💡 PUBLIC ROUTE: 인증 면제 경로 (회원가입, 로그인 등)
+            # 1. USER-SERVICE
             - id: user-service-public
               uri: lb://USER-SERVICE
               predicates:
-                # 회원가입 및 로그인 경로를 명시. POST 메서드만 받도록 합니다.
-                - Path=/user-service/health-check, /user-service/api/users/create, /user-service/api/users/login
-                - Method=GET, POST
+                - Path=/user-service/health-check, /user-service/api/users/create, /user-service/api/users/login, /user-service/v3/api-docs/**, /user-service/swagger-ui/**, /user-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
-              # AuthorizationHeaderFilter 미적용
 
-            # 2. 💡 SECURE ROUTE: 인증 필수 경로 (나머지 모든 /user-service/**)
             - id: user-service-secure
               uri: lb://USER-SERVICE
               predicates:
-                # /user-service로 시작하는 나머지 모든 경로
                 - Path=/user-service/**
               filters:
                 - name: AuthorizationHeaderFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
 
+            # 2. BOARD-SERVICE
             - id: board-service-public
               uri: lb://BOARD-SERVICE
               predicates:
-                - Path=/board-service/health-check
-                - Method=GET
+                - Path=/board-service/health-check, /board-service/v3/api-docs/**, /board-service/swagger-ui/**, /board-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/board-service/(?<segment>.*),/$\{segment}
@@ -74,11 +69,11 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/board-service/(?<segment>.*),/$\{segment}
 
+            # 3. COMMENT-SERVICE
             - id: comment-service-public
               uri: lb://COMMENT-SERVICE
               predicates:
-                - Path=/comment-service/health-check
-                - Method=GET
+                - Path=/comment-service/health-check, /comment-service/v3/api-docs/**, /comment-service/swagger-ui/**, /comment-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
@@ -91,9 +86,21 @@ spring:
                 - name: AuthorizationHeaderFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
-
 management:
   endpoints:
     web:
       exposure:
         include: refresh, health, beans, info, httpexchanges, busrefresh
+
+springdoc:
+  api-docs:
+    enabled: true   # 🔥 중요 (Gateway는 문서 생성 안 함)
+
+  swagger-ui:
+    urls:
+      - name: user-service
+        url: /user-service/v3/api-docs
+      - name: board-service
+        url: /board-service/v3/api-docs
+      - name: comment-service
+        url: /comment-service/v3/api-docs
