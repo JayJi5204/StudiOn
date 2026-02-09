@@ -1,18 +1,17 @@
 package backend.service.board.serviceImpl;
 
-import backend.service.board.dto.request.BoardCreateRequestDto;
-import backend.service.board.dto.response.GetBoardResponse;
-import backend.service.board.dto.response.PageResponseDto;
+import backend.security.common.Snowflake;
 import backend.service.board.common.PageLimitCalculator;
+import backend.service.board.dto.request.BoardCreateRequestDto;
 import backend.service.board.dto.request.BoardUpdateRequestDto;
 import backend.service.board.dto.response.BoardResponseDto;
-import backend.service.board.dto.response.ResponseBoard;
+import backend.service.board.dto.response.GetBoardResponse;
+import backend.service.board.dto.response.PageResponseDto;
 import backend.service.board.entity.BoardEntity;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardService;
 import backend.service.comment.dto.response.ResponseComment;
 import jakarta.transaction.Transactional;
-import backend.security.common.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import backend.service.board.messageQueue.KafkaProducer;
 
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final Environment env;
     private final RestTemplate restTemplate;
+    private final KafkaProducer kafkaProducer;
 
 
     @Transactional
@@ -39,6 +40,8 @@ public class BoardServiceImpl implements BoardService {
                 BoardEntity.create(snowflake.nextId(), dto.getUserId(), dto.getTitle(), dto.getContent())
 
         );
+
+        kafkaProducer.send("create-board-topic", dto);
         return BoardResponseDto.from(boardEntity);
     }
 

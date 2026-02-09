@@ -1,6 +1,5 @@
 package backend.service.board.messageQueue;
 
-import backend.service.board.entity.BoardEntity;
 import backend.service.board.repository.BoardRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
