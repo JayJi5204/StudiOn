@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X,FileText, Save, Eye, ChevronDown } from 'lucide-react';
 import { postService } from '../services/posts.service';
+import { useNavigate } from 'react-router';
+import useUserInfoStore from '../store/userInfoStore';
 
-const WritePostPage: React.FC = () => {
+const WritePostPage = () => {
+    let navigate = useNavigate();
+    const {userInfo} = useUserInfoStore();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -11,6 +15,7 @@ const WritePostPage: React.FC = () => {
     const [showCategoryMenu, setShowCategoryMenu] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
 
+    const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
     const categories = ['자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
 
     const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -27,19 +32,23 @@ const WritePostPage: React.FC = () => {
         setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!title.trim() || !content.trim() || !selectedCategory) {
             alert('제목, 내용, 카테고리를 모두 입력해주세요.');
             return;
         }
         // 여기에 게시글 저장 로직 추가
         postService.createPost({
-            title,
-            content,
-            category: selectedCategory,
-            tags,
-        });
+                title,
+                content,
+                category: selectedCategory,
+                tags,
+            }, 
+            userInfo.id
+        );
         alert('게시글이 작성되었습니다!');
+        navigate(communityPageUrl);
+
     };
 
     const handleCancel = () => {

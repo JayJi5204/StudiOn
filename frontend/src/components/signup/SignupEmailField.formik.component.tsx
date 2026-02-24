@@ -1,7 +1,7 @@
 import InputForm from "../form/InputForm";
 import { Mail } from "lucide-react";
 
-const SignupEmailField:React.FC = () => {
+const SignupEmailField= () => {
     return (
         <InputForm
             name="email"

@@ -4,7 +4,7 @@ import { Check,X } from "lucide-react";
 
 import { useFormikContext } from "formik";
 
-const SignupPasswordField:React.FC = () => {
+const SignupPasswordField = () => {
     const { values } = useFormikContext<any>();
     
     let passwordStrength = ({

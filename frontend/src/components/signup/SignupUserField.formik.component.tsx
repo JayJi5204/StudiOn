@@ -1,7 +1,7 @@
 import { User } from "lucide-react";
 import InputForm from "../form/InputForm";
 
-const SignupUserField:React.FC  = () => {
+const SignupUserField  = () => {
     return (
         <InputForm
             name="username"

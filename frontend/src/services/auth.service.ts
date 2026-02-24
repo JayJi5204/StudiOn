@@ -15,6 +15,7 @@ export const authService = {
         return response;
     },
 
+    //추후 수정
     getUser: async () => {
         const response = await axios.get(API_URL_SIGNIN);
         return response;
@@ -25,6 +26,10 @@ export const authService = {
             username,
             password
             });
+            
+        if (response.data.accessToken) {
+            sessionStorage.setItem("user", JSON.stringify(response.data.userInfo));
+            }
  
         return response;
     },

@@ -1,9 +1,9 @@
-import React from 'react';
+
 import { useFormikContext } from 'formik'; // 1. Formik 컨텍스트 가져오기
 import { Check, X, Lock } from 'lucide-react'; // X 아이콘도 추가하면 좋겠죠?
 import InputForm from '../form/InputForm';
 
-const SignupConfirmPasswordField: React.FC = () => {
+const SignupConfirmPasswordField= () => {
 
   const { values } = useFormikContext<any>();
 

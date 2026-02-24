@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {authService} from '../services/auth.service';
-import useUserInfoStore from '../common/userInfoStore';
+import useUserInfoStore from '../store/userInfoStore';
+import { postService } from '../services/posts.service';
+import type Post from '../types/posts.type';
+import PostsContent from '../components/profile/PostsContent';
 
 import {
     User,
@@ -17,9 +20,6 @@ import {
     X,
     TrendingUp,
     Bookmark,
-    MessageSquare,
-    Eye,
-    Target,
     Award,
     Clock,
     Users,
@@ -46,21 +46,27 @@ const StudyProgressBar = ({ progress }: { progress: number }) => {
 
 
 // 메인 컴포넌트
-const ProfilePage: React.FC = () => {
-    const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
-
+const ProfilePage = () => {
     let navigate = useNavigate();
 
     const {userInfo,setUserInfo} = useUserInfoStore();
-    
-    if (!userInfo.loggedin) {
-        navigate(redirectUrl);
-        return null;
-    }
-
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [editForm,setEditForm] = useState(userInfo);
+    const [myPosts,setMyPosts] = useState<Post[]>([]);
+
+    useEffect(()=>{
+        const loadMyPosts = async () => {
+            const data = await postService.getPosts({
+                authorId:userInfo.id,
+                page:10,
+                limit:10,
+            });
+            // console.log(data)
+            setMyPosts(data);
+        };
+        loadMyPosts();
+    },[])
     
     // 사용자 정보
     // 통계 정보
@@ -110,28 +116,6 @@ const ProfilePage: React.FC = () => {
             members: 15,
             NextSession: null,
             image: '💻'
-        }
-    ];
-
-    // 작성글 목록
-    const myPosts = [
-        {
-            id: 1,
-            title: 'React 스터디 3개월 하고 나니 확실히 달라진 점',
-            category: '스터디 후기',
-            date: '2024-10-18',
-            views: 342,
-            likes: 28,
-            comments: 15
-        },
-        {
-            id: 2,
-            title: '알고리즘 문제 풀이 팁 공유합니다',
-            category: '정보공유',
-            date: '2024-10-15',
-            views: 198,
-            likes: 34,
-            comments: 12
         }
     ];
     
@@ -216,32 +200,7 @@ const ProfilePage: React.FC = () => {
         </div>
     );
 
-    // 작성글 탭 컨텐츠
-    const PostsContent = () => (
-        <div className='space-y-4'>
-            {myPosts.map((post) => (
-                <div key={post.id} className='bg-white rounded-2xl shadow-lg p-5 transition-transform duration-300 hover:shadow-xl hover:scale-[1.01]'>
-                    <div className='flex justify-between items-center mb-2'>
-                        <h4 className='text-lg font-semibold text-indigo-700 hover:text-indigo-900 cursor-pointer'>{post.title}</h4>
-                        <span className='text-xs text-gray-500'>{post.date}</span>
-                    </div>
-                    <div className='flex items-center space-x-4 text-sm text-gray-600'>
-                        <span className='px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600'>
-                            {post.category}
-                        </span>
-                        <span className='flex items-center'><Eye className='w-4 h-4 mr-1 text-gray-400'/> {post.views}</span>
-                        <span className='flex items-center'><Target className='w-4 h-4 mr-1 text-red-400'/> {post.likes}</span>
-                        <span className='flex items-center'><MessageSquare className='w-4 h-4 mr-1 text-blue-400'/> {post.comments}</span>
-                    </div>
-                </div>
-            ))}
-            <div className='text-center mt-6'>
-                <button className='bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg font-medium hover:bg-indigo-100 transition-colors'>
-                    모든 작성글 보기
-                </button>
-            </div>
-        </div>
-    );
+    
 
     // 업적 탭 컨텐츠
     const AchievementsContent = () => (
@@ -266,7 +225,9 @@ const ProfilePage: React.FC = () => {
             case 'studies':
                 return <StudiesContent />;
             case 'posts':
-                return <PostsContent />;
+                return <PostsContent
+                            myPosts={myPosts}
+                        />;
             case 'achievements':
                 return <AchievementsContent />;
             default:
@@ -403,7 +364,7 @@ const ProfilePage: React.FC = () => {
                                             });
                                             navigate('/');
                                             });
-                                        navigate(redirectUrl);
+                                        navigate('/');
                                     }}
                                     className='w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
                                 >

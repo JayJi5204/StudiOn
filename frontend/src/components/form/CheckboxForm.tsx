@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Field } from 'formik';
 import {checkboxStyles} from '../../styles/checkboxForm.css';
 

@@ -1,7 +1,7 @@
 import { useGoogleLogin } from '@react-oauth/google';
 
 
-const GoogleLoginButton:React.FC = () => {
+const GoogleLoginButton = () => {
     
     const redirect_uri = import.meta.env.VITE_REACT_APP_AUTH_REDIRECT_API_URL_GOOGLE
     const handleGoogleLogin =  useGoogleLogin({

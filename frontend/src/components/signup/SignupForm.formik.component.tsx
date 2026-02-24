@@ -7,11 +7,12 @@ import SignupPasswordField from './SignupPasswordField.formik.component';
 import SignupConfirmPasswordField from './SignupConfirmPasswordField';
 import SignupTermsAgreementField from './SignupTermsAgreementField';
 import SignupPrivacyAgreementField from './SignupPrivacyAgreementField';
+import SignupPhoneNumberField from './SignupPhoneNumberField';
 import SubmitButton from '../button/SubmitButton';
 import Consent from '../footer/Consent.component';
 import { signupInitialValues, signupSchema } from '../../schemas/authSchema';
 
-const SignupForm:React.FC = () => {
+const SignupForm = () => {
 
     let navigate = useNavigate();
     
@@ -48,6 +49,7 @@ const SignupForm:React.FC = () => {
                     <Form>
                         <SignupUserField/>
                         <SignupEmailField/>
+                        <SignupPhoneNumberField/>
                         <SignupPasswordField/>
                         <SignupConfirmPasswordField/>
                         <SignupTermsAgreementField/>

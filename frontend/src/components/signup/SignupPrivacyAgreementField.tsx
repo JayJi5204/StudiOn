@@ -1,6 +1,6 @@
 import CheckboxForm from "../form/CheckboxForm"
 
-const SignupPrivacyAgreementField:React.FC = () => {
+const SignupPrivacyAgreementField = () => {
     return (
         <CheckboxForm
             name="agreePrivacy"
