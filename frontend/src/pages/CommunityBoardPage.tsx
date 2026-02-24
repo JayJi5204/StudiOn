@@ -16,10 +16,12 @@ const CommunityBoard= () => {
     const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
 
-    if (!userloggedIn) {
-        alert('자유게시판은 로그인 후 이용 가능합니다.');
-        navigate(signinPageUrl);
-    }
+    useEffect(()=>{
+        if (!userloggedIn) {
+            alert('자유게시판은 로그인 후 이용 가능합니다.');
+            navigate(signinPageUrl);
+        }
+    });
 
     useEffect(() => {
         const loadPosts = async () => {
