@@ -5,7 +5,7 @@ const Main = lazy(() => import("../pages/MainPage.tsx"));
 const Layout = lazy(() => import('../pages/Layout.tsx'))
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
-const CommunityBoardPage = lazy(() => import("../pages/CommunityBoard.tsx"));
+const CommunityBoardPage = lazy(() => import("../pages/CommunityBoardPage.tsx"));
 const PostDetailsPage = lazy(() => import("../pages/PostDetailPage.tsx"));
 const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'));
 const SignInPage = lazy(() => import("../pages/SignInPage.tsx"));
