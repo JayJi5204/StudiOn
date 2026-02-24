@@ -29,7 +29,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private final SecretKey signingKey;
 
     // API Gateway의 bootstrap.yml에서 가져오는 이름에 맞춰 "token.secret"을 사용합니다.
-    private static final String JWT_SECRET_PROPERTY = "token.secret";
+    private static final String JWT_SECRET_PROPERTY = "jwt.secret";
     private static final String X_USER_ID_HEADER = "X-User-ID";
 
     public AuthorizationHeaderFilter(Environment env) {
