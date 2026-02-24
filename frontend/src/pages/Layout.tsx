@@ -1,11 +1,75 @@
-import { Outlet } from "react-router";
-import {BookOpen} from 'lucide-react';
 import {Link } from "react-router-dom";
-function Layout() {
+import { Outlet,useNavigate } from "react-router";
+import { authService } from "../services/auth.service";
+import useUserInfoStore from "../store/userInfoStore";
+import { LogOut,BookOpen } from "lucide-react";
+
+const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN 
+const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP
+const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE
+const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
+const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
+
+const Layout = () => {
+  let navigate = useNavigate();
+  const {userInfo,setUserInfo} = useUserInfoStore();
+
+  const LogoutContent = () => {
+    return (
+      <div className="flex space-x-4">
+        <button className="text-gray-600 border rounded-lg px-4 py-2 shadow-lg bg-white hover:bg-blue-950 hover:text-white transition-colors">
+          <Link to={signinPageUrl}>로그인</Link>
+        </button>
+        <button className="bg-indigo-600 border text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+          <Link to={signupPageUrl}>회원가입</Link>
+        </button>
+      </div>
+    );
+  ;}
+
+  const LoginContent = () => {
+    return (
+      <div className="flex space-x-4">
+        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.username}님</div>
+        
+        <button
+          onClick={() => { 
+              const nextPage = userInfo.loggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
+              navigate(nextPage)
+          }}
+          className="rounded-xl hover:bg-red-50 transition-colors font-medium cursor-pointer"
+        >
+            <div className='w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mb-4 shadow-lg ring-4 ring-indigo-300/50'>
+                {userInfo.avatar}
+            </div>
+        </button>
+
+        <button
+            onClick={() => {
+                authService.logout(userInfo).then(() => {
+                  setUserInfo({
+                      ...userInfo,
+                      loggedin: false,
+                  });
+                  navigate(`${signinPageUrl}`);
+                });
+            }}
+            className='items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
+        >
+            <LogOut className="w-5 h-5" />
+        </button>
+      </div>
+    );
+  };
+
+  const renderLogInOutContent = () => {
+    return userInfo.loggedin ? <LoginContent/> : <LogoutContent/>;
+  }
+
   return (
     <>
       <header className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="text-2xl font-bold text-indigo-600 flex items-center">
@@ -14,18 +78,13 @@ function Layout() {
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 찾기</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 만들기</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600 transition-colors">내 스터디</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600 transition-colors">커뮤니티</a>
+              <Link to="/study" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 찾기</Link>
+              <Link to="/create-study" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 만들기</Link>
+              <Link to="/my-studies" className="text-gray-600 hover:text-indigo-600 transition-colors">내 스터디</Link>
+              <Link to={communityBoardUrl} className="text-gray-600 hover:text-indigo-600 transition-colors">커뮤니티</Link>
             </nav>
-            <div className="flex space-x-4">
-              <button className="text-gray-600 hover:text-indigo-600 transition-colors">
-                <Link to="/login">로그인</Link>
-              </button>
-              <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                <Link to="/signup">회원가입</Link>
-              </button>
+            <div>
+              {renderLogInOutContent()}
             </div>
           </div>
         </div>
