@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Field, ErrorMessage} from 'formik';
+import { Field, ErrorMessage, type FieldProps} from 'formik';
 import {InputFormStyles} from '../../styles/InputForm.css';
 
 interface InputFormProps {
@@ -11,14 +12,14 @@ interface InputFormProps {
   apply?: React.ReactNode[];
 }
 
-const InputForm: React.FC<InputFormProps> = ({
+const InputForm = ({
    name, 
    label, 
    placeholder, 
    icon, 
    type, 
    apply
-  }) => {
+  }:InputFormProps) => {
   
     return (
       <div className="flex flex-col mt-12">
@@ -34,7 +35,7 @@ const InputForm: React.FC<InputFormProps> = ({
           )}
           
           <Field name={name}>
-            {({ field, meta }: any) => {
+            {({ field, meta }: FieldProps<string>) => {
               const hasError = !!(meta.touched && meta.error);
               return (
                 <input

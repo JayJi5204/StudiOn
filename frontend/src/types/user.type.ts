@@ -1,17 +1,22 @@
 export default interface IUser {
-    id: number;
+    id?: number;
     username: string;
     password: string;
     confirmPassword?: string;
+    phoneNumber:string;
+    studyTime?:Number;
+    email: string;
+    bio?: string;
+    location?: string;
+    joinDate?: string;
+    role?: string;
+    avatar?: string;
+    loggedin?: boolean;
     rememberMe?: boolean;
     agreeTerms?: boolean;
     agreePrivacy?: boolean;
-    email: string;
-    bio: string;
-    location: string;
-    joinDate: string;
-    role: string;
-    avatar: string;
-    loggedin: boolean;
+    JWT?:string;
+    Refresh?:string;
+    isDeleted?:boolean;
 }
 

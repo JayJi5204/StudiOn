@@ -5,16 +5,25 @@ const Main = lazy(() => import("../pages/MainPage.tsx"));
 const Layout = lazy(() => import('../pages/Layout.tsx'))
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
-const FreeBulletinBoard = lazy(() => import("../pages/FreeBulletinBoard.tsx"));
-const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'))
-const SignIn = lazy(() => import("../pages/SignIn.tsx"));
-const SignUp = lazy(() => import("../pages/SignUp.tsx"));
-const Profile = lazy(() => import("../pages/Profile.tsx"));
+const CommunityBoardPage = lazy(() => import("../pages/CommunityBoard.tsx"));
+const PostDetailsPage = lazy(() => import("../pages/PostDetailPage.tsx"));
+const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'));
+const SignInPage = lazy(() => import("../pages/SignInPage.tsx"));
+const SignUpPage = lazy(() => import("../pages/SignUpPage.tsx"));
+const ProfilePage = lazy(() => import("../pages/Profile.tsx"));
 const GoogleCallback = lazy(() => import("../api/GoogleCallback.tsx"));
+
+const layoutPageUrl = import.meta.env.VITE_REACT_APP_URL;
+const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
+const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
+const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
+const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP;
+const profilePageUrl = `${import.meta.env.VITE_REACT_APP_URL_PROFILE}/:id`;
+const googleCallbackPageUrl = import.meta.env.VITE_REACT_APP_AUTH_API_URL_GOOGLE;
 
 const Router = createBrowserRouter([
   {
-    path: import.meta.env.VITE_REACT_APP_URL,
+    path: layoutPageUrl,
     Component: Layout,
     children: [
       {
@@ -36,21 +45,29 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: "/freebulletinboard",
+    path: communityPageUrl,
     Component: Layout,
     children: [
       {
         index: true,
         element: (
           <Suspense fallback={<Loading />}>
-            <FreeBulletinBoard/>
+            <CommunityBoardPage />
           </Suspense>
         ),
       },
+      {
+        path:":id",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <PostDetailsPage/> 
+          </Suspense>
+        ),
+      }
     ],
   },
   {
-    path:"/freebulletinboard/writepost",
+    path: writePostPageUrl,
     Component: Layout,
     children: [
       {
@@ -64,49 +81,57 @@ const Router = createBrowserRouter([
     ]
   },
   {
-    path: import.meta.env.VITE_REACT_APP_URL_SIGNIN,
+    path: signinPageUrl,
     Component: Layout,
     children: [
       {
         index: true,
         element: (
           <Suspense fallback={<Loading />}>
-            <SignIn/>
+            <SignInPage/>
           </Suspense>
         ),
       },
     ],
   },
   {
-    path: import.meta.env.VITE_REACT_APP_URL_SIGNUP,
+    path: signupPageUrl,
     Component: Layout,
     children: [
       {
         index: true,
         element: (
           <Suspense fallback={<Loading />}>
-            <SignUp/>
+            <SignUpPage/>
           </Suspense>
         ),
       },
     ],
   },
   {
-    path: `${import.meta.env.VITE_REACT_APP_URL_PROFILE}/:id`,
+    path: profilePageUrl,
     Component: Layout,
     children: [
       {
         index: true,
         element: (
           <Suspense fallback={<Loading />}>
-            <Profile />
+            <ProfilePage />
           </Suspense>
         ),
       },
+      {
+        path:"myposts/:id",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <PostDetailsPage/> 
+          </Suspense>
+        ),
+      }
     ],
   },
   {
-    path:"/api/auth/callback/google",
+    path:googleCallbackPageUrl,
     children:[
       {
         index:true,

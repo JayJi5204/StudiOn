@@ -1,8 +1,8 @@
-import React from 'react';
+
 import CheckboxForm from '../form/CheckboxForm';
 import { Link } from 'react-router';
 
-const RememberMe: React.FC = () => {
+const RememberMe = () => {
   return (
     <div className="flex items-center justify-between py-1">
       <CheckboxForm 

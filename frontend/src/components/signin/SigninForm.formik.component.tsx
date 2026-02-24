@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import {useState } from 'react';
 import { Formik, Form} from 'formik';
 import SigninUserField from './SigninUserField.formik.component'; 
 import SigninPasswordField from './SigninPassworField.formik.component'; 
@@ -8,9 +8,9 @@ import GoogleLoginButton from '../button/GoogleLoginButton';
 import { signinSchema, signinInitialValues} from '../../schemas/authSchema'; 
 import { useNavigate } from 'react-router';
 import { authService } from '../../services/auth.service';
-import useUserInfoStore from '../../common/userInfoStore';
+import useUserInfoStore from '../../store/userInfoStore';
 
-const SigninForm: React.FC = () => {
+const SigninForm = () => {
     let navigate = useNavigate();
 
     const [message,setMessage] = useState<string>('');
@@ -36,13 +36,9 @@ const SigninForm: React.FC = () => {
             console.log('로그인 성공:', userInfo);
             navigate('/');
         }).catch(error => {
-            if (error.response && error.response.data && error.response.data.message) {
-                setMessage(error.response.data.message);
-                console.log('로그인 실패 메시지:', error.response.data.message);
-            } else {
-                setMessage('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
-                console.log('로그인 중 알 수 없는 오류 발생:', error);
-            }
+            setMessage(error.response.data.message);
+            alert('로그인에 실패했습니다: ' + error.response.data.message);
+            navigate('/');
         });
         
         console.log(message)

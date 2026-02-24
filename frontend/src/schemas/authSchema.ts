@@ -29,6 +29,10 @@ export const signupSchema = Yup.object().shape({
       '영문, 숫자, 특수문자를 포함하여 8자 이상 입력하세요.'
     )
     .required('비밀번호를 입력하세요 (8자 이상).'),
+  phoneNumber: Yup.string()
+    .min(11,'최소 11자리를 입력해주세요')
+    .matches(/^010\d{7,8}$/,'-을 제외한 휴대폰 번호를 입력해주세요.')
+    .required('휴대폰 번호를 입력하세요'),
   confirmPassword: Yup.string()
     .min(8, '비밀번호는 최소 8자 이상입니다.')
     .required('비밀번호를 다시 입력하세요'),
@@ -50,8 +54,9 @@ export const signinInitialValues = {
 export const signupInitialValues:IUser = {
   username: '',
   password: '',
-  email:'',
   confirmPassword: '',
+  email:'',
+  phoneNumber:'',
   agreeTerms: false,
   agreePrivacy: false,
   rememberMe:false,

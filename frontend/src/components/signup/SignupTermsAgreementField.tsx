@@ -1,6 +1,6 @@
 import CheckboxForm from "../form/CheckboxForm";
 
-const SignupTermsAgreementField:React.FC = () => {
+const SignupTermsAgreementField = () => {
 
     return (
         <CheckboxForm

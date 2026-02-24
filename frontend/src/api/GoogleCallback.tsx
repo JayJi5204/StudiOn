@@ -1,7 +1,7 @@
-import React,{ useEffect} from "react";
+import { useEffect} from "react";
 import { useNavigate } from "react-router";
 
-const GoogleCallback:React.FC = () => {
+const GoogleCallback = () => {
     const redirectUrl = import.meta.env.VITE_REACT_APP_URL
     const navigate = useNavigate();
     // 전역 상태 업데이트 함수
