@@ -1,0 +1,312 @@
+import  { useEffect, useState } from 'react';
+import { ArrowLeft, Eye, ThumbsUp, MessageCircle, Clock, Bookmark, Share2, MoreVertical, Edit, Trash2, Flag } from 'lucide-react';
+import type Post from '../types/posts.type';
+import { postService } from '../services/posts.service';
+import { useParams } from 'react-router';
+import { useNavigate } from 'react-router';
+
+const PostDetail = () => {
+  const navigate = useNavigate();
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+
+  const { id } = useParams<{id:string}>();
+
+  useEffect(() => {
+    const loadPost = async () => {
+      try {
+        
+        const data = await postService.getPostById(Number(id));
+        
+        setPost(data);
+        setLoading(true);
+
+      } catch (error){
+          console.log(error)
+      }
+    }
+    loadPost();
+  },[id]);
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+  };
+
+  const handleShare = () => {
+    alert('링크가 클립보드에 복사되었습니다!');
+  };
+
+  const handleCommentSubmit = () => {
+    if (commentText.trim()) {
+      alert('댓글이 작성되었습니다!');
+      setCommentText('');
+    }
+  };
+
+  if (!loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">게시글을 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl text-gray-600">게시글을 찾을 수 없습니다.</p>
+          <button onClick={handleBack} className="mt-4 text-indigo-600 hover:text-indigo-700">
+            목록으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Header */}
+      <header className="bg-white shadow-md">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <button
+            onClick={handleBack}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">목록으로</span>
+          </button>
+        </div>
+      </header>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid lg:grid-cols-4 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <article className="bg-white rounded-xl shadow-md p-6 md:p-8">
+              {/* Post Header */}
+              <div className="border-b border-gray-200 pb-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="px-3 py-1 bg-indigo-100 text-indigo-600 text-sm rounded-full font-medium">
+                    {post.category}
+                  </span>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowMoreMenu(!showMoreMenu)}
+                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+                    {showMoreMenu && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700">
+                          <Edit size={16} />
+                          <span>수정</span>
+                        </button>
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700">
+                          <Trash2 size={16} />
+                          <span>삭제</span>
+                        </button>
+                        <button className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700">
+                          <Flag size={16} />
+                          <span>신고</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                  {post.title}
+                </h1>
+
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="text-3xl">{post.authorAvatar}</div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{post.author}</p>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Clock size={14} className="mr-1" />
+                        {post.createdAt}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <div className="flex items-center space-x-1">
+                      <Eye size={16} />
+                      <span>{post.views}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <ThumbsUp size={16} />
+                      <span>{post.likes}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <MessageCircle size={16} />
+                      <span>{post.comments.length}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Post Content */}
+              <div className="prose max-w-none mb-8">
+                <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {post.content}
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {post.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-gray-200 cursor-pointer transition-colors"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleLike}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
+                      isLiked
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <ThumbsUp size={18} />
+                    <span className="font-medium">{isLiked ? post.likes + 1 : post.likes}</span>
+                  </button>
+                  <button
+                    onClick={handleBookmark}
+                    className={`p-2 rounded-lg transition-all ${
+                      isBookmarked
+                        ? 'bg-yellow-100 text-yellow-600'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Bookmark size={18} fill={isBookmarked ? 'currentColor' : 'none'} />
+                  </button>
+                </div>
+                <button
+                  onClick={handleShare}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  <Share2 size={18} />
+                  <span className="font-medium">공유</span>
+                </button>
+              </div>
+            </article>
+
+            {/* Comments Section */}
+            <div className="bg-white rounded-xl shadow-md p-6 md:p-8 mt-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">
+                댓글 <span className="text-indigo-600">{post.comments.length}</span>
+              </h2>
+
+              {/* Comment Input */}
+              <div className="mb-8">
+                <textarea
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="댓글을 입력하세요..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                  rows={3}
+                />
+                <div className="flex justify-end mt-2">
+                  <button
+                    onClick={handleCommentSubmit}
+                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                  >
+                    댓글 작성
+                  </button>
+                </div>
+              </div>
+
+              {/* Comments List */}
+              <div className="space-y-6">
+                {post.comments.map((comment) => (
+                  <div key={comment.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                    <div className="flex items-start space-x-3">
+                      <div className="text-2xl flex-shrink-0">{comment.authorAvatar}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <span className="font-semibold text-gray-900">{comment.author}</span>
+                            <span className="text-sm text-gray-500 ml-2">{comment.createdAt}</span>
+                          </div>
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <MoreVertical size={16} />
+                          </button>
+                        </div>
+                        <p className="text-gray-700 mb-3">{comment.content}</p>
+                        <div className="flex items-center space-x-4">
+                          <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                            <ThumbsUp size={14} />
+                            <span>{comment.likes}</span>
+                          </button>
+                          <button className="text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                            답글
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">작성자의 다른 글</h3>
+              <div className="space-y-4">
+                <div className="pb-4 border-b border-gray-100">
+                  <h4 className="text-sm font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer line-clamp-2 mb-2">
+                    JavaScript 비동기 처리 완전 정복
+                  </h4>
+                  <p className="text-xs text-gray-500">2024-10-15</p>
+                </div>
+                <div className="pb-4 border-b border-gray-100">
+                  <h4 className="text-sm font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer line-clamp-2 mb-2">
+                    CSS Grid 레이아웃 실전 예제
+                  </h4>
+                  <p className="text-xs text-gray-500">2024-10-10</p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer line-clamp-2 mb-2">
+                    개발자 커리어 로드맵 정리
+                  </h4>
+                  <p className="text-xs text-gray-500">2024-10-05</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PostDetail;

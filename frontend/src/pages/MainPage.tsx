@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Users, Calendar, Star,ChevronRight, Heart, MessageCircle } from 'lucide-react';
 
 const MainPage = () => {
