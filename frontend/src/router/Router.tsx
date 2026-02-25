@@ -10,7 +10,7 @@ const PostDetailsPage = lazy(() => import("../pages/PostDetailPage.tsx"));
 const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'));
 const SignInPage = lazy(() => import("../pages/SignInPage.tsx"));
 const SignUpPage = lazy(() => import("../pages/SignUpPage.tsx"));
-const ProfilePage = lazy(() => import("../pages/Profile.tsx"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage.tsx"));
 const GoogleCallback = lazy(() => import("../api/GoogleCallback.tsx"));
 
 const layoutPageUrl = import.meta.env.VITE_REACT_APP_URL;
