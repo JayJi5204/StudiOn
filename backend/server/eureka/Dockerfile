@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
 
 COPY gradlew .
@@ -12,9 +12,11 @@ RUN ./gradlew :server:eureka:dependencies --no-daemon
 COPY server/eureka/src server/eureka/src
 RUN ./gradlew :server:eureka:clean :server:eureka:build -x test --no-daemon
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-RUN apk add --no-cache curl
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/server/eureka/build/libs/*.jar app.jar
 EXPOSE 8761
 

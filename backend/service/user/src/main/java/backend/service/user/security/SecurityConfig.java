@@ -63,8 +63,13 @@ public class SecurityConfig {
         http.httpBasic((auth) -> auth.disable());
 
         http.authorizeHttpRequests((auth) -> auth.
-                requestMatchers("/", "/api/users/create", // 회원가입 경로
-                        "/api/users/login", "/health-check", "/actuator/**", "/v3/api-docs/**",
+                requestMatchers("/",
+                        "/api/users/create",
+                        "/user-service/api/users/create",
+                        "/api/users/login",
+                        "/health-check",
+                        "/actuator/**",
+                        "/v3/api-docs/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html").permitAll().
                 requestMatchers("/api/auth/admin").hasRole("ADMIN").

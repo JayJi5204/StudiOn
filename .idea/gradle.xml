@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/backend" />
+        <option name="gradleJvm" value="21" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/backend" />
+            <option value="$PROJECT_DIR$/backend/common" />
+            <option value="$PROJECT_DIR$/backend/common/snowFlake" />
+            <option value="$PROJECT_DIR$/backend/server" />
+            <option value="$PROJECT_DIR$/backend/server/api-gateway" />
+            <option value="$PROJECT_DIR$/backend/server/config" />
+            <option value="$PROJECT_DIR$/backend/server/eureka" />
+            <option value="$PROJECT_DIR$/backend/service" />
+            <option value="$PROJECT_DIR$/backend/service/board" />
+            <option value="$PROJECT_DIR$/backend/service/comment" />
+            <option value="$PROJECT_DIR$/backend/service/user" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

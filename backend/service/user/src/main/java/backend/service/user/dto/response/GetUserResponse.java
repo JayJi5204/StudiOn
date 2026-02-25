@@ -1,7 +1,7 @@
 package backend.service.user.dto.response;
 
-import backend.service.board.dto.response.ResponseBoard;
-import backend.service.comment.dto.response.ResponseComment;
+import backend.service.user.dto.otherDto.BoardDto;
+import backend.service.user.dto.otherDto.CommentDto;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.enumType.UserRole;
 import lombok.Getter;
@@ -15,10 +15,10 @@ public class GetUserResponse {
     private String username;
     private Long userId;
     private UserRole role;
-    private List<ResponseBoard> boards;
-    private List<ResponseComment> comments;
+    private List<BoardDto> boards;
+    private List<CommentDto> comments;
 
-    public static GetUserResponse from(UserEntity entity, List<ResponseBoard> responseBoards, List<ResponseComment> responseComments) {
+    public static GetUserResponse from(UserEntity entity, List<BoardDto> responseBoards, List<CommentDto> responseComments) {
         GetUserResponse dto = new GetUserResponse();
         dto.email = entity.getEmail();
         dto.username = entity.getUsername();

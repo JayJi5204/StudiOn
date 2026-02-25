@@ -1,45 +1,40 @@
 server:
-  port: 0
+  port: 8081
 
 spring:
   application:
     name: user-service
 
+  output:
+    ansi:
+      enabled: "always"
+
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
   rabbitmq:
-    host: 127.0.0.1
+    host: rabbitmq
     port: 5672
     username: guest
     password: guest
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
-
-  output:
-    ansi:
-      enabled: "always"
 
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
-
-greeting:
-  message: User
+      defaultZone: http://eureka-server:8761/eureka
 
 management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, info, httpexchanges, busrefresh
-
-
-springdoc:
-  swagger-ui:
-    config-url: /user-service/v3/api-docs/swagger-config
-    url: /user-service/v3/api-docs
+        include: refresh, health, beans, info, busrefresh
