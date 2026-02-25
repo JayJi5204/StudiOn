@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import {authService} from '../services/auth.service';
+import { authService } from '../services/auth.service';
+import { usePosts } from '../hooks/usePosts';
 import useUserInfoStore from '../store/userInfoStore';
-import { postService } from '../services/posts.service';
-import type Post from '../types/posts.type';
 import PostsContent from '../components/profile/PostsContent';
 
 import {
@@ -53,20 +52,10 @@ const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [editForm,setEditForm] = useState(userInfo);
-    const [myPosts,setMyPosts] = useState<Post[]>([]);
-
-    useEffect(()=>{
-        const loadMyPosts = async () => {
-            const data = await postService.getPosts({
-                authorId:userInfo.id,
-                page:10,
-                limit:10,
-            });
-            // console.log(data)
-            setMyPosts(data);
-        };
-        loadMyPosts();
-    },[])
+    const { posts: myPosts} = usePosts(
+            { authorId: userInfo.id, page: 1, limit: 10 },
+            { requireAuth: false } // 이미 로그인된 상태이므로 requireAuth는 기본값 false
+        );
     
     // 사용자 정보
     // 통계 정보
