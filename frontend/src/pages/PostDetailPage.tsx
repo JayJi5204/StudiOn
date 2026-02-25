@@ -1,36 +1,17 @@
-import  { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Eye, ThumbsUp, MessageCircle, Clock, Bookmark, Share2, MoreVertical, Edit, Trash2, Flag } from 'lucide-react';
-import type Post from '../types/posts.type';
-import { postService } from '../services/posts.service';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router';
+import { usePost } from '../hooks/usePost';
 
 const PostDetail = () => {
   const navigate = useNavigate();
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { id } = useParams<{id:string}>();
+  const {post,setPost,isLoading} = usePost(Number(id))
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-
-  const { id } = useParams<{id:string}>();
-
-  useEffect(() => {
-    const loadPost = async () => {
-      try {
-        
-        const data = await postService.getPostById(Number(id));
-        
-        setPost(data);
-        setLoading(true);
-
-      } catch (error){
-          console.log(error)
-      }
-    }
-    loadPost();
-  },[id]);
 
   const handleBack = () => {
     navigate(-1);
@@ -55,7 +36,7 @@ const PostDetail = () => {
     }
   };
 
-  if (!loading) {
+  if (!isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
