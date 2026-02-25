@@ -3,6 +3,7 @@ import Router from "./router/Router.tsx";
 import { RouterProvider } from "react-router";
 import "./index.css";
 import { GoogleOAuthProvider} from '@react-oauth/google';
+import React from "react";
 
 const clientId = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID || '';
 
@@ -24,8 +25,10 @@ async function enableMocking() {
 
 enableMocking().then( ()=> {
   createRoot(document.getElementById("root")!).render(
-    <GoogleOAuthProvider clientId={clientId}>
-      <RouterProvider router={Router}></RouterProvider>
-    </GoogleOAuthProvider>
+    <React.StrictMode>
+      <GoogleOAuthProvider clientId={clientId}>
+        <RouterProvider router={Router}></RouterProvider>
+      </GoogleOAuthProvider>
+    </React.StrictMode>
   );
 })
