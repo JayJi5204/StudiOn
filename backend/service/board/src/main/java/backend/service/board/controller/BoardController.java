@@ -47,7 +47,7 @@ public class BoardController {
     }
 
     @Operation(summary = "사용자별 작성 게시글 조회", description = "특정 사용자가 작성한 모든 게시글을 리스트로 반환합니다.")
-    @GetMapping("/getBoard/{userId}")
+    @GetMapping("/users/{userId}")
     public List<BoardResponse> getBoardWhoCreate(
             @Parameter(description = "작성자 ID", example = "279296958190669824")
             @PathVariable("userId") Long userId) {

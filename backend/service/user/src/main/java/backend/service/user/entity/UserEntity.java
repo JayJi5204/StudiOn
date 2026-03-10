@@ -38,10 +38,10 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static UserEntity create(Long id, String username, String password, String email) {
+    public static UserEntity create(Long userId, String username, String password, String email) {
 
         UserEntity entity = new UserEntity();
-        entity.userId = id;
+        entity.userId = userId;
         entity.username = username;
         entity.password = password;
         entity.email = email;

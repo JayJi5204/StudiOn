@@ -10,6 +10,8 @@ import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
 import backend.service.user.entity.UserEntity;
+import backend.service.user.feignClient.BoardClient;
+import backend.service.user.feignClient.CommentClient;
 import backend.service.user.jwt.JwtUtil;
 import backend.service.user.messageQueue.KafkaProducer;
 import backend.service.user.repository.UserRepository;
@@ -17,13 +19,8 @@ import backend.service.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -32,13 +29,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final Environment env;
     private final Snowflake snowflake = new Snowflake();
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
-    private final RestTemplate restTemplate;
     private final KafkaProducer kafkaProducer;
+
+    private final BoardClient boardClient;
+    private final CommentClient commentClient;
 
     @Override
     public CreateResponse create(CreateRequest dto) {
@@ -54,7 +52,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UpdateResponse update(UpdateRequest dto, Long userId) {
-        UserEntity entity = userRepository.findUsersByUserId(userId);
+        UserEntity entity = userRepository.findByUserId(userId);
         log.info(userId);
         entity.update(dto.getUsername(), dto.getPassword(), dto.getEmail());
         userRepository.save(entity);
@@ -65,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public DeletedResponse delete(DeleteRequest dto, Long userId) {
-        UserEntity entity = userRepository.findUsersByUserId(userId);
+        UserEntity entity = userRepository.findByUserId(userId);
         entity.delete();
         KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
         kafkaProducer.send("user-delete", kafkaUserDto);
@@ -104,17 +102,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetUserResponse getUser(Long userId) {
-        UserEntity entity = userRepository.findUsersByUserId(userId);
-        String boardUrl = String.format(env.getProperty("board-service.url"), userId);
-        String commentUrl = String.format(env.getProperty("comment-service.url"), userId);
 
-        ResponseEntity<List<BoardDto>> responseBoardEntity = restTemplate.exchange(boardUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<BoardDto>>() {
-        });
-        List<BoardDto> responseBoards = responseBoardEntity.getBody();
+        UserEntity entity = userRepository.findByUserId(userId);
 
-        ResponseEntity<List<CommentDto>> responseCommentEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<CommentDto>>() {
-        });
-        List<CommentDto> responseComments = responseCommentEntity.getBody();
+        if (entity == null) {
+            throw new RuntimeException("존재하지 않는 사용자 입니다.");
+        }
+
+        List<BoardDto> responseBoards = boardClient.getBoards(userId);
+        List<CommentDto> responseComments = commentClient.getComments(userId);
+
         return GetUserResponse.from(entity, responseBoards, responseComments);
     }
 

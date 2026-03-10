@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class LoginResponse {
 
-    private Long userId;
+    private String userId;
     private String email;
     private String username;
     private UserRole role;
@@ -18,7 +18,7 @@ public class LoginResponse {
 
     public static LoginResponse from(UserEntity entity,String accessToken) {
         LoginResponse response = new LoginResponse();
-        response.userId = entity.getUserId();
+        response.userId = String.valueOf(entity.getUserId());
         response.email = entity.getEmail();
         response.username = entity.getUsername();
         response.role = entity.getRole();
