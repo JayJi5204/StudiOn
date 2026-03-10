@@ -29,7 +29,8 @@ services:
       - GITHUB_USERNAME=${GITHUB_USERNAME}
       - GITHUB_PASSWORD=${GITHUB_PASSWORD}
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 5s
@@ -57,6 +58,23 @@ services:
     networks:
       - studion-network
 
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - studion-network
+
   user-service:
     build:
       context: .
@@ -70,21 +88,50 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
-      mysql-user:
-        condition: service_started
+      mysql:
+        condition: service_healthy
       kafka:
         condition: service_started
     networks:
       - studion-network
 
-  mysql-user:
-    image: mysql:8.0
-    container_name: mysql-user
+  board-service:
+    build:
+      context: .
+      dockerfile: service/board/Dockerfile
+    container_name: board-service
     environment:
-      - MYSQL_DATABASE=user_db
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    ports:
-      - "3306:3306"
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${KAFKA_HOST}:${KAFKA_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - studion-network
+
+  comment-service:
+    build:
+      context: .
+      dockerfile: service/comment/Dockerfile
+    container_name: comment-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${KAFKA_HOST}:${KAFKA_PORT}
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - studion-network
 
