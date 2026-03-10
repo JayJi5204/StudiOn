@@ -3,15 +3,40 @@ import { ArrowLeft, Eye, ThumbsUp, MessageCircle, Clock, Bookmark, Share2, MoreV
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router';
 import { usePost } from '../hooks/usePost';
+import { usePosts} from '../hooks/usePosts'
+import { postService } from '../services/posts.service';
+import useUserInfoStore from '../store/userInfoStore';
 
 const PostDetail = () => {
+  const userInfo = useUserInfoStore((state) => state.userInfo);
   const navigate = useNavigate();
   const { id } = useParams<{id:string}>();
-  const {post,setPost,isLoading} = usePost(Number(id))
+  const { post,isLoading } = usePost(Number(id))
+  const { setPosts } = usePosts(
+            { authorId: userInfo.id, page: 1, limit: 10 },
+            { requireAuth: false } // 이미 로그인된 상태이므로 requireAuth는 기본값 false
+        );
+  
+  
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+
+
+  const handleDelete = async (deleteId:number) => {
+        //삭제된 아이디만 제외하고 목록을 새로 고침
+        try {
+          await postService.deletePost(deleteId);
+          setPosts(prevPosts => prevPosts.filter(post => post.id !== deleteId));
+          alert("삭제되었습니다.");
+          navigate(-1);
+        }
+        catch{
+          alert("삭제에 실패했습니다.");
+          navigate("/");
+        }
+    };
 
   const handleBack = () => {
     navigate(-1);
@@ -30,7 +55,25 @@ const PostDetail = () => {
   };
 
   const handleCommentSubmit = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    const formatted = `${year}-${month}-${day} ${hours}:${minutes}`;
+        
     if (commentText.trim()) {
+      post.comments.push({
+        id: post.comments.length + 1,
+        author: userInfo.username,
+        authorId: Number(userInfo.id),
+        authorAvatar: String(userInfo.avatar),
+        content: commentText,
+        createdAt: formatted,
+        likes: 0,
+      })
       alert('댓글이 작성되었습니다!');
       setCommentText('');
     }
@@ -87,19 +130,28 @@ const PostDetail = () => {
                     {post.category}
                   </span>
                   <div className="relative">
-                    <button
-                      onClick={() => setShowMoreMenu(!showMoreMenu)}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      <MoreVertical size={20} />
-                    </button>
+                    {(userInfo.role==='admin' || userInfo.id === post.authorId) && (
+                        <button
+                            onClick={() => setShowMoreMenu(!showMoreMenu)}
+                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                          >
+                          <MoreVertical size={20} />
+                        </button>
+                      )
+                    }
                     {showMoreMenu && (
                       <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700">
+                        <button 
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
+                          // onClick={}
+                        >
                           <Edit size={16} />
                           <span>수정</span>
                         </button>
-                        <button className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700">
+                        <button 
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
+                          onClick={() => {handleDelete(post.id)}}  
+                        >
                           <Trash2 size={16} />
                           <span>삭제</span>
                         </button>
@@ -223,38 +275,38 @@ const PostDetail = () => {
                   </button>
                 </div>
               </div>
-
-              {/* Comments List */}
-              <div className="space-y-6">
-                {post.comments.map((comment) => (
-                  <div key={comment.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
-                    <div className="flex items-start space-x-3">
-                      <div className="text-2xl flex-shrink-0">{comment.authorAvatar}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <span className="font-semibold text-gray-900">{comment.author}</span>
-                            <span className="text-sm text-gray-500 ml-2">{comment.createdAt}</span>
+              
+                {/* Comments List */}
+                <div className="space-y-6">
+                  {post.comments.length && post.comments.map((comment) => (
+                    <div key={comment.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                      <div className="flex items-start space-x-3">
+                        <div className="text-2xl flex-shrink-0">{comment.authorAvatar}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <span className="font-semibold text-gray-900">{comment.author}</span>
+                              <span className="text-sm text-gray-500 ml-2">{comment.createdAt}</span>
+                            </div>
+                            <button className="text-gray-400 hover:text-gray-600">
+                              <MoreVertical size={16} />
+                            </button>
                           </div>
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <MoreVertical size={16} />
-                          </button>
-                        </div>
-                        <p className="text-gray-700 mb-3">{comment.content}</p>
-                        <div className="flex items-center space-x-4">
-                          <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
-                            <ThumbsUp size={14} />
-                            <span>{comment.likes}</span>
-                          </button>
-                          <button className="text-sm text-gray-500 hover:text-indigo-600 transition-colors">
-                            답글
-                          </button>
+                          <p className="text-gray-700 mb-3">{comment.content}</p>
+                          <div className="flex items-center space-x-4">
+                            <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                              <ThumbsUp size={14} />
+                              <span>{comment.likes}</span>
+                            </button>
+                            <button className="text-sm text-gray-500 hover:text-indigo-600 transition-colors">
+                              답글
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
             </div>
           </div>
 

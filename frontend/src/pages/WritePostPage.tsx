@@ -37,14 +37,14 @@ const WritePostPage = () => {
             alert('제목, 내용, 카테고리를 모두 입력해주세요.');
             return;
         }
-        // 여기에 게시글 저장 로직 추가
+        // 게시글 저장 로직 추가
         postService.createPost({
                 title,
                 content,
                 category: selectedCategory,
                 tags,
             }, 
-            userInfo.id
+            Number(userInfo.id)
         );
         alert('게시글이 작성되었습니다!');
         navigate(communityPageUrl);

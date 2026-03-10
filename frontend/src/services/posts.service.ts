@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type Post from '../types/posts.type';
+import type { Posts,Post } from '../types/posts.type';
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL_COMMUNITY_BOARD;
 
@@ -17,17 +17,16 @@ export const postService = {
   },
   getPosts: async (
       params:{
-        authorId?:number; 
         page?:number; 
         limit?:number
       }
     ): Promise<Post[]> => {
 
-      const response = await axios.get<Post[]>(API_URL,{
+      const response = await axios.get<Posts>(API_URL,{
           params // axios가 자동으로 ?userId=1&page=1... 형태로 변환
       });
     
-    return response.data;
+    return response.data.posts;
   },
 
   getPostById: async ( 
