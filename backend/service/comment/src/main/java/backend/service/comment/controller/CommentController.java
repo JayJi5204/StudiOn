@@ -61,7 +61,7 @@ public class CommentController {
     }
 
     @Operation(summary = "사용자별 댓글 목록 조회", description = "특정 사용자가 작성한 모든 댓글을 조회합니다.")
-    @GetMapping("/getCommentWithUserId/{userId}")
+    @GetMapping("/users/{userId}")
     public List<CommentResponseDto> getBoardWhoCreateWithUserId(
             @Parameter(description = "사용자 ID", example = "279296958190669820") @PathVariable("userId") Long userId) {
         return commentService.getBoardWhoCreateWithUserId(userId);
