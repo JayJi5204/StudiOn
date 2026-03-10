@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { authService } from '../services/auth.service';
 import { usePosts } from '../hooks/usePosts';
 import useUserInfoStore from '../store/userInfoStore';
-import PostsContent from '../components/profile/PostsContent';
+import MyPostsContent from '../components/profile/MyPostsContent';
 
 import {
     User,
@@ -52,9 +52,9 @@ const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [editForm,setEditForm] = useState(userInfo);
-    const { posts: myPosts} = usePosts(
-            { authorId: userInfo.id, page: 1, limit: 10 },
-            { requireAuth: false } // 이미 로그인된 상태이므로 requireAuth는 기본값 false
+    const { posts } = usePosts(
+            { page: 1, limit: 10 },
+            Boolean(userInfo.loggedin)
         );
     
     // 사용자 정보
@@ -214,9 +214,10 @@ const ProfilePage = () => {
             case 'studies':
                 return <StudiesContent />;
             case 'posts':
-                return <PostsContent
-                            myPosts={myPosts}
-                        />;
+                return <MyPostsContent
+                            myPosts={posts}  // 위에서 선언한 posts 변수
+                            userId={Number(userInfo.id)}  // 현재 컨텍스트의 userId 변수
+                        />
             case 'achievements':
                 return <AchievementsContent />;
             default:

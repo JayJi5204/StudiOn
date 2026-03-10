@@ -1,4 +1,8 @@
-export default interface Post {
+export interface Posts {
+  posts: Post[];
+}
+
+export interface Post {
   id: number;
   title: string;
   content: string;
@@ -17,6 +21,7 @@ export default interface Post {
 interface Comment {
   id: number;
   author: string;
+  authorId: number;
   authorAvatar: string;
   content: string;
   createdAt: string;
