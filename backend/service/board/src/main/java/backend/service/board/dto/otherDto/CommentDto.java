@@ -1,14 +1,13 @@
 package backend.service.board.dto.otherDto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentDto {
-    private final Long commentId;
-    private final String content;
-
-    public CommentDto(Long commentId, String content) {
-        this.commentId = commentId;
-        this.content = content;
-    }
+    private Long commentId;
+    private String content;
 }

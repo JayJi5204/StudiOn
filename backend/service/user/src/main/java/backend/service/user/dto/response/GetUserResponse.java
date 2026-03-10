@@ -8,21 +8,23 @@ import lombok.Getter;
 
 import java.util.List;
 
-
 @Getter
 public class GetUserResponse {
+
     private String email;
     private String username;
-    private Long userId;
+    private String userId;
     private UserRole role;
     private List<BoardDto> boards;
     private List<CommentDto> comments;
 
-    public static GetUserResponse from(UserEntity entity, List<BoardDto> responseBoards, List<CommentDto> responseComments) {
+    public static GetUserResponse from(UserEntity entity,
+                                       List<BoardDto> responseBoards,
+                                       List<CommentDto> responseComments) {
         GetUserResponse dto = new GetUserResponse();
         dto.email = entity.getEmail();
         dto.username = entity.getUsername();
-        dto.userId = entity.getUserId();
+        dto.userId = String.valueOf(entity.getUserId());
         dto.role = entity.getRole();
         dto.boards = responseBoards;
         dto.comments = responseComments;

@@ -10,7 +10,9 @@ import java.util.List;
 
 @Getter
 public class GetBoardResponse {
-    private Long userId;
+
+    private String boardId;
+    private String userId;
     private String title;
     private String content;
     private LocalDateTime createAt;
@@ -18,13 +20,17 @@ public class GetBoardResponse {
     private List<CommentDto> comment;
 
     public static GetBoardResponse from(BoardEntity entity, List<CommentDto> responseComments) {
+
         GetBoardResponse dto = new GetBoardResponse();
-        dto.userId = entity.getUserId();
+
+        dto.boardId = String.valueOf(entity.getBoardId());
+        dto.userId = String.valueOf(entity.getUserId());
         dto.title = entity.getTitle();
         dto.content = entity.getContent();
         dto.createAt = entity.getCreateAt();
         dto.modifiedAt = entity.getModifiedAt();
         dto.comment = responseComments;
+
         return dto;
     }
 }
