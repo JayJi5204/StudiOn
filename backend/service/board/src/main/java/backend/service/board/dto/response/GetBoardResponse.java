@@ -1,7 +1,7 @@
 package backend.service.board.dto.response;
 
+import backend.service.board.dto.otherDto.CommentDto;
 import backend.service.board.entity.BoardEntity;
-import backend.service.comment.dto.response.ResponseComment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -15,9 +15,9 @@ public class GetBoardResponse {
     private String content;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
-    private List<ResponseComment> comment;
+    private List<CommentDto> comment;
 
-    public static GetBoardResponse from(BoardEntity entity, List<ResponseComment> responseComments) {
+    public static GetBoardResponse from(BoardEntity entity, List<CommentDto> responseComments) {
         GetBoardResponse dto = new GetBoardResponse();
         dto.userId = entity.getUserId();
         dto.title = entity.getTitle();

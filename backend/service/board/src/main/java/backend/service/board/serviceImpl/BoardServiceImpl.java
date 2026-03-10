@@ -2,6 +2,7 @@ package backend.service.board.serviceImpl;
 
 import backend.security.common.Snowflake;
 import backend.service.board.common.PageLimitCalculator;
+import backend.service.board.dto.otherDto.CommentDto;
 import backend.service.board.dto.request.BoardCreateRequestDto;
 import backend.service.board.dto.request.BoardUpdateRequestDto;
 import backend.service.board.dto.response.BoardResponse;
@@ -12,7 +13,6 @@ import backend.service.board.entity.BoardEntity;
 import backend.service.board.messageQueue.KafkaProducer;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardService;
-import backend.service.comment.dto.response.ResponseComment;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -88,9 +88,9 @@ public class BoardServiceImpl implements BoardService {
     public GetBoardResponse getBoard(Long boardId) {
         BoardEntity entity = boardRepository.findBoardsByBoardId(boardId);
         String commentUrl = String.format(env.getProperty("comment-service.url"), boardId);
-        ResponseEntity<List<ResponseComment>> responseEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseComment>>() {
+        ResponseEntity<List<CommentDto>> responseEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<CommentDto>>() {
         });
-        List<ResponseComment> responseComments = responseEntity.getBody();
+        List<CommentDto> responseComments = responseEntity.getBody();
         return GetBoardResponse.from(entity, responseComments);
     }
 

@@ -1,9 +1,9 @@
 package backend.service.user.serviceImpl;
 
 import backend.security.common.Snowflake;
-import backend.service.board.dto.response.ResponseBoard;
-import backend.service.comment.dto.response.ResponseComment;
 import backend.service.user.dto.kafka.KafkaUserDto;
+import backend.service.user.dto.otherDto.BoardDto;
+import backend.service.user.dto.otherDto.CommentDto;
 import backend.service.user.dto.request.CreateRequest;
 import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
@@ -108,13 +108,13 @@ public class UserServiceImpl implements UserService {
         String boardUrl = String.format(env.getProperty("board-service.url"), userId);
         String commentUrl = String.format(env.getProperty("comment-service.url"), userId);
 
-        ResponseEntity<List<ResponseBoard>> responseBoardEntity = restTemplate.exchange(boardUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseBoard>>() {
+        ResponseEntity<List<BoardDto>> responseBoardEntity = restTemplate.exchange(boardUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<BoardDto>>() {
         });
-        List<ResponseBoard> responseBoards = responseBoardEntity.getBody();
+        List<BoardDto> responseBoards = responseBoardEntity.getBody();
 
-        ResponseEntity<List<ResponseComment>> responseCommentEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<ResponseComment>>() {
+        ResponseEntity<List<CommentDto>> responseCommentEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<CommentDto>>() {
         });
-        List<ResponseComment> responseComments = responseCommentEntity.getBody();
+        List<CommentDto> responseComments = responseCommentEntity.getBody();
         return GetUserResponse.from(entity, responseBoards, responseComments);
     }
 
