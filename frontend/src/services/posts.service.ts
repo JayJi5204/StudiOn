@@ -39,9 +39,10 @@ export const postService = {
   },
 
   updatePost: async (
-    id:number,data:Partial<Post>
+    id:number,
+    postData:Partial<Post>
   ):Promise<Post> => {
-    const response = await axios.put<Post>(`${API_URL}/${id}`,data);
+    const response = await axios.patch<Post>(`${API_URL}/updatepost/post/${id}`,postData);
     return response.data;
   },
   

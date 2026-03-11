@@ -11,21 +11,34 @@ const PostDetail = () => {
   const userInfo = useUserInfoStore((state) => state.userInfo);
   const navigate = useNavigate();
   const { id } = useParams<{id:string}>();
-  const { post,isLoading } = usePost(Number(id))
+  const { post,isLoading } = usePost(Number(id));
   const { setPosts } = usePosts(
-            { authorId: userInfo.id, page: 1, limit: 10 },
-            { requireAuth: false } // 이미 로그인된 상태이므로 requireAuth는 기본값 false
+            { page: 1, limit: 10 },
+            Boolean(userInfo.loggedin)
         );
-  
   
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-
+      
+  const handleEdit = () => {
+    const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_UPDATE_POST;
+    navigate(`${updatePostPageUrl}/post/${id}`, { 
+        state: { 
+            postData: {
+                id: post.id,
+                title: post.title,
+                content: post.content,
+                category: post.category,
+                tags: post.tags
+            } 
+        } 
+    });
+  };
 
   const handleDelete = async (deleteId:number) => {
-        //삭제된 아이디만 제외하고 목록을 새로 고침
+        //삭제할 포스트를 제외하고 목록을 새로 고침
         try {
           await postService.deletePost(deleteId);
           setPosts(prevPosts => prevPosts.filter(post => post.id !== deleteId));
@@ -143,7 +156,7 @@ const PostDetail = () => {
                       <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                         <button 
                           className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
-                          // onClick={}
+                          onClick={handleEdit}
                         >
                           <Edit size={16} />
                           <span>수정</span>

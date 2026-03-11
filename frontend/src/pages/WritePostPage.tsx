@@ -1,23 +1,30 @@
 import { useState } from 'react';
 import { X,FileText, Save, Eye, ChevronDown } from 'lucide-react';
 import { postService } from '../services/posts.service';
-import { useNavigate } from 'react-router';
+import { useLocation,useNavigate } from 'react-router';
 import useUserInfoStore from '../store/userInfoStore';
+import type { Post } from '../types/posts.type';
 
 const WritePostPage = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const editData = location.state.postData as Post;
+    const isEditMode = !!editData;
     const {userInfo} = useUserInfoStore();
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [tags, setTags] = useState<string[]>([]);
+
+    const [title, setTitle] = useState(editData.title || '');
+    const [content, setContent] = useState(editData.content || '');
+    const [selectedCategory, setSelectedCategory] = useState(editData.category || '');
+    const [tags, setTags] = useState<string[]>(editData.tags || []);
+
     const [tagInput, setTagInput] = useState('');
     const [showCategoryMenu, setShowCategoryMenu] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
 
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
     const categories = ['자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
-
+    
     const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && tagInput.trim() !== '') {
             e.preventDefault();
@@ -37,17 +44,42 @@ const WritePostPage = () => {
             alert('제목, 내용, 카테고리를 모두 입력해주세요.');
             return;
         }
-        // 게시글 저장 로직 추가
-        postService.createPost({
-                title,
-                content,
-                category: selectedCategory,
-                tags,
-            }, 
-            Number(userInfo.id)
-        );
-        alert('게시글이 작성되었습니다!');
-        navigate(communityPageUrl);
+
+        try {
+
+            if (isEditMode) {
+                //게시글 수정 로직 추가
+                const res = await postService.updatePost(
+                    Number(editData.id),
+                    {
+                        title,
+                        content,
+                        category: selectedCategory,
+                        tags,
+                    }, 
+                )
+                alert('게시글이 작성되었습니다!');
+                navigate(communityPageUrl);
+                console.log("수정 성공:", res);
+            } else {
+                
+                // 게시글 저장 로직 추가
+                const res = await postService.createPost({
+                        title,
+                        content,
+                        category: selectedCategory,
+                        tags,
+                    }, 
+                    Number(userInfo.id)
+                );
+                console.log("수정 성공:", res);
+                alert('게시글이 작성되었습니다!');
+                navigate(communityPageUrl);
+            }
+        } catch (error) { 
+            console.error("저장 실패:", error);
+            alert('저장에 실패했습니다.');
+        }
 
     };
 
