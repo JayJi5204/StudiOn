@@ -56,6 +56,33 @@ const testGetPosts = http.get(API_URL_COMMUNITY_BOARD, ({ request }) => {
     }
 });
 
+const testUpdatePost = http.patch(`${API_URL_COMMUNITY_BOARD}/updatepost/post/:id`, async ({ params, request }) => {
+    const { id } = params;
+    const updateData = await request.json() as any; // 클라이언트가 보낸 수정 데이터
+
+    // 1. DB에서 해당 ID를 가진 포스트의 인덱스 찾기
+    const idx = POSTS_DB.posts.findIndex(post => post.id === Number(id));
+
+    // 2. 해당 포스트가 없을 경우 404 에러 반환
+    if (idx === -1) {
+        return new HttpResponse(null, {
+            status: 404,
+            statusText: 'Post not found',
+        });
+    }
+
+    // 3. 기존 데이터 유지 + 새로운 데이터로 덮어쓰기 (업데이트)
+    POSTS_DB.posts[idx] = {
+        ...POSTS_DB.posts[idx], // 기존 데이터 (id, author 등)
+        ...updateData,          // 수정된 데이터 (title, content 등)
+    };
+
+    console.log(`[MSW] ${id}번 게시글 수정 완료:`, POSTS_DB.posts[idx]);
+
+    // 4. 업데이트된 전체 객체 반환
+    return HttpResponse.json(id, { status: 200 });
+});
+
 const testCreatePost = http.post(API_URL_COMMUNITY_BOARD, async ({ request }) => {
   const newPost = (await request.json()) as any;
   console.log('받은 새 게시글 데이터:', newPost);
@@ -175,4 +202,5 @@ export const handlers = [
   testGetPosts,
   testCreatePost,
   testDeletePosts,
+  testUpdatePost
 ];

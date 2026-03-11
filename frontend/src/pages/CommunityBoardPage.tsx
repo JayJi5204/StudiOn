@@ -304,16 +304,16 @@ const CommunityBoard= () => {
                         <h3 className="text-lg font-bold text-gray-900 mb-4">게시판 통계</h3>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">전체 게시글</span>
-                            <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
+                                <span className="text-gray-600">전체 게시글</span>
+                                <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">오늘 작성</span>
-                            <span className="text-lg font-bold text-green-600">{todayPostsCount}</span>
+                                <span className="text-gray-600">오늘 작성</span>
+                                <span className="text-lg font-bold text-green-600">{todayPostsCount}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">활성 회원</span>
-                            <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
+                                <span className="text-gray-600">활성 회원</span>
+                                <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
                             </div>
                         </div>
                     </div>
