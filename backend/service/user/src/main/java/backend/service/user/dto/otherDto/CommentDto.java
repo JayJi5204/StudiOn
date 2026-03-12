@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CommentDto {
 
-    private Long boardId;
-    private Long commentId;
+    private String boardId;
+    private String commentId;
     private String content;
     private String parentPath;
 }
