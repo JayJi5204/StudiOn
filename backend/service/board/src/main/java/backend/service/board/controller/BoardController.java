@@ -32,7 +32,7 @@ public class BoardController {
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID를 통해 상세 내용을 조회합니다.")
     @GetMapping("/get/{boardId}")
     public GetBoardResponse getBoard(
-            @Parameter(description = "조회할 게시글 ID", example = "1")
+            @Parameter(description = "조회할 게시글 ID", example = "290374683355869184")
             @PathVariable Long boardId) {
         return boardService.getBoard(boardId);
     }
