@@ -10,15 +10,13 @@ import backend.service.board.dto.response.DeletedResponse;
 import backend.service.board.dto.response.GetBoardResponse;
 import backend.service.board.dto.response.PageResponseDto;
 import backend.service.board.entity.BoardEntity;
+import backend.service.board.feignClient.CommentClient;
 import backend.service.board.messageQueue.KafkaProducer;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,15 +28,14 @@ public class BoardServiceImpl implements BoardService {
 
     private final Snowflake snowflake = new Snowflake();
     private final BoardRepository boardRepository;
-    private final Environment env;
-    private final RestTemplate restTemplate;
     private final KafkaProducer kafkaProducer;
+    private final CommentClient commentClient;
 
 
     @Transactional
     public BoardResponse create(BoardCreateRequestDto dto) {
         BoardEntity boardEntity = boardRepository.save(
-                BoardEntity.create(snowflake.nextId(), dto.getUserId(), dto.getTitle(), dto.getContent())
+                BoardEntity.create(snowflake.nextId(), dto.getUserId(), dto.getTitle(), dto.getContent(),dto.getCategory())
 
         );
 
@@ -80,17 +77,15 @@ public class BoardServiceImpl implements BoardService {
         List<BoardEntity> entities = boardRepository.findAllByUserId(userId);
 
         return entities.stream()
-                .map(BoardResponse::from) // 혹은 직접 빌더/생성자 사용
+                .map(BoardResponse::from)
                 .toList();
     }
 
     @Override
     public GetBoardResponse getBoard(Long boardId) {
         BoardEntity entity = boardRepository.findBoardsByBoardId(boardId);
-        String commentUrl = String.format(env.getProperty("comment-service.url"), boardId);
-        ResponseEntity<List<CommentDto>> responseEntity = restTemplate.exchange(commentUrl, HttpMethod.GET, null, new ParameterizedTypeReference<List<CommentDto>>() {
-        });
-        List<CommentDto> responseComments = responseEntity.getBody();
+        List<CommentDto> responseComments = commentClient.getComments(boardId);
+
         return GetBoardResponse.from(entity, responseComments);
     }
 
