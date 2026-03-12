@@ -1,8 +1,7 @@
 package backend.service.board.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import backend.service.board.enumType.Category;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,15 +18,18 @@ public class BoardEntity {
     private Long userId;
     private String title;
     private String content;
+    @Enumerated(EnumType.STRING)
+    private Category category;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
 
-    public static BoardEntity create(Long boardId,Long userId, String title, String content) {
+    public static BoardEntity create(Long boardId, Long userId, String title, String content,Category category) {
         BoardEntity boardEntity = new BoardEntity();
         boardEntity.boardId = boardId;
-        boardEntity.userId=userId;
+        boardEntity.userId = userId;
         boardEntity.title = title;
         boardEntity.content = content;
+        boardEntity.category = category;
         boardEntity.createAt = LocalDateTime.now();
         boardEntity.modifiedAt = boardEntity.createAt;
         return boardEntity;
