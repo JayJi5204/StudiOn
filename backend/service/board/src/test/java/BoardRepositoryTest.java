@@ -14,12 +14,5 @@ public class BoardRepositoryTest {
     @Autowired
     BoardRepository boardRepository;
 
-    @Test
-    void findAllTest(){
-        List<BoardEntity> boardEntityList=boardRepository.findAll(1L,1L,1L);
-        log.info("size = "+boardEntityList.size());
-        for (BoardEntity boardEntity : boardEntityList) {
-            log.info("board = {}",boardEntity);
-        }
-    }
+
 }
