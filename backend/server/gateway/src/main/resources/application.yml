@@ -15,12 +15,6 @@ spring:
   config:
     import: "optional:configserver:"
 
-  rabbitmq:
-    host: rabbitmq
-    port: 5672
-    username: guest
-    password: guest
-
   output:
     ansi:
       enabled: "always"
@@ -93,7 +87,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, info, httpexchanges, busrefresh
+        include: refresh, health, beans, info, httpexchanges
 
 springdoc:
   api-docs:

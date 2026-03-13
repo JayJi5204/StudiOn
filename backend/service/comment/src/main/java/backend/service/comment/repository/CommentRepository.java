@@ -6,14 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
 
-    // JPQL은 엔티티 이름을 사용하므로 그대로 두셔도 됩니다.
     @Query(value = "select c from CommentEntity c where c.commentPath.path = :path")
     Optional<CommentEntity> findByPath(@Param("path") String path);
 

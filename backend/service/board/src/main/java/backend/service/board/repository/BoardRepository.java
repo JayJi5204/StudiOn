@@ -1,50 +1,21 @@
 package backend.service.board.repository;
 
 import backend.service.board.entity.BoardEntity;
+import backend.service.board.enumType.Category;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
+
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
-    @Query(value = """
-        SELECT b.board_id, b.board_key, b.title, b.content, b.create_at, b.modified_at
-        FROM (
-            SELECT board_id
-            FROM boards
-            WHERE board_key = :boardKey
-            ORDER BY board_id DESC
-            LIMIT :limit OFFSET :offset
-        ) t
-        LEFT JOIN boards b ON t.board_id = b.board_id
-        """, nativeQuery = true
-    )
-    List<BoardEntity> findAll(
-            @Param("boardKey") Long boardKey,
-            @Param("offset") Long offset,
-            @Param("limit") Long limit
-    );
+    Page<BoardEntity> findAll(Pageable pageable);
 
-    @Query(value = """
-        SELECT COUNT(*)
-        FROM (
-            SELECT board_id
-            FROM boards
-            WHERE board_key = :boardKey
-            LIMIT :limit
-        ) t
-        """, nativeQuery = true
-    )
-    Long count(
-            @Param("boardKey") Long boardKey,
-            @Param("limit") Long limit
-    );
+    Page<BoardEntity> findByCategory(Category category, Pageable pageable);
 
     List<BoardEntity> findAllByUserId(Long userId);
-
-    BoardEntity findBoardsByBoardId(Long boardId);
-
 }

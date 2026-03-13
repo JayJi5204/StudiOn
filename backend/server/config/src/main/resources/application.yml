@@ -1,6 +1,9 @@
 server:
   port: 8888
 
+encrypt:
+  key: ${ENCRYPT_KEY}
+
 eureka:
   client:
     register-with-eureka: true
@@ -11,12 +14,6 @@ eureka:
 spring:
   application:
     name: config-server
-
-  rabbitmq:
-    host: rabbitmq
-    port: 5672
-    username: guest
-    password: guest
 
   output:
     ansi:
@@ -36,4 +33,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, info, httpexchanges, busrefresh
+        include: refresh, health, beans, info, httpexchanges
