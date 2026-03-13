@@ -11,11 +11,7 @@ public interface CommentService {
 
     CommentResponseDto create(CommentCreateRequestDto commentCreateRequestDto);
 
-    CommentResponseDto get(Long commentId);
-
     DeletedResponse delete(Long commentId);
-
-    CommentPageResponse getAll(Long boardId, Long page, Long pageSize);
 
     List<CommentResponseDto> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
 
