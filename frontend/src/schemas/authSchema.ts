@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import type IUser from '../types/user.type';
+import type { IUser } from '../types/user.type';
 
 export const signinSchema = Yup.object().shape({
   username: Yup.string()
