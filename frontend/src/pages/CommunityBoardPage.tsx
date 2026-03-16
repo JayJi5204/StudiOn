@@ -19,13 +19,6 @@ const CommunityBoard= () => {
     //activeMembers 추후 수정 
     const activeMembers = 8934;
 
-    const todayPostsCount = useMemo(() => {
-        const today = new Date().toDateString();
-        return posts.filter(post => 
-            new Date(post.createdAt).toDateString() === today
-        ).length;
-    }, [posts]);
-
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
     const [sortBy, setSortBy] = useState('latest');
@@ -42,7 +35,7 @@ const CommunityBoard= () => {
                               
         return matchesCategory && matchesSearch;
     });
-
+    
     const sortedPosts = [...filteredPosts].sort((a, b) => {
         switch(sortBy) {
             case 'popular':
@@ -308,10 +301,6 @@ const CommunityBoard= () => {
                                 <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-gray-600">오늘 작성</span>
-                                <span className="text-lg font-bold text-green-600">{todayPostsCount}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
                                 <span className="text-gray-600">활성 회원</span>
                                 <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
                             </div>
@@ -345,6 +334,6 @@ const CommunityBoard= () => {
             </div>
         </div>
     );
-    };
+};
 
 export default CommunityBoard;

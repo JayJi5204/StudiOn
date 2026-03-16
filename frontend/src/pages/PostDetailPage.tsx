@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { ArrowLeft, Eye, ThumbsUp, MessageCircle, Clock, Bookmark, Share2, MoreVertical, Edit, Trash2, Flag } from 'lucide-react';
-import { useParams } from 'react-router';
-import { useNavigate } from 'react-router';
+import { useNavigate,useParams } from 'react-router';
 import { usePost } from '../hooks/usePost';
-import { usePosts} from '../hooks/usePosts'
+import { usePosts} from '../hooks/usePosts';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
+import CommentSection from '../components/comunityboard/CommentSection';
 
-const PostDetail = () => {
+const PostDetailPage = () => {
   const userInfo = useUserInfoStore((state) => state.userInfo);
   const navigate = useNavigate();
   const { id } = useParams<{id:string}>();
@@ -19,7 +19,6 @@ const PostDetail = () => {
   
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
       
   const handleEdit = () => {
@@ -65,31 +64,6 @@ const PostDetail = () => {
 
   const handleShare = () => {
     alert('링크가 클립보드에 복사되었습니다!');
-  };
-
-  const handleCommentSubmit = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-
-    const formatted = `${year}-${month}-${day} ${hours}:${minutes}`;
-        
-    if (commentText.trim()) {
-      post.comments.push({
-        id: post.comments.length + 1,
-        author: userInfo.username,
-        authorId: Number(userInfo.id),
-        authorAvatar: String(userInfo.avatar),
-        content: commentText,
-        createdAt: formatted,
-        likes: 0,
-      })
-      alert('댓글이 작성되었습니다!');
-      setCommentText('');
-    }
   };
 
   if (!isLoading) {
@@ -202,10 +176,12 @@ const PostDetail = () => {
                       <ThumbsUp size={16} />
                       <span>{post.likes}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
+                  
+                    {/* <div className="flex items-center space-x-1">
                       <MessageCircle size={16} />
                       <span>{post.comments.length}</span>
-                    </div>
+                    </div> */}
+                    
                   </div>
                 </div>
               </div>
@@ -263,64 +239,11 @@ const PostDetail = () => {
                 </button>
               </div>
             </article>
-
-            {/* Comments Section */}
-            <div className="bg-white rounded-xl shadow-md p-6 md:p-8 mt-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                댓글 <span className="text-indigo-600">{post.comments.length}</span>
-              </h2>
-
-              {/* Comment Input */}
-              <div className="mb-8">
-                <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="댓글을 입력하세요..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                  rows={3}
-                />
-                <div className="flex justify-end mt-2">
-                  <button
-                    onClick={handleCommentSubmit}
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                  >
-                    댓글 작성
-                  </button>
-                </div>
-              </div>
-              
-                {/* Comments List */}
-                <div className="space-y-6">
-                  {post.comments.length && post.comments.map((comment) => (
-                    <div key={comment.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
-                      <div className="flex items-start space-x-3">
-                        <div className="text-2xl flex-shrink-0">{comment.authorAvatar}</div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <span className="font-semibold text-gray-900">{comment.author}</span>
-                              <span className="text-sm text-gray-500 ml-2">{comment.createdAt}</span>
-                            </div>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <MoreVertical size={16} />
-                            </button>
-                          </div>
-                          <p className="text-gray-700 mb-3">{comment.content}</p>
-                          <div className="flex items-center space-x-4">
-                            <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
-                              <ThumbsUp size={14} />
-                              <span>{comment.likes}</span>
-                            </button>
-                            <button className="text-sm text-gray-500 hover:text-indigo-600 transition-colors">
-                              답글
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-            </div>
+            <CommentSection
+              postId={post.id}
+              initialComments={post.comments}
+              userInfo={userInfo}
+            />
           </div>
 
           {/* Sidebar */}
@@ -355,4 +278,4 @@ const PostDetail = () => {
   );
 };
 
-export default PostDetail;
+export default PostDetailPage;
