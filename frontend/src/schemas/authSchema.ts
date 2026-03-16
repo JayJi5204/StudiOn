@@ -1,5 +1,4 @@
 import * as Yup from 'yup';
-import type { IUser } from '../types/user.type';
 
 export const signinSchema = Yup.object().shape({
   email: Yup.string()
@@ -46,12 +45,12 @@ export const signupSchema = Yup.object().shape({
 });
 
 export const signinInitialValues = {
-  username: '',
+  email: '',
   password: '',
   rememberMe: false,
 };
 
-export const signupInitialValues:IUser = {
+export const signupInitialValues = {
   username: '',
   password: '',
   confirmPassword: '',
