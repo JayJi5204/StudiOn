@@ -1,10 +1,9 @@
 import * as Yup from 'yup';
-import type { IUser } from '../types/user.type';
 
 export const signinSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(2, '사용자명은 2자 이상이어야 합니다.')
-    .required('사용자명을 입력하세요'),
+  email: Yup.string()
+    .email("유효한 이메일 주소가 아닙니다.")
+    .required("이메일을 입력하세요"),
   password: Yup.string()
     .min(8, '비밀번호는 최소 8자 이상입니다.')
     .matches(
@@ -46,12 +45,12 @@ export const signupSchema = Yup.object().shape({
 });
 
 export const signinInitialValues = {
-  username: '',
+  email: '',
   password: '',
   rememberMe: false,
 };
 
-export const signupInitialValues:IUser = {
+export const signupInitialValues = {
   username: '',
   password: '',
   confirmPassword: '',

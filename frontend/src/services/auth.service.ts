@@ -30,13 +30,13 @@ export const authService = {
     },
 
     login: async (
-        username:string,
+        email:string,
         password:string
     ) => {
         const response = await axios.post(`${BASE_API_URL}/login`, {
-            username,
+            email,
             password
-            });
+        });
             
         if (response.data.accessToken) {
             sessionStorage.setItem("user", JSON.stringify(response.data.userInfo));

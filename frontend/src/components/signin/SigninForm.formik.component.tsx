@@ -1,6 +1,6 @@
 import {useState } from 'react';
 import { Formik, Form} from 'formik';
-import SigninUserField from './SigninUserField.formik.component'; 
+import SigninEmailField from './SigninEmailField.formik.component'; 
 import SigninPasswordField from './SigninPassworField.formik.component'; 
 import SigninRememberMe from './SigninRememberMeField.component';
 import SigninSubmitButton from '../button/SubmitButton';
@@ -16,11 +16,12 @@ const SigninForm = () => {
     const [message,setMessage] = useState<string>('');
     const {userInfo,setUserInfo } = useUserInfoStore();
 
-    const handleSignin = (formValue:{username:string,password:string}) => {
-        const {username,password} = formValue;
+    const handleSignin = (formValue:{email:string,password:string}) => {
+        const {email,password} = formValue;
         setMessage('');
-        
-        authService.login(username,password).then(response => {
+        console.log('FormValue:',email,password);
+
+        authService.login(email,password).then(response => {
             const userData = response.data;
             if (userData.accessToken !== 'mocked-jwt-token-xyz') {
                 setMessage('정상적인 로그인 응답이 아닙니다.');
@@ -37,7 +38,6 @@ const SigninForm = () => {
             navigate('/');
         }).catch(error => {
             setMessage(error.response.data.message);
-            alert('로그인에 실패했습니다: ' + error.response.data.message);
             navigate('/');
         });
         
@@ -58,7 +58,7 @@ const SigninForm = () => {
                     onSubmit={handleSignin}
                 >
                     <Form>
-                        <SigninUserField />
+                        <SigninEmailField />
                         <SigninPasswordField />
                         <SigninRememberMe />
                         <SigninSubmitButton

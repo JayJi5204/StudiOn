@@ -7,7 +7,7 @@ import SignupPasswordField from './SignupPasswordField.formik.component';
 import SignupConfirmPasswordField from './SignupConfirmPasswordField';
 import SignupTermsAgreementField from './SignupTermsAgreementField';
 import SignupPrivacyAgreementField from './SignupPrivacyAgreementField';
-import SignupPhoneNumberField from './SignupPhoneNumberField';
+import SignupPhoneNumberField from './SignupPhoneNumberField.formik';
 import SubmitButton from '../button/SubmitButton';
 import Consent from '../footer/Consent.component';
 import { signupInitialValues, signupSchema } from '../../schemas/authSchema';

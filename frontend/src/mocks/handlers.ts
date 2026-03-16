@@ -4,21 +4,16 @@ import { POSTS_DB } from "./postDB";
 import type { Comment } from "../types/posts.type";
 
 const API_URL_USERS = import.meta.env.VITE_REACT_APP_API_URL_USERS;
-const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE;
-const API_URL_COMMUNITY_BOARD = import.meta.env
-  .VITE_REACT_APP_URL_COMMUNITY_BOARD;
-const testUpdateComment = http.put(
-  `${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,
-  async ({ params, request }) => {
-    const { id } = params;
-    const editComment = (await request.json()) as Comment;
-    const idx = POSTS_DB.posts.findIndex((post) => post.id === Number(id));
-    if (idx === -1) {
-      return HttpResponse.json(null, {
-        status: 404,
-        statusText: "Post Not found",
-      });
-    }
+const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE
+const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
+
+const testUpdateComment = http.put(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
+  const {id} = params
+  const editComment = await request.json() as Comment;
+  const idx = POSTS_DB.posts.findIndex(post => post.id === Number(id))
+  if (idx === -1) {
+    return HttpResponse.json(null,{status:404,statusText:"Post Not found"});
+  }
 
     POSTS_DB.posts[idx].comments[editComment.id] = editComment;
 
@@ -154,15 +149,12 @@ const testLogOut = http.post(`${API_URL_USERS}/logout`, async () => {
 });
 
 const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
-  const { username, password } = (await request.json()) as any;
-  const user = USER_DB.users.find(
-    (u) => u.username === username && u.password == password,
-  );
-
-  if (user) {
-    return HttpResponse.json(
-      {
-        accessToken: "mocked-jwt-token-xyz", // signin 함수에서 체크하는 키
+    const { email, password } = await (request.json()) as any
+    const user = USER_DB.users.find(u => u.email === email && u.password == password)
+    console.log(email,password,user,USER_DB.users)
+    if (user) {
+      return HttpResponse.json({
+        accessToken: 'mocked-jwt-token-xyz', // signin 함수에서 체크하는 키
         // 로그인 성공 시 유저 정보를 한꺼번에 응답!
         userInfo: user,
       },
@@ -186,10 +178,8 @@ const testSignup = http.post(`${API_URL_USERS}/create`, async ({ request }) => {
 
   if (isDuplicate) {
     return new HttpResponse(
-      JSON.stringify({
-        message: "이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.",
-      }),
-      {
+      JSON.stringify({ message: '이메일 또는 비밀번호가 틀렸습니다.' }),
+      { 
         status: 401,
         headers: { "Content-Type": "application/json" },
       },
