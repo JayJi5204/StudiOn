@@ -6,7 +6,6 @@ import type { Comment } from '../types/posts.type';
 const API_URL_USERS = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE
 const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
-const API_URL_LOGOUT = import.meta.env.VITE_REACT_APP_AUTH_API_URL_LOGOUT
 
 const testUpdateComment = http.put(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
   const {id} = params
@@ -132,9 +131,9 @@ const testLogOut = http.post(`${API_URL_USERS}/logout`, async () => {
 });
 
 const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
-    const { username, password } = (await request.json()) as any;
-    const user = USER_DB.users.find(u => u.username === username && u.password == password)
-    
+    const { email, password } = await (request.json()) as any
+    const user = USER_DB.users.find(u => u.email === email && u.password == password)
+    console.log(email,password,user,USER_DB.users)
     if (user) {
       return HttpResponse.json({
         accessToken: 'mocked-jwt-token-xyz', // signin 함수에서 체크하는 키
@@ -144,7 +143,7 @@ const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
     }
 
     return new HttpResponse(
-      JSON.stringify({ message: '아이디 또는 비밀번호가 틀렸습니다.' }),
+      JSON.stringify({ message: '이메일 또는 비밀번호가 틀렸습니다.' }),
       { 
         status: 401,
         headers: { 'Content-Type': 'application/json' }
