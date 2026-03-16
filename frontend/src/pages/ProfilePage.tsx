@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import React,{ useState} from 'react';
 import { useNavigate } from 'react-router';
 import { authService } from '../services/auth.service';
 import { usePosts } from '../hooks/usePosts';
 import useUserInfoStore from '../store/userInfoStore';
 import MyPostsContent from '../components/profile/MyPostsContent';
-
+import { TabButton } from '../components/button/TabButton';
+import { QuickActionButton } from '../components/button/QuickActionButton';
 import {
     User,
     Mail,
@@ -23,9 +24,16 @@ import {
     Clock,
     Users,
 } from 'lucide-react';
+import type { IUser } from '../types/user.type';
+
+interface StudyProgressBarProps {
+    progress:number,
+}
 
 // 스터디 진행도 바 컴포넌트
-const StudyProgressBar = ({ progress }: { progress: number }) => {
+const StudyProgressBar = ({ 
+    progress 
+}: StudyProgressBarProps ) => {
     const getColor = (p:number) => {
         if (p === 100) return 'bg-green-500';
         if (p > 70) return 'bg-blue-500';
@@ -50,8 +58,8 @@ const ProfilePage = () => {
 
     const {userInfo,setUserInfo} = useUserInfoStore();
     const [isEditing, setIsEditing] = useState(false);
-    const [activeTab, setActiveTab] = useState('overview');
-    const [editForm,setEditForm] = useState(userInfo);
+    const [activeTab, setActiveTab] = useState<string>('overview');
+    const [editForm,setEditForm] = useState<IUser>(userInfo);
     const { posts } = usePosts(
             { page: 1, limit: 10 },
             Boolean(userInfo.loggedin)
@@ -343,8 +351,8 @@ const ProfilePage = () => {
 
                             {/* Quick Actions */}
                             <div className='space-y-2 mt-6 pt-6 border-t border-gray-200'>
-                                <QuickActionButton icon={Settings} label='설정' />
-                                <QuickActionButton icon={Bell} label='알림' />
+                                <QuickActionButton icon={<Settings/>} label='설정' />
+                                <QuickActionButton icon={<Bell/>} label='알림' />
                                 <button
                                     onClick={() => {
                                         authService.logout(userInfo).then(() => {
@@ -397,35 +405,22 @@ const ProfilePage = () => {
     );
 };
 
+
+interface StatsItemProps {
+    value:number, 
+    label:string, 
+    color:string,
+};
 // 보조 컴포넌트: 통계 항목
-const StatItem = ({ value, label, color }) => (
+const StatItem = ({ 
+    value, 
+    label, 
+    color 
+}:StatsItemProps) => (
     <div className='text-center p-2 bg-gray-50 rounded-xl shadow-inner'>
         <div className={`text-2xl font-extrabold ${color}`}>{value}</div>
         <div className='text-sm text-gray-600 font-medium'>{label}</div>
     </div>
 );
-
-// 보조 컴포넌트: 빠른 실행 버튼
-const QuickActionButton = ({ icon: Icon, label }) => (
-    <button className='w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-colors font-medium'>
-        <Icon className="w-5 h-5 text-indigo-500" />
-        <span>{label}</span>
-    </button>
-);
-
-// 보조 컴포넌트: 탭 버튼
-const TabButton = ({ tabKey, activeTab, setActiveTab, label }) => (
-    <button
-        onClick={() => setActiveTab(tabKey)}
-        className={`pb-3 px-3 sm:px-4 font-bold text-sm sm:text-base transition-colors duration-200 border-b-2 ${
-            activeTab === tabKey
-                ? 'text-indigo-600 border-indigo-600'
-                : 'text-gray-600 border-transparent hover:border-gray-300 hover:text-gray-900'
-        } whitespace-nowrap`}
-    >
-        {label}
-    </button>
-);
-
 
 export default ProfilePage;
