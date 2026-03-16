@@ -1,11 +1,22 @@
 import { useState } from 'react';
-import { ArrowLeft, Eye, ThumbsUp, MessageCircle, Clock, Bookmark, Share2, MoreVertical, Edit, Trash2, Flag } from 'lucide-react';
 import { useNavigate,useParams } from 'react-router';
 import { usePost } from '../hooks/usePost';
 import { usePosts} from '../hooks/usePosts';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
 import CommentSection from '../components/comunityboard/CommentSection';
+import { 
+  ArrowLeft, 
+  Eye, 
+  ThumbsUp, 
+  Clock, 
+  Bookmark, 
+  Share2, 
+  MoreVertical, 
+  Edit, 
+  Trash2, 
+  Flag 
+} from 'lucide-react';
 
 const PostDetailPage = () => {
   const userInfo = useUserInfoStore((state) => state.userInfo);
