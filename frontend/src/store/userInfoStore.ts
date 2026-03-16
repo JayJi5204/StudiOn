@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type IUser from '../types/user.type';
+import type { IUser } from '../types/user.type';
 
 const initialUserInfo = {
     id:0,
