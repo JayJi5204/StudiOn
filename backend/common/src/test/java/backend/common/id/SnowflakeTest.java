@@ -1,4 +1,4 @@
-package backend.security.common;
+package backend.common.id;
 
 import org.junit.jupiter.api.Test;
 

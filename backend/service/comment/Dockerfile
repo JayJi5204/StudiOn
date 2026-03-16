@@ -9,16 +9,15 @@ COPY build.gradle .
 COPY settings.gradle .
 RUN chmod +x gradlew
 
-# 각 모듈의 build.gradle 복사 (계층 구조 유지)
-COPY common/snowFlake/build.gradle common/snowFlake/
+# 모듈 build.gradle 복사
+COPY common/build.gradle common/
 COPY service/comment/build.gradle service/comment/
 
-# 의존성 다운로드 (캐싱 활용)
+# 의존성 캐싱
 RUN ./gradlew :service:comment:dependencies --no-daemon
 
-# [핵심 수정] 실제 존재하는 소스 폴더만 정확히 복사
-# common 바로 밑에는 src가 없으므로 snowFlake의 src만 가져옵니다.
-COPY common/snowFlake/src common/snowFlake/src
+# 소스 복사
+COPY common/src common/src
 COPY service/comment/src service/comment/src
 
 # 빌드 수행

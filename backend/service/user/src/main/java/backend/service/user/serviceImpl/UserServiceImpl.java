@@ -1,7 +1,6 @@
 package backend.service.user.serviceImpl;
 
-import backend.security.common.Snowflake;
-import backend.service.user.dto.kafka.KafkaUserDto;
+import backend.common.id.Snowflake;
 import backend.service.user.dto.otherDto.BoardDto;
 import backend.service.user.dto.otherDto.CommentDto;
 import backend.service.user.dto.request.CreateRequest;
@@ -13,7 +12,7 @@ import backend.service.user.entity.UserEntity;
 import backend.service.user.feignClient.BoardClient;
 import backend.service.user.feignClient.CommentClient;
 import backend.service.user.jwt.JwtUtil;
-import backend.service.user.messageQueue.KafkaProducer;
+import backend.service.user.kafka.KafkaProducer;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,10 +42,6 @@ public class UserServiceImpl implements UserService {
 
         UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUsername(), encoder.encode(dto.getPassword()), dto.getEmail()));
 
-        KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
-
-        kafkaProducer.send("user-create", kafkaUserDto);
-
         return CreateResponse.from(entity);
     }
 
@@ -56,8 +51,6 @@ public class UserServiceImpl implements UserService {
         log.info(userId);
         entity.update(dto.getUsername(), dto.getPassword(), dto.getEmail());
         userRepository.save(entity);
-        KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
-        kafkaProducer.send("user-update", kafkaUserDto);
         return UpdateResponse.from(entity);
     }
 
@@ -65,8 +58,6 @@ public class UserServiceImpl implements UserService {
     public DeletedResponse delete(DeleteRequest dto, Long userId) {
         UserEntity entity = userRepository.findByUserId(userId);
         entity.delete();
-        KafkaUserDto kafkaUserDto = KafkaUserDto.from(entity);
-        kafkaProducer.send("user-delete", kafkaUserDto);
         return DeletedResponse.from(entity);
     }
 
