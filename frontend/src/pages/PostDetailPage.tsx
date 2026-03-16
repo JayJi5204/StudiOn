@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Eye, ThumbsUp, MessageCircle, Clock, Bookmark, Share2, MoreVertical, Edit, Trash2, Flag } from 'lucide-react';
+import { ArrowLeft, Eye, ThumbsUp, Clock, Bookmark, Share2, MoreVertical, Edit, Trash2, Flag } from 'lucide-react';
 import { useNavigate,useParams } from 'react-router';
 import { usePost } from '../hooks/usePost';
 import { usePosts} from '../hooks/usePosts';
