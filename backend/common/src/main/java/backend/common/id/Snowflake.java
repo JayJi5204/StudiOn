@@ -1,6 +1,5 @@
-package backend.security.common;
+package backend.common.id;
 
-import java.util.random.RandomGenerator;
 
 public class Snowflake {
 	private static final int UNUSED_BITS = 1;
