@@ -29,6 +29,7 @@ type UserInfoState = {
 }
 
 type UserInfoAction = {
+    getUserInfo: () => IUser;
     setUserInfo: (newUserInfo: IUser) => void;
     updateUserInfo: (key: keyof IUser, value: IUser[keyof IUser]) => void;
     updateAvatar: (newAvatar: string) => void;
@@ -36,8 +37,9 @@ type UserInfoAction = {
 
 const useUserInfoStore = create<UserInfoState & UserInfoAction>()(
     persist(
-        (set) => ({
+        (set,get) => ({
             userInfo: initialUserInfo,
+            getUserInfo: () => get().userInfo,
             setUserInfo: (newUserInfo) => set({ userInfo: newUserInfo }),
             updateUserInfo: (key, value) => set((state) => ({
                 userInfo: { ...state.userInfo, [key]: value }

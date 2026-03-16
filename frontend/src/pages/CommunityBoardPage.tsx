@@ -1,56 +1,23 @@
-import {useState,useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router';
+import {useState, useMemo } from 'react';
+import { Link} from 'react-router';
 import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, Filter, ChevronDown, Bookmark, Share2 } from 'lucide-react';
 import useUserInfoStore from '../store/userInfoStore';
-import { postService } from '../services/posts.service';
-import type Post from '../types/posts.type';
-import DeleteButton from '../components/button/DeleteButton';
-
+import { usePosts } from '../hooks/usePosts';
 
 const CommunityBoard= () => {
-    const navigate = useNavigate();
     const userloggedIn = useUserInfoStore((state) => state.userInfo.loggedin);
-    const userRole = useUserInfoStore((state) => state.userInfo.role); 
-    
-    const [posts,setPosts] = useState<Post[]>([]);
-    const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
+    const { posts } = usePosts(
+            { page: 1, limit: 10 },
+            Boolean(userloggedIn)
+        );
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
 
-    useEffect(()=>{
-        if (!userloggedIn) {
-            alert('자유게시판은 로그인 후 이용 가능합니다.');
-            navigate(signinPageUrl);
-        }
-    });
-
-    useEffect(() => {
-        const loadPosts = async () => {
-            try {
-                const data = await postService.getPosts({
-                    page:10,
-                    limit:20,
-                });
-               
-                setPosts(data);
-            } catch (error) {
-                console.error('❌ 게시글 로드 실패:', error);
-            }
-        };
-        loadPosts();
-    }, []);
 
     // 데이터 기반 파생 값 계산 (Memoization)
     // posts가 변경될 때만 다시 계산되어 성능과 가독성을 모두 잡습니다.
     const totalPosts = posts.length;
     //activeMembers 추후 수정 
     const activeMembers = 8934;
-
-    const todayPostsCount = useMemo(() => {
-        const today = new Date().toDateString();
-        return posts.filter(post => 
-            new Date(post.createdAt).toDateString() === today
-        ).length;
-    }, [posts]);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -68,7 +35,7 @@ const CommunityBoard= () => {
                               
         return matchesCategory && matchesSearch;
     });
-
+    
     const sortedPosts = [...filteredPosts].sort((a, b) => {
         switch(sortBy) {
             case 'popular':
@@ -91,11 +58,6 @@ const CommunityBoard= () => {
             case 'comments': return '댓글순';
             default: return '최신순';
         }
-    };
-
-    const handleDelete = async (deleteId:number) => {
-        //삭제된 아이디만 제외하고 목록을 새로 고침
-        setPosts(prevPosts => prevPosts.filter(post => post.id !== deleteId));
     };
 
     return (
@@ -250,12 +212,6 @@ const CommunityBoard= () => {
                                             </span>
                                         ))}
                                     </div>
-                                    {userRole === 'admin' &&
-                                        <DeleteButton
-                                            postId={post.id}
-                                            onDeleteSuccess={handleDelete}
-                                        />
-                                    }
                                 </div>
 
                                 {/* Post Stats */}
@@ -341,16 +297,12 @@ const CommunityBoard= () => {
                         <h3 className="text-lg font-bold text-gray-900 mb-4">게시판 통계</h3>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">전체 게시글</span>
-                            <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
+                                <span className="text-gray-600">전체 게시글</span>
+                                <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">오늘 작성</span>
-                            <span className="text-lg font-bold text-green-600">{todayPostsCount}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                            <span className="text-gray-600">활성 회원</span>
-                            <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
+                                <span className="text-gray-600">활성 회원</span>
+                                <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
                             </div>
                         </div>
                     </div>
@@ -382,6 +334,6 @@ const CommunityBoard= () => {
             </div>
         </div>
     );
-    };
+};
 
 export default CommunityBoard;

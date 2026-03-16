@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/posts.service';
-import type Post from '../types/posts.type';
+import type { Post } from '../types/posts.type';
 
 interface UsePostsReturn {
   posts: Post[];
@@ -12,34 +12,25 @@ interface UsePostsReturn {
 interface PostQueryParams {
   page: number;
   limit: number;
-  authorId?: number;
-}
-
-interface UsePostsOptions {
-  userloggedIn?: boolean, 
-  redirectUrl?: string,
-  requireAuth: boolean; // 인증 체크 여부 선택
 }
 
 export const usePosts = (
-  params: PostQueryParams = {page:1,limit:10},  
-  options: UsePostsOptions
+  params: PostQueryParams,  
+  userloggedIn: boolean,
 ): UsePostsReturn => {
 
-  const { userloggedIn, redirectUrl, requireAuth} = options;
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  //데이터 로드 (파라미터 변경 시에만 실행)
   useEffect(() => {
-    // 1. 인증 체크
-    if (requireAuth && !userloggedIn && redirectUrl) {
+    if (!userloggedIn) {
       alert('게시글은 로그인 후 이용 가능합니다.');
-      navigate(redirectUrl);
-      return;
+      navigate('/');
+      return
     }
 
-    // 2. 데이터 로드
     const loadPosts = async () => {
       try {
         setIsLoading(true);
@@ -51,11 +42,9 @@ export const usePosts = (
         setIsLoading(false);
       }
     };
-
     loadPosts();
-    // params 객체의 변화를 감지하기 위해 JSON 문자열화하여 의존성 주입하거나, 
-    // 주요 값들을 개별적으로 주입
-  }, [userloggedIn, navigate, redirectUrl, requireAuth, params.authorId, params.page]); // 의존성 배열 관리
-
+    
+  }, [params.page,params.limit]); // 실제 요청에 필요한 값만!
   return { posts, setPosts, isLoading };
 };
+
