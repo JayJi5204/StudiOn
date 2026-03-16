@@ -1,4 +1,4 @@
-import {useState, useMemo } from 'react';
+import {useState } from 'react';
 import { Link} from 'react-router';
 import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, Filter, ChevronDown, Bookmark, Share2 } from 'lucide-react';
 import useUserInfoStore from '../store/userInfoStore';
@@ -12,9 +12,6 @@ const CommunityBoard= () => {
         );
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
 
-
-    // 데이터 기반 파생 값 계산 (Memoization)
-    // posts가 변경될 때만 다시 계산되어 성능과 가독성을 모두 잡습니다.
     const totalPosts = posts.length;
     //activeMembers 추후 수정 
     const activeMembers = 8934;

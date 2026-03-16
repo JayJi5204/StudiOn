@@ -1,5 +1,5 @@
 import axios from "axios";
-import type IUser from "../types/user.type";
+import type { IUser } from "../types/user.type";
 
 
 const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN;
@@ -17,6 +17,11 @@ export const authService = {
 
     //추후 수정
     getUser: async () => {
+        const response = await axios.get(API_URL_SIGNIN);
+        return response;
+    },
+    //추후 수정
+    getUserById: async () => {
         const response = await axios.get(API_URL_SIGNIN);
         return response;
     },
