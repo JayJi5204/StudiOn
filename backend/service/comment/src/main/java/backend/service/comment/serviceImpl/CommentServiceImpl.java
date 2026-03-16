@@ -10,10 +10,10 @@ import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
 import backend.service.comment.service.CommentService;
 import jakarta.transaction.Transactional;
-import backend.security.common.Snowflake;
+import backend.common.id.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import backend.service.comment.messageQueue.KafkaProducer;
+import backend.service.comment.kafka.KafkaProducer;
 import java.util.List;
 
 import static java.util.function.Predicate.not;
@@ -41,7 +41,6 @@ public class CommentServiceImpl implements CommentService {
                         requestDto.getUserId(),
                         requestDto.getBoardId()));
 
-        kafkaProducer.send("create-comment-topic", requestDto);
         return CommentResponseDto.from(comment);
     }
 
