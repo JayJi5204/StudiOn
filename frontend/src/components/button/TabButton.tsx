@@ -1,4 +1,4 @@
-interface TabButton {
+interface TabButtonProps {
     tabKey:string;
     activeTab:string;
     setActiveTab:React.Dispatch<React.SetStateAction<string>>;
@@ -6,7 +6,7 @@ interface TabButton {
 }
 
 // 보조 컴포넌트: 탭 버튼
-export const TabButton = ({ tabKey, activeTab, setActiveTab, label }:TabButton) => (
+export const TabButton = ({ tabKey, activeTab, setActiveTab, label }:TabButtonProps) => (
     <button
         onClick={() => setActiveTab(tabKey)}
         className={`pb-3 px-3 sm:px-4 font-bold text-sm sm:text-base transition-colors duration-200 border-b-2 ${

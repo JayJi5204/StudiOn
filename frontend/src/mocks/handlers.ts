@@ -3,8 +3,7 @@ import { USER_DB } from './userDB'
 import { POSTS_DB } from './postDB';
 import type { Comment } from '../types/posts.type';
 
-const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN
-const API_URL_SIGNUP = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNUP
+const API_URL_USERS = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE
 const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
 const API_URL_LOGOUT = import.meta.env.VITE_REACT_APP_AUTH_API_URL_LOGOUT
@@ -128,11 +127,11 @@ const testCreatePost = http.post(API_URL_COMMUNITY_BOARD, async ({ request }) =>
     return HttpResponse.json(postWithId, { status: 200 });
 });
 
-const testLogOut = http.post(API_URL_LOGOUT, async () => {
+const testLogOut = http.post(`${API_URL_USERS}/logout`, async () => {
     return HttpResponse.json({ message: '로그아웃 성공' }, { status: 200 });
 });
 
-const testSignin = http.post(API_URL_SIGNIN, async ({ request }) => {
+const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
     const { username, password } = (await request.json()) as any;
     const user = USER_DB.users.find(u => u.username === username && u.password == password)
     
@@ -153,7 +152,7 @@ const testSignin = http.post(API_URL_SIGNIN, async ({ request }) => {
     );
   })
 
-const testSignup = http.post(API_URL_SIGNUP, async({ request }) => {
+const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
     const { username, password, email,phoneNumber } = (await request.json()) as any;
     const isDuplicate = USER_DB.users.some(user => user.username === username)
     
