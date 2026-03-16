@@ -18,7 +18,11 @@ export interface Post {
   tags: string[];
 }
 
-interface Comment {
+export interface comments {
+  comments:Comment[]
+}
+
+export interface Comment {
   id: number;
   author: string;
   authorId: number;

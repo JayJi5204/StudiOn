@@ -1,12 +1,41 @@
 import { http, HttpResponse } from 'msw';
 import { USER_DB } from './userDB'
 import { POSTS_DB } from './postDB';
+import type { Comment } from '../types/posts.type';
 
 const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN
 const API_URL_SIGNUP = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNUP
 const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE
-const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_API_URL_COMMUNITY_BOARD
+const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
 const API_URL_LOGOUT = import.meta.env.VITE_REACT_APP_AUTH_API_URL_LOGOUT
+
+const testUpdateComment = http.put(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
+  const {id} = params
+  const editComment = await request.json() as Comment;
+  const idx = POSTS_DB.posts.findIndex(post => post.id === Number(id))
+  if (idx === -1) {
+    return HttpResponse.json(null,{status:404,statusText:"Post Not found"});
+  }
+
+  POSTS_DB.posts[idx].comments[editComment.id] = editComment 
+
+  return HttpResponse.json(editComment,{status:200})
+
+});
+
+const testCreateComment = http.post(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
+  
+  const {id} = params
+  const newComment = await request.json() as Comment;
+  const idx = POSTS_DB.posts.findIndex(post => post.id === Number(id))
+  if (idx === -1) {
+    return HttpResponse.json(null,{status:404,statusText:"Post Not found"});
+  }
+
+  POSTS_DB.posts[idx].comments.push(newComment)
+
+  return HttpResponse.json(newComment,{status:200})
+})
 
 const testGetPostDetail = http.get(`${API_URL_COMMUNITY_BOARD}/:id`,({params}) => {
   const {id} = params;
@@ -202,5 +231,7 @@ export const handlers = [
   testGetPosts,
   testCreatePost,
   testDeletePosts,
-  testUpdatePost
+  testUpdatePost,
+  testCreateComment,
+  testUpdateComment,
 ];
