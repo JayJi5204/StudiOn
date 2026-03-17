@@ -4,19 +4,20 @@ export interface IUser {
     password: string;
     confirmPassword?: string;
     phoneNumber:string;
-    studyTime?:Number;
+    studyTime:Number;
     email: string;
-    bio?: string;
-    location?: string;
-    joinDate?: string;
-    role?: string;
-    avatar?: string;
-    loggedin?: boolean;
-    rememberMe?: boolean;
-    agreeTerms?: boolean;
-    agreePrivacy?: boolean;
-    JWT?:string;
-    Refresh?:string;
-    isDeleted?:boolean;
+    bio: string;
+    location: string;
+    joinDate: string;
+    role: string;
+    avatar: string;
+    loggedin: boolean;
+    rememberMe: boolean;
+    agreeTerms: boolean;
+    agreePrivacy: boolean;
+    JWT:string;
+    Refresh:string;
+    isDeleted:boolean;
+    accessToken:string;
 }
 

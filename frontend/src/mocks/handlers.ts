@@ -134,11 +134,13 @@ const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
     const { email, password } = await (request.json()) as any
     const user = USER_DB.users.find(u => u.email === email && u.password == password)
     console.log(email,password,user,USER_DB.users)
+    
     if (user) {
+      const { password, ...userInfoWithoutPassword } = user;
+
       return HttpResponse.json({
-        accessToken: 'mocked-jwt-token-xyz', // signin 함수에서 체크하는 키
-        // 로그인 성공 시 유저 정보를 한꺼번에 응답!
-        userInfo: user
+        ...userInfoWithoutPassword,
+        accessToken: 'mocked-jwt-token-xyz'
       }, { status: 200 });
     }
 
@@ -180,7 +182,8 @@ const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
       loggedin: false,
       joinDate: `${year}년 ${month}월 ${date}일`,
       role: 'user',
-      avatar: '👨‍💻'
+      avatar: '👨‍💻',
+      accessToken:''
     }
 
     USER_DB.users.push(newUser);
