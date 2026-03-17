@@ -1,0 +1,88 @@
+version: "3"
+
+services:
+  eureka-server:
+    image: jayji5204/eureka:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - studion-network
+
+  config-server:
+    image: jayji5204/config:latest
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka-server
+    networks:
+      - studion-network
+
+  gateway-server:
+    image: jayji5204/gateway:latest
+    container_name: gateway-server
+    ports:
+      - "8000:8000"
+    depends_on:
+      - eureka-server
+      - config-server
+    networks:
+      - studion-network
+
+  user-service:
+    image: jayji5204/user:latest
+    container_name: user-service
+    depends_on:
+      - config-server
+      - mysql
+    networks:
+      - studion-network
+
+  board-service:
+    image: jayji5204/board:latest
+    container_name: board-service
+    depends_on:
+      - config-server
+      - mysql
+    networks:
+      - studion-network
+
+  comment-service:
+    image: jayji5204/comment:latest
+    container_name: comment-service
+    depends_on:
+      - config-server
+      - mysql
+    networks:
+      - studion-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    networks:
+      - studion-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    networks:
+      - studion-network
+
+  frontend:
+    image: jayji5204/frontend:latest
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - gateway-server
+    networks:
+      - studion-network
+
+networks:
+  studion-network:
+    driver: bridge
