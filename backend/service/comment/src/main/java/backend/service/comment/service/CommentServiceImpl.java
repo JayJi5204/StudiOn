@@ -1,4 +1,4 @@
-package backend.service.comment.serviceImpl;
+package backend.service.comment.service;
 
 import backend.service.comment.common.PageLimitCalculator;
 import backend.service.comment.dto.request.CommentCreateRequestDto;
@@ -8,7 +8,6 @@ import backend.service.comment.dto.response.DeletedResponse;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
-import backend.service.comment.service.CommentService;
 import jakarta.transaction.Transactional;
 import backend.common.id.Snowflake;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package backend.service.user.serviceImpl;
+package backend.service.user.service;
 
 import backend.common.id.Snowflake;
 import backend.service.user.dto.otherDto.BoardDto;
@@ -11,10 +11,9 @@ import backend.service.user.dto.response.*;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.feignClient.BoardClient;
 import backend.service.user.feignClient.CommentClient;
-import backend.service.user.jwt.JwtUtil;
+import backend.common.jwt.JwtUtil;
 import backend.service.user.kafka.KafkaProducer;
 import backend.service.user.repository.UserRepository;
-import backend.service.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -78,8 +77,6 @@ public class UserServiceImpl implements UserService {
         String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString());
 
         String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString());
-
-        response.addHeader("accessToken", accessToken);
 
         return LoginResponse.from(entity, accessToken);
     }

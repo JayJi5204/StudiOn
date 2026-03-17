@@ -1,4 +1,4 @@
-package backend.service.board.serviceImpl;
+package backend.service.board.service;
 
 import backend.common.id.Snowflake;
 import backend.common.event.board.BoardDeleteEvent;
@@ -14,7 +14,6 @@ import backend.service.board.enumType.Category;
 import backend.service.board.feignClient.CommentClient;
 import backend.service.board.kafka.KafkaProducer;
 import backend.service.board.repository.BoardRepository;
-import backend.service.board.service.BoardService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -1,4 +1,4 @@
-package backend.service.board.config; // 각 서비스 패키지에 맞게 수정
+package backend.service.board.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

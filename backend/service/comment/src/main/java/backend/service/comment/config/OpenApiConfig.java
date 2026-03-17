@@ -1,4 +1,4 @@
-package backend.service.comment.config; // 각 서비스 패키지에 맞게 수정
+package backend.service.comment.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -20,7 +20,7 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        String jwtSchemeName = "jwtAuth";
+        String jwtSchemeName = "jwtAuth"; // 보안 스키마 이름
 
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
 

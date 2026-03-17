@@ -34,7 +34,12 @@ spring:
             - id: user-service-public
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/health-check, /user-service/api/users/create, /user-service/api/users/login, /user-service/v3/api-docs/**, /user-service/swagger-ui/**, /user-service/swagger-ui.html
+                - Path=/user-service/health-check, 
+                  /user-service/api/users/create, 
+                  /user-service/api/users/login, 
+                  /user-service/v3/api-docs/**, 
+                  /user-service/swagger-ui/**, 
+                  /user-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
@@ -52,7 +57,10 @@ spring:
             - id: board-service-public
               uri: lb://BOARD-SERVICE
               predicates:
-                - Path=/board-service/health-check, /board-service/v3/api-docs/**, /board-service/swagger-ui/**, /board-service/swagger-ui.html
+                - Path=/board-service/health-check, 
+                  /board-service/v3/api-docs/**, 
+                  /board-service/swagger-ui/**, 
+                  /board-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/board-service/(?<segment>.*),/$\{segment}
@@ -70,7 +78,10 @@ spring:
             - id: comment-service-public
               uri: lb://COMMENT-SERVICE
               predicates:
-                - Path=/comment-service/health-check, /comment-service/v3/api-docs/**, /comment-service/swagger-ui/**, /comment-service/swagger-ui.html
+                - Path=/comment-service/health-check, 
+                  /comment-service/v3/api-docs/**, 
+                  /comment-service/swagger-ui/**, 
+                  /comment-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
