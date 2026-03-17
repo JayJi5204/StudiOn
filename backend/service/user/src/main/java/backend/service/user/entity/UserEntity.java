@@ -38,7 +38,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static UserEntity create(Long userId, String username, String password, String email) {
+    public static UserEntity create(Long userId, String username, String password, String email, String adminPassword) {
 
         UserEntity entity = new UserEntity();
         entity.userId = userId;
@@ -47,7 +47,12 @@ public class UserEntity {
         entity.email = email;
         entity.createAt = LocalDateTime.now();
         entity.isDeleted = false;
-        entity.role = UserRole.USER;
+
+        if (adminPassword == null) {
+            entity.role = UserRole.USER;
+        } else {
+            entity.role = UserRole.ADMIN;
+        }
 
         return entity;
     }
@@ -58,14 +63,7 @@ public class UserEntity {
         this.email = email;
     }
 
-    public void delete(){
-        this.isDeleted=true;
+    public void delete() {
+        this.isDeleted = true;
     }
-
-
-    public void jwtFilter(String email,UserRole role){
-        this.email=email;
-        this.role=role;
-    }
-
 }
