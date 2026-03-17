@@ -1,9 +1,8 @@
-package backend.service.user.jwt;
+package backend.common.jwt;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys; // 💡 Keys 클래스 import
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 
@@ -11,7 +10,6 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@Component
 public class JwtUtil {
 
     private final SecretKey secretKey;
@@ -67,8 +65,6 @@ public class JwtUtil {
                 .getExpiration()
                 .before(new Date());
     }
-
-    // JwtUtil.java (수정 제안)
 
     // 🚨 매개변수에 userId 추가
     public String createAccessToken(String userId, String email, String role) {
