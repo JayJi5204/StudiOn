@@ -22,6 +22,7 @@ const initialUserInfo = {
     JWT:'',
     Refresh:'',
     isDeleted:false,
+    accessToken:''
 };
 
 type UserInfoState = {

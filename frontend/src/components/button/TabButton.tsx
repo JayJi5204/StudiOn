@@ -6,7 +6,12 @@ interface TabButtonProps {
 }
 
 // 보조 컴포넌트: 탭 버튼
-export const TabButton = ({ tabKey, activeTab, setActiveTab, label }:TabButtonProps) => (
+export const TabButton = ({ 
+    tabKey, 
+    activeTab, 
+    setActiveTab, 
+    label 
+}:TabButtonProps) => (
     <button
         onClick={() => setActiveTab(tabKey)}
         className={`pb-3 px-3 sm:px-4 font-bold text-sm sm:text-base transition-colors duration-200 border-b-2 ${

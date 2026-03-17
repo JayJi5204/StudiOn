@@ -9,53 +9,51 @@ export const authService = {
         username:string,
         email:string,
         password:string
-    ) => {
+    ):Promise<Partial<IUser>> => {
         const response = await axios.post(`${BASE_API_URL}/create`, {
             username,
             email,
             password,
         });
-        return response;
+        return response.data;
     },
 
     //추후 수정
     getUsers: async () => {
         const response = await axios.get(`${BASE_API_URL}/get/all`);
-        return response;
+        return response.data;
     },
     //추후 수정
     getUserById: async () => {
         const response = await axios.get(`${BASE_API_URL}/get`);
-        return response;
+        return response.data;
     },
 
     login: async (
         email:string,
         password:string
-    ) => {
+    ):Promise<IUser> => {
         const response = await axios.post(`${BASE_API_URL}/login`, {
             email,
             password
         });
-            
-        if (response.data.accessToken) {
-            sessionStorage.setItem("user", JSON.stringify(response.data.userInfo));
-            }
  
-        return response;
+        return response.data;
     },
 
-    logout: async(userinfo:IUser) => {
+    logout: async(
+        userinfo:IUser
+    ):Promise<Partial<IUser>> => {
         const response = await axios.post(`${BASE_API_URL}/logout`, {
             ...userinfo,
             loggedin: false,
         });
-        return response;
+        return response.data;
     },
 
     deleteUser: async (
         id:number,
-    ):Promise<IUser> => {
+    ):Promise<Partial<IUser>> => {
         const response = await axios.delete(`${BASE_API_URL}/delete/${id}`);
         return response.data;
     },

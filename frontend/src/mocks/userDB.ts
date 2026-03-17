@@ -11,7 +11,8 @@ export let USER_DB = {
         joinDate: '2024-10-18',
         role: 'admin',
         avatar: '👤',
-        loggedin: false
+        loggedin: false,
+        accessToken:''
     }
     ]
 };
