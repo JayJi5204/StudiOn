@@ -23,7 +23,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final Snowflake snowflake = new Snowflake();
-    private final KafkaProducer kafkaProducer;
 
     @Transactional
     public CommentResponseDto create(CommentCreateRequestDto requestDto) {

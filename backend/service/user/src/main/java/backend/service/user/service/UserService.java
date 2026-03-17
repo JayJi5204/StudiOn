@@ -16,11 +16,15 @@ public interface UserService {
 
     List<CreateResponse> getAllUsers();
 
-    GetUserResponse getUser(Long userId);
+    GetMyInfoResponse getMyInfo();
 
-    UpdateResponse update(UpdateRequest dto, Long userId);
+    UpdateResponse update(UpdateRequest dto);
 
-    DeletedResponse delete(DeleteRequest dto, Long userId);
+    DeletedResponse delete(DeleteRequest dto);
 
     LoginResponse login(LoginRequest dto, HttpServletResponse response);
+
+    GetUserResponse getUser(Long userId);
+
+    GetUserResponse getUserByAdmin(Long userId);
 }
