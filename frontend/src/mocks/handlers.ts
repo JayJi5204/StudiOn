@@ -125,8 +125,7 @@ const testUpdatePost = http.patch(
   },
 );
 
-const testCreatePost = http.post(
-  API_URL_COMMUNITY_BOARD,
+const testCreatePost = http.post( API_URL_COMMUNITY_BOARD,
   async ({ request }) => {
     const newPost = (await request.json()) as any;
     console.log("받은 새 게시글 데이터:", newPost);
@@ -161,22 +160,8 @@ const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
         accessToken: 'mocked-jwt-token-xyz'
       }, { status: 200 });
     }
-
-const testSignup = http.post(`${API_URL_USERS}/create`, async ({ request }) => {
-  const { username, password, email, phoneNumber } =
-    (await request.json()) as any;
-  const isDuplicate = USER_DB.users.some((user) => user.username === username);
-
-  if (isDuplicate) {
-    return new HttpResponse(
-      JSON.stringify({ message: '이메일 또는 비밀번호가 틀렸습니다.' }),
-      { 
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  })
-
+  });
+  
 const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
     const { username, password, email,phoneNumber } = (await request.json()) as any;
     const isDuplicate = USER_DB.users.some(user => user.username === username)
