@@ -4,10 +4,10 @@ import { Link, useNavigate } from 'react-router';
 import SignupUserField from './SignupUserField.formik.component';
 import SignupEmailField from './SignupEmailField.formik.component';
 import SignupPasswordField from './SignupPasswordField.formik.component';
-import SignupConfirmPasswordField from './SignupConfirmPasswordField';
-import SignupTermsAgreementField from './SignupTermsAgreementField';
-import SignupPrivacyAgreementField from './SignupPrivacyAgreementField';
-import SignupPhoneNumberField from './SignupPhoneNumberField.formik';
+import SignupConfirmPasswordField from './SignupConfirmPasswordField.formik';
+import SignupTermsAgreementField from './SignupTermsAgreementField.formik.component';
+import SignupPrivacyAgreementField from './SignupPrivacyAgreementField.formik.component';
+import SignupPhoneNumberField from './SignupPhoneNumberField.formik.component';
 import SubmitButton from '../button/SubmitButton';
 import Consent from '../footer/Consent.component';
 import { signupInitialValues, signupSchema } from '../../schemas/authSchema';
@@ -16,21 +16,23 @@ const SignupForm = () => {
 
     let navigate = useNavigate();
     
-    const handleSignUp = (formValue:{username:string,password:string,email:string}) => {
+    const handleSignUp = async (formValue:{username:string,password:string,email:string}) => {
         const {username,email,password} = formValue;
 
-        authService
-            .creatUser(username,email,password).then(response => {
-            console.log('회원가입 성공:', response.data);
+        try {
+            const userData = await authService.creatUser(
+                username,
+                email,
+                password
+            );
+            console.log('회원가입 성공:',userData);
             navigate('/signin');
-            })
-            .catch(error => {
-                if (error.response && error.response.data && error.response.data.message) {
-                    console.log('회원가입 실패 메시지:', error.response.data.message);
-                    alert(`회원가입 실패: ${error.response.data.message}`);
-                    navigate('/');
-            }
-        });
+
+        } catch(error) {
+            console.log('회원가입 실패 메시지:', error);
+            alert(`회원가입 실패`);
+            navigate('/');
+        }
     };
 
     return (

@@ -152,24 +152,15 @@ const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
     const { email, password } = await (request.json()) as any
     const user = USER_DB.users.find(u => u.email === email && u.password == password)
     console.log(email,password,user,USER_DB.users)
+    
     if (user) {
-      return HttpResponse.json({
-        accessToken: 'mocked-jwt-token-xyz', // signin 함수에서 체크하는 키
-        // 로그인 성공 시 유저 정보를 한꺼번에 응답!
-        userInfo: user,
-      },
-      { status: 200 },
-    );
-  }
+      const { password, ...userInfoWithoutPassword } = user;
 
-  return new HttpResponse(
-    JSON.stringify({ message: "아이디 또는 비밀번호가 틀렸습니다." }),
-    {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    },
-  );
-});
+      return HttpResponse.json({
+        ...userInfoWithoutPassword,
+        accessToken: 'mocked-jwt-token-xyz'
+      }, { status: 200 });
+    }
 
 const testSignup = http.post(`${API_URL_USERS}/create`, async ({ request }) => {
   const { username, password, email, phoneNumber } =
@@ -184,29 +175,45 @@ const testSignup = http.post(`${API_URL_USERS}/create`, async ({ request }) => {
         headers: { "Content-Type": "application/json" },
       },
     );
-  }
-  let today = new Date();
-  let year = today.getFullYear();
-  let month = today.getMonth() + 1;
-  let date = today.getDate();
+  })
 
-  const newUser = {
-    id: USER_DB.users.length + 1,
-    username: `${username}`,
-    password: `${password}`,
-    phoneNumber: `${phoneNumber}`,
-    email: `${email}`,
-    bio: "기본 자기소개입니다.",
-    location: "서울, 대한민국",
-    loggedin: false,
-    joinDate: `${year}년 ${month}월 ${date}일`,
-    role: "user",
-    avatar: "👨‍💻",
-  };
+const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
+    const { username, password, email,phoneNumber } = (await request.json()) as any;
+    const isDuplicate = USER_DB.users.some(user => user.username === username)
+    
+    if (isDuplicate){
+      return new HttpResponse(
+        JSON.stringify({ message: '이미 존재하는 아이디입니다. 다른 아이디를 입력해주세요.' }),
+        { 
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+    let today = new Date();  
+    let year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let date = today.getDate();
 
-  USER_DB.users.push(newUser);
-  console.log(username, password, email, USER_DB);
-  return HttpResponse.json(newUser, { status: 200 });
+    const newUser = {
+      id:USER_DB.users.length +1,
+      username: `${username}`,
+      password: `${password}`,
+      phoneNumber:`${phoneNumber}`,
+      email: `${email}`,
+      bio: '기본 자기소개입니다.',
+      location: '서울, 대한민국',
+      loggedin: false,
+      joinDate: `${year}년 ${month}월 ${date}일`,
+      role: 'user',
+      avatar: '👨‍💻',
+      accessToken:''
+    }
+
+    USER_DB.users.push(newUser);
+    console.log(username,password,email,USER_DB)
+    return HttpResponse.json(newUser, { status: 200 });
+    
 });
 
 const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
