@@ -20,4 +20,3 @@ export interface IUser {
     isDeleted:boolean;
     accessToken:string;
 }
-
