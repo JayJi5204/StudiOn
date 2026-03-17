@@ -2,8 +2,6 @@ rootProject.name = 'backend'
 
 
 include 'common'
-include 'common:snowFlake'
-
 
 include 'server'
 include 'server:gateway'
