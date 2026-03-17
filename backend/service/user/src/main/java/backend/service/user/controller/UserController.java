@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,7 +54,7 @@ public class UserController {
     }
 
     @Operation(summary = "특정 사용자 조회", description = "ID를 통해 특정 사용자의 정보를 조회합니다.")
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public GetUserResponse getUser(
             @Parameter(description = "조회할 사용자의 ID", example = "279294608354758660")
             @PathVariable Long userId){
@@ -74,12 +73,4 @@ public class UserController {
         return userService.delete(dto);
     }
 
-    @Operation(summary = "관리자를 이용한 특정 사용자 조회", description = "ID를 통해 특정 사용자의 정보를 조회합니다.")
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/users/{userId}")
-    public GetUserResponse getUserByAdmin(
-            @Parameter(description = "조회할 사용자의 ID", example = "279294608354758660")
-            @PathVariable Long userId) {
-        return userService.getUserByAdmin(userId);
-    }
 }

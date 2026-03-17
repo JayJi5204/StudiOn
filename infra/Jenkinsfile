@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB = "jayji5204"
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+
+        stage('Build Backend') {
+            steps {
+                sh '''
+                cd backend
+                chmod +x gradlew
+                ./gradlew clean build -x test
+                '''
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                # backend - server
+                docker build -t $DOCKER_HUB/eureka:latest ./backend/server/eureka
+                docker build -t $DOCKER_HUB/config:latest ./backend/server/config
+                docker build -t $DOCKER_HUB/gateway:latest ./backend/server/gateway
+
+                # backend - service
+                docker build -t $DOCKER_HUB/user:latest ./backend/service/user
+                docker build -t $DOCKER_HUB/board:latest ./backend/service/board
+                docker build -t $DOCKER_HUB/comment:latest ./backend/service/comment
+
+                # frontend
+                docker build -t $DOCKER_HUB/frontend:latest ./frontend
+                '''
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub',
+                    usernameVariable: 'USERNAME',
+                    passwordVariable: 'PASSWORD'
+                )]) {
+                    sh '''
+                    echo $PASSWORD | docker login -u $USERNAME --password-stdin
+
+                    docker push $DOCKER_HUB/eureka:latest
+                    docker push $DOCKER_HUB/config:latest
+                    docker push $DOCKER_HUB/gateway:latest
+
+                    docker push $DOCKER_HUB/user:latest
+                    docker push $DOCKER_HUB/board:latest
+                    docker push $DOCKER_HUB/comment:latest
+
+                    docker push $DOCKER_HUB/frontend:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                cd infra
+                docker-compose down
+                docker-compose pull
+                docker-compose up -d
+                '''
+            }
+        }
+    }
+}
