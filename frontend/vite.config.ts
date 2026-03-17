@@ -3,24 +3,30 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
 
-// https://vite.dev/config/
-export default defineConfig(({mode}) => {
-  
-  const env = loadEnv(mode,process.cwd(),"")
-  
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
   return {
     plugins: [react(), tailwindcss()],
     server: {
-      headers:{
-        'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
       },
       host: env.VITE_SERVER_HOST || "localhost",
       port: Number(env.VITE_SERVER_PORT) || 8167,
+
+      proxy: {
+        "/api": {
+          target: "http://localhost:8000",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, "/user-service/api"),
+        },
+      },
     },
     test: {
       globals: true,
       root: __dirname,
-      setupFiles: ['./src/vitest.setup.ts'],
+      setupFiles: ["./src/vitest.setup.ts"],
     },
-  }
+  };
 });
