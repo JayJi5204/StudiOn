@@ -10,5 +10,6 @@ public class CreateRequest {
 
     private String password;
 
+    private String adminPassword;
 
 }
