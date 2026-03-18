@@ -1,13 +1,13 @@
-version: "3.8"
-
 services:
   eureka-server:
-    image: eureka:latest
+    build:
+      context: .
+      dockerfile: server/eureka/Dockerfile
     container_name: eureka-server
     ports:
       - "8761:8761"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -15,7 +15,9 @@ services:
       - studion-network
 
   config-server:
-    image: config:latest
+    build:
+      context: .
+      dockerfile: server/config/Dockerfile
     container_name: config-server
     ports:
       - "8888:8888"
@@ -29,7 +31,7 @@ services:
       eureka-server:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -37,7 +39,9 @@ services:
       - studion-network
 
   gateway-server:
-    image: gateway:latest
+    build:
+      context: .
+      dockerfile: server/gateway/Dockerfile
     container_name: gateway-server
     ports:
       - "8000:8000"
@@ -71,7 +75,9 @@ services:
       - studion-network
 
   user-service:
-    image: user:latest
+    build:
+      context: .
+      dockerfile: service/user/Dockerfile
     container_name: user-service
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
@@ -89,7 +95,9 @@ services:
       - studion-network
 
   board-service:
-    image: board:latest
+    build:
+      context: .
+      dockerfile: service/board/Dockerfile
     container_name: board-service
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
@@ -107,7 +115,9 @@ services:
       - studion-network
 
   comment-service:
-    image: comment:latest
+    build:
+      context: .
+      dockerfile: service/comment/Dockerfile
     container_name: comment-service
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
@@ -129,14 +139,14 @@ services:
     container_name: kafka
     environment:
       KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: "broker,controller"
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
-      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
-      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     networks:
