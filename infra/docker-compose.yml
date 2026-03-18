@@ -1,59 +1,55 @@
-version: "3"
+version: "3.8"
 
 services:
   eureka-server:
-    image: jayji5204/eureka:latest
+    image: eureka:latest
     container_name: eureka-server
     ports:
       - "8761:8761"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - studion-network
 
   config-server:
-    image: jayji5204/config:latest
+    image: config:latest
     container_name: config-server
     ports:
       - "8888:8888"
+    environment:
+      - ENCRYPT_KEY=${ENCRYPT_KEY}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - GITHUB_URL=${GITHUB_URL}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - GITHUB_PASSWORD=${GITHUB_PASSWORD}
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - studion-network
 
   gateway-server:
-    image: jayji5204/gateway:latest
+    image: gateway:latest
     container_name: gateway-server
     ports:
       - "8000:8000"
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_APPLICATION_NAME=gateway-server
     depends_on:
-      - eureka-server
-      - config-server
-    networks:
-      - studion-network
-
-  user-service:
-    image: jayji5204/user:latest
-    container_name: user-service
-    depends_on:
-      - config-server
-      - mysql
-    networks:
-      - studion-network
-
-  board-service:
-    image: jayji5204/board:latest
-    container_name: board-service
-    depends_on:
-      - config-server
-      - mysql
-    networks:
-      - studion-network
-
-  comment-service:
-    image: jayji5204/comment:latest
-    container_name: comment-service
-    depends_on:
-      - config-server
-      - mysql
+      eureka-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
     networks:
       - studion-network
 
@@ -61,25 +57,88 @@ services:
     image: mysql:8.0
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
+    volumes:
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - studion-network
+
+  user-service:
+    image: user:latest
+    container_name: user-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - studion-network
+
+  board-service:
+    image: board:latest
+    container_name: board-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - studion-network
+
+  comment-service:
+    image: comment:latest
+    container_name: comment-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      config-server:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - studion-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
-    networks:
-      - studion-network
-
-  frontend:
-    image: jayji5204/frontend:latest
-    container_name: frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      - gateway-server
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     networks:
       - studion-network
 
