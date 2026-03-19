@@ -30,7 +30,7 @@ pipeline {
         stage('Docker Run') {
             steps {
                 sh '''
-                    cd infra
+                    cd studion
 
                     echo "Docker Compose Down"
                     docker-compose down || true
