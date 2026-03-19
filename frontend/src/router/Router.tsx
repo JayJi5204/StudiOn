@@ -16,7 +16,7 @@ const GoogleCallback = lazy(() => import("../api/GoogleCallback.tsx"));
 const layoutPageUrl = import.meta.env.VITE_REACT_APP_URL;
 const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
 const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
-const updatePostPageUrl = `${import.meta.env.VITE_REACT_APP_URL_UPDATE_POST}/post/:id`;
+const updatePostPageUrl = `${import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE}/post/:id`;
 const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
 const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP;
 const profilePageUrl = `${import.meta.env.VITE_REACT_APP_URL_PROFILE}/:id`;

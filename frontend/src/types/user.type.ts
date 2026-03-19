@@ -2,7 +2,6 @@ export interface IUser {
     id: number;
     username: string;
     password: string;
-    confirmPassword?: string;
     phoneNumber:string;
     studyTime:Number;
     email: string;
@@ -11,13 +10,12 @@ export interface IUser {
     joinDate: string;
     role: string;
     avatar: string;
-    loggedin: boolean;
+    isLoggedin:boolean;
     rememberMe: boolean;
     agreeTerms: boolean;
     agreePrivacy: boolean;
-    JWT:string;
-    Refresh:string;
     isDeleted:boolean;
+    Refresh:string;
     accessToken:string;
 }
 

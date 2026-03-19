@@ -3,20 +3,20 @@ import { X,FileText, Save, Eye, ChevronDown } from 'lucide-react';
 import { postService } from '../services/posts.service';
 import { useLocation,useNavigate } from 'react-router';
 import useUserInfoStore from '../store/userInfoStore';
-import type { Post } from '../types/posts.type';
+import type { IPost } from '../types/posts.type';
 
 const WritePostPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const editData = location.state.postData as Post;
+    const editData = location.state as IPost;
     const isEditMode = !!editData;
     const {userInfo} = useUserInfoStore();
 
-    const [title, setTitle] = useState(editData.title || '');
-    const [content, setContent] = useState(editData.content || '');
-    const [selectedCategory, setSelectedCategory] = useState(editData.category || '');
-    const [tags, setTags] = useState<string[]>(editData.tags || []);
+    const [title, setTitle] = useState(editData?.title || '');
+    const [content, setContent] = useState(editData?.content || '');
+    const [selectedCategory, setSelectedCategory] = useState(editData?.category || '');
+    const [tags, setTags] = useState<string[]>(editData?.tags || []);
 
     const [tagInput, setTagInput] = useState('');
     const [showCategoryMenu, setShowCategoryMenu] = useState(false);
@@ -50,7 +50,7 @@ const WritePostPage = () => {
             if (isEditMode) {
                 //게시글 수정 로직 추가
                 const res = await postService.updatePost(
-                    Number(editData.id),
+                    editData.id,
                     {
                         title,
                         content,
@@ -64,13 +64,14 @@ const WritePostPage = () => {
             } else {
                 
                 // 게시글 저장 로직 추가
-                const res = await postService.createPost({
+                const res = await postService.createPost(
+                    userInfo.id,
+                    {
                         title,
                         content,
                         category: selectedCategory,
                         tags,
                     }, 
-                    Number(userInfo.id)
                 );
                 console.log("수정 성공:", res);
                 alert('게시글이 작성되었습니다!');

@@ -7,6 +7,45 @@ const API_URL_USERS = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE
 const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
 
+const testUpdateUser = http.patch(`${API_URL_USERS}/:id`, async ({ params, request }) => {
+    const { id } = params;
+    const editForm = await request.json() as any;
+
+    const idx = USER_DB.users.findIndex(u => String(u.id) === String(id));
+
+    if (idx !== -1) {
+        USER_DB.users[idx] = { ...USER_DB.users[idx], ...editForm };
+        console.log('업데이트 성공:', USER_DB.users[idx]);
+        
+        return HttpResponse.json(USER_DB.users[idx], { status: 200 });
+    }
+
+    // 데이터가 없어서 404가 나는 경우 콘솔에 표시
+    console.error(`ID ${id}에 해당하는 유저를 찾을 수 없어 404를 반환합니다.`);
+    return new HttpResponse(null, { status: 404 });
+});
+
+const testDeleteComment = http.delete(
+  `${API_URL_COMMUNITY_BOARD}/posts/:postId/comments/:commentId`, 
+  ({ params }) => {
+    const { postId, commentId } = params;
+    const postIdx = POSTS_DB.posts.findIndex(post => post.id === Number(postId));
+
+    if (postIdx !== -1) {
+      
+      POSTS_DB.posts[postIdx].comments = POSTS_DB.posts[postIdx].comments.filter(
+        (comment) => comment.id !== Number(commentId)
+      );
+      
+      console.log(`게시글 ${postId}번의 ${commentId}번 댓글 삭제 완료`);
+      return HttpResponse.json({ message: "삭제 성공" }, { status: 200 });
+    }
+
+    // 게시글을 못 찾았을 경우 에러 응답
+    return new HttpResponse(null, { status: 404 });
+  }
+);
+
 const testUpdateComment = http.put(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
   const {id} = params
   const editComment = await request.json() as Comment;
@@ -96,7 +135,7 @@ const testGetPosts = http.get(API_URL_COMMUNITY_BOARD, ({ request }) => {
 });
 
 const testUpdatePost = http.patch(
-  `${API_URL_COMMUNITY_BOARD}/updatepost/post/:id`,
+  `${API_URL_COMMUNITY_BOARD}/writepost/post/:id`,
   async ({ params, request }) => {
     const { id } = params;
     const updateData = (await request.json()) as any; // 클라이언트가 보낸 수정 데이터
@@ -147,7 +186,7 @@ const testLogOut = http.post(`${API_URL_USERS}/logout`, async () => {
   return HttpResponse.json({ message: "로그아웃 성공" }, { status: 200 });
 });
 
-const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
+const testLogin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
     const { email, password } = await (request.json()) as any
     const user = USER_DB.users.find(u => u.email === email && u.password == password)
     console.log(email,password,user,USER_DB.users)
@@ -162,7 +201,7 @@ const testSignin = http.post(`${API_URL_USERS}/login`, async ({ request }) => {
     }
   });
   
-const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
+const testCreateUser = http.post(`${API_URL_USERS}/create`, async({ request }) => {
     const { username, password, email,phoneNumber } = (await request.json()) as any;
     const isDuplicate = USER_DB.users.some(user => user.username === username)
     
@@ -188,7 +227,7 @@ const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
       email: `${email}`,
       bio: '기본 자기소개입니다.',
       location: '서울, 대한민국',
-      loggedin: false,
+      isLoggedin: false,
       joinDate: `${year}년 ${month}월 ${date}일`,
       role: 'user',
       avatar: '👨‍💻',
@@ -201,12 +240,11 @@ const testSignup = http.post(`${API_URL_USERS}/create`, async({ request }) => {
     
 });
 
+
 const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
   const { id } = params;
-
-  //DB에서 유저 찾기 (없으면 기본 목데이터 반환)
   const user = USER_DB.users.find((u) => u.id === Number(id));
-
+  
   if (user) {
     return HttpResponse.json(
       {
@@ -218,7 +256,7 @@ const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
         joinDate: user.joinDate,
         role: user.role,
         avatar: user.avatar,
-        loggedin: user.loggedin,
+        isLoggedin: user.isLoggedin,
       },
       { status: 200 },
     );
@@ -234,8 +272,9 @@ const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
 });
 
 export const handlers = [
-  testSignin,
-  testSignup,
+  testCreateUser,
+  testUpdateUser,
+  testLogin,
   testLogOut,
   testProfile,
   testGetPostDetail,
@@ -245,4 +284,5 @@ export const handlers = [
   testUpdatePost,
   testCreateComment,
   testUpdateComment,
+  testDeleteComment,
 ];

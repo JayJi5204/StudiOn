@@ -34,7 +34,7 @@ const Layout = () => {
         
         <button
           onClick={() => { 
-              const nextPage = userInfo.loggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
+              const nextPage = userInfo.isLoggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
               navigate(nextPage)
           }}
           className="rounded-xl hover:bg-red-50 transition-colors font-medium cursor-pointer"
@@ -49,7 +49,7 @@ const Layout = () => {
                 authService.logout(userInfo).then(() => {
                   setUserInfo({
                       ...userInfo,
-                      loggedin: false,
+                      isLoggedin: false,
                   });
                   navigate(`${signinPageUrl}`);
                 });
@@ -63,7 +63,7 @@ const Layout = () => {
   };
 
   const renderLogInOutContent = () => {
-    return userInfo.loggedin ? <LoginContent/> : <LogoutContent/>;
+    return userInfo.isLoggedin ? <LoginContent/> : <LogoutContent/>;
   }
 
   return (

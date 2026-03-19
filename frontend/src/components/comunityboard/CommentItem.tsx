@@ -7,7 +7,8 @@ interface CommentItemProps {
     userId:number;
     userRole:string;
     comment:Comment;
-    onUpdate: (editComment:Comment) => void;
+    handleUpdateComment: (editComment:Comment) => void;
+    handleDeleteComment: () => void;
 }
 
 const CommentItem = (
@@ -15,7 +16,8 @@ const CommentItem = (
         userId,
         userRole,
         comment,
-        onUpdate
+        handleUpdateComment,
+        handleDeleteComment,
     }:CommentItemProps) => {
     const [showMoreMenu, setShowMoreMenu] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -24,10 +26,6 @@ const CommentItem = (
     const handleEdit = () => {
         setShowMoreMenu(!showMoreMenu);
         setIsEditing(!isEditing);
-    }
-
-    const handleDelete = () => {
-
     }
     
     return (
@@ -55,7 +53,10 @@ const CommentItem = (
                             {showMoreMenu && (
                                 <EditButton
                                     handleEdit={handleEdit}
-                                    handleDelete={handleDelete}
+                                    handleDelete={() => {
+                                        handleDeleteComment()
+                                        setIsEditing(!isEditing)
+                                    }}
                                 />
                             )}
                             </div>
@@ -72,8 +73,7 @@ const CommentItem = (
                             <button
                                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
                                 onClick={() => {
-                                    // onUpdate(comment);
-                                    onUpdate({ ...comment, content: editText });
+                                    handleUpdateComment({ ...comment, content: editText });
                                     setIsEditing(!isEditing);
                                 }}
                             >

@@ -62,7 +62,7 @@ const ProfilePage = () => {
     const [editForm,setEditForm] = useState<IUser>(userInfo);
     const { posts } = usePosts(
             { page: 1, limit: 10 },
-            Boolean(userInfo.loggedin)
+            Boolean(userInfo.isLoggedin)
         );
     
     // 사용자 정보
@@ -123,8 +123,9 @@ const ProfilePage = () => {
     };
 
     // 저장 핸들러
-    const handleSave = () => {
-        setUserInfo(editForm);
+    const handleSave = async () => {
+        const updatedUser = await authService.updateUser(editForm.id,editForm)
+        setUserInfo(editForm || updatedUser);
         setIsEditing(false);
     };
 
@@ -224,7 +225,7 @@ const ProfilePage = () => {
             case 'posts':
                 return <MyPostsContent
                             myPosts={posts}  // 위에서 선언한 posts 변수
-                            userId={Number(userInfo.id)}  // 현재 컨텍스트의 userId 변수
+                            userId={userInfo.id}  // 현재 컨텍스트의 userId 변수
                         />
             case 'achievements':
                 return <AchievementsContent />;
@@ -358,7 +359,7 @@ const ProfilePage = () => {
                                         authService.logout(userInfo).then(() => {
                                             setUserInfo({
                                                 ...userInfo,
-                                                loggedin: false,
+                                                isLoggedin: false,
                                             });
                                             navigate('/');
                                             });

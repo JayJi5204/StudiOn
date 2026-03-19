@@ -5,10 +5,10 @@ import useUserInfoStore from '../store/userInfoStore';
 import { usePosts } from '../hooks/usePosts';
 
 const CommunityBoard= () => {
-    const userloggedIn = useUserInfoStore((state) => state.userInfo.loggedin);
+    const isLoggedin = useUserInfoStore((state) => state.userInfo.isLoggedin);
     const { posts } = usePosts(
             { page: 1, limit: 10 },
-            Boolean(userloggedIn)
+            Boolean(isLoggedin)
         );
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
 
@@ -23,7 +23,7 @@ const CommunityBoard= () => {
 
     const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
     const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
-
+    console.log(posts)
     const filteredPosts = posts.filter(post => {
         const matchesCategory = selectedCategory === '전체' || post.category === selectedCategory;
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +46,7 @@ const CommunityBoard= () => {
         }
     });
 
-    const popularPosts = posts.filter(post => post.isPopular).slice(0, 3);
+    const popularPosts = sortedPosts.slice(0,3);
 
     const getSortLabel = () => {
         switch(sortBy) {
@@ -84,13 +84,13 @@ const CommunityBoard= () => {
                     {/* Search Bar */}
                     <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                        type="text"
-                        placeholder="게시글을 검색해보세요..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    />
+                        <input
+                            type="text"
+                            placeholder="게시글을 검색해보세요..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        />
                     </div>
 
                     {/* Categories */}
@@ -167,12 +167,6 @@ const CommunityBoard= () => {
                                                     <span className="px-2 py-1 bg-indigo-100 text-indigo-600 text-xs rounded-full">
                                                         {post.category}
                                                     </span>
-                                                        {post.isPopular && (
-                                                    <span className="flex items-center text-orange-500 text-xs">
-                                                        <TrendingUp size={14} className="mr-1" />
-                                                        인기
-                                                    </span>
-                                                    )}
                                                 </div>
                                                 <div className="flex items-center text-sm text-gray-500 mt-1">
                                                     <Clock size={14} className="mr-1" />

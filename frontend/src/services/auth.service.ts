@@ -46,14 +46,22 @@ export const authService = {
     ):Promise<Partial<IUser>> => {
         const response = await axios.post(`${BASE_API_URL}/logout`, {
             ...userinfo,
-            loggedin: false,
+            isLoggedin: false,
         });
+        return response.data;
+    },
+    
+    updateUser: async (
+        id:number,
+        userInfo:IUser
+    ):Promise<Partial<IUser>> => {
+        const response = await axios.patch(`${BASE_API_URL}/${id}`,userInfo)
         return response.data;
     },
 
     deleteUser: async (
         id:number,
-    ):Promise<Partial<IUser>> => {
+    ) => {
         const response = await axios.delete(`${BASE_API_URL}/delete/${id}`);
         return response.data;
     },

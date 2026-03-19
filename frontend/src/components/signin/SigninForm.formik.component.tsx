@@ -26,7 +26,7 @@ const SigninForm = () => {
             setUserInfo(
                 {
                     ...userData,
-                    loggedin:true
+                    isLoggedin:true
                 }
             );
 

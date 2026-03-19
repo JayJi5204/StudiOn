@@ -20,20 +20,29 @@ const CommentSection = ({
     const [comments,setComments] = useState<Comment[]>(initialComments);
     const [commentText, setCommentText] = useState('');
 
+    const handleDeleteComment = async (postId:number,commentId:number) => {
+        try {
+            await commentService.deleteComment(postId,commentId);
+            setComments(prev => 
+                prev.filter(comment => comment.id !== commentId)
+        );
+        } catch (error) {
+            console.log('댓글 삭제 실패',error);
+            alert('댓글 삭제에 실패했습니다.');
+        }
+    }
     const handleUpdateComment = async (editComment:Comment) => {
-        
         try {
             //API 호출
-            const res = await commentService.updateComment(editComment.id,editComment);
+            await commentService.updateComment(editComment.id,editComment);
             //로컬 상태 반영
             setComments(prev => 
                 prev.map(c => c.id === editComment.id ? editComment : c)
             );
-            console.log(res);
             alert('댓글이 수정되었습니다.');
         } catch (error){
-            console.log('수정 실패',error);
-            alert('수정에 실패했습니다.');
+            console.log('댓글 수정 실패',error);
+            alert('댓글 수정에 실패했습니다.');
         }
     }
     const handleCommentSubmit = async (newComment:Comment) => {
@@ -42,7 +51,7 @@ const CommentSection = ({
         }
 
         try {
-            const res = await commentService.createComment(Number(postId),newComment);
+            const res = await commentService.createComment(postId,newComment);
     
             console.log('댓글 생성 완료',res);
             setComments(prev => [...prev, newComment]);
@@ -76,10 +85,11 @@ const CommentSection = ({
                         {
                             id: comments.length + 1,
                             author: userInfo.username,
-                            authorId: Number(userInfo.id),
-                            authorAvatar: String(userInfo.avatar),
+                            authorId: userInfo.id,
+                            authorAvatar: userInfo.avatar,
                             content: commentText.trim(),
                             createdAt: dateFormatter(),
+                            updatedAt: dateFormatter(),
                             likes: 0
                         }
                     )}}
@@ -95,10 +105,11 @@ const CommentSection = ({
                 {comments.map((comment) => (
                     <CommentItem
                         key={comment.id}
-                        userId={Number(userInfo.id)}
-                        userRole={String(userInfo.role)}
+                        userId={userInfo.id}
+                        userRole={userInfo.role}
                         comment={comment}
-                        onUpdate={handleUpdateComment}
+                        handleUpdateComment={handleUpdateComment}
+                        handleDeleteComment={() => {handleDeleteComment(postId,comment.id)}}
                     />
                 ))}
             </div>
