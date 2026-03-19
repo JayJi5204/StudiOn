@@ -16,12 +16,12 @@ pipeline {
                     sh '''
                         echo "WORKSPACE: $(pwd)"
 
-                        mkdir -p infra
-                        cp "$ENV_FILE" infra/.env
+                        # 🔥 root에 .env 생성
+                        cp "$ENV_FILE" .env
 
                         echo "=== ENV CHECK ==="
-                        ls -al infra
-                        cat infra/.env
+                        ls -al
+                        cat .env
                     '''
                 }
             }
