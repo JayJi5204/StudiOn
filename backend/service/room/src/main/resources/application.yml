@@ -1,9 +1,9 @@
 server:
-  port: 0
+  port: 8081
 
 spring:
   application:
-    name: user-service
+    name: room-service
 
   output:
     ansi:

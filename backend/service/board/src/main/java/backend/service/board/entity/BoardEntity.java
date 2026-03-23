@@ -4,6 +4,9 @@ import backend.service.board.enumType.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +23,9 @@ public class BoardEntity {
     private String content;
     @Enumerated(EnumType.STRING)
     private Category category;
+    @CreatedDate
     private LocalDateTime createAt;
+    @LastModifiedDate
     private LocalDateTime modifiedAt;
 
     public static BoardEntity create(Long boardId, Long userId, String title, String content,Category category) {
