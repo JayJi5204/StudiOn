@@ -1,65 +1,36 @@
-import {useState,useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, Filter, ChevronDown, Bookmark, Share2 } from 'lucide-react';
+import {useState } from 'react';
+import { Link} from 'react-router';
+import { 
+    Search, 
+    Plus, 
+    MessageCircle, 
+    ThumbsUp, 
+    TrendingUp,
+    Filter, 
+    ChevronDown 
+} from 'lucide-react';
 import useUserInfoStore from '../store/userInfoStore';
-import { postService } from '../services/posts.service';
-import type Post from '../types/posts.type';
-import DeleteButton from '../components/button/DeleteButton';
-
+import { usePosts } from '../hooks/usePosts';
+import PostSection from '../components/communityboard/PostSection';
 
 const CommunityBoard= () => {
-    const navigate = useNavigate();
-    const userloggedIn = useUserInfoStore((state) => state.userInfo.loggedin);
-    const userRole = useUserInfoStore((state) => state.userInfo.role); 
+    const isLoggedin = useUserInfoStore((state) => state.userInfo.isLoggedin);
+    const { posts,setPosts } = usePosts(
+            { page: 1, limit: 10 },
+            Boolean(isLoggedin)
+        );
     
-    const [posts,setPosts] = useState<Post[]>([]);
-    const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
-    const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
-
-    useEffect(()=>{
-        if (!userloggedIn) {
-            alert('자유게시판은 로그인 후 이용 가능합니다.');
-            navigate(signinPageUrl);
-        }
-    });
-
-    useEffect(() => {
-        const loadPosts = async () => {
-            try {
-                const data = await postService.getPosts({
-                    page:10,
-                    limit:20,
-                });
-               
-                setPosts(data);
-            } catch (error) {
-                console.error('❌ 게시글 로드 실패:', error);
-            }
-        };
-        loadPosts();
-    }, []);
-
-    // 데이터 기반 파생 값 계산 (Memoization)
-    // posts가 변경될 때만 다시 계산되어 성능과 가독성을 모두 잡습니다.
-    const totalPosts = posts.length;
-    //activeMembers 추후 수정 
-    const activeMembers = 8934;
-
-    const todayPostsCount = useMemo(() => {
-        const today = new Date().toDateString();
-        return posts.filter(post => 
-            new Date(post.createdAt).toDateString() === today
-        ).length;
-    }, [posts]);
-
+    
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
     const [sortBy, setSortBy] = useState('latest');
     const [showSortMenu, setShowSortMenu] = useState(false);
 
-    const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
+    //activeMembers 추후 수정 
+    const activeMembers = 8934;
     const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
-
+    const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
+    
     const filteredPosts = posts.filter(post => {
         const matchesCategory = selectedCategory === '전체' || post.category === selectedCategory;
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -68,7 +39,7 @@ const CommunityBoard= () => {
                               
         return matchesCategory && matchesSearch;
     });
-
+    
     const sortedPosts = [...filteredPosts].sort((a, b) => {
         switch(sortBy) {
             case 'popular':
@@ -82,7 +53,7 @@ const CommunityBoard= () => {
         }
     });
 
-    const popularPosts = posts.filter(post => post.isPopular).slice(0, 3);
+    const popularPosts = sortedPosts.slice(0,3);
 
     const getSortLabel = () => {
         switch(sortBy) {
@@ -91,11 +62,6 @@ const CommunityBoard= () => {
             case 'comments': return '댓글순';
             default: return '최신순';
         }
-    };
-
-    const handleDelete = async (deleteId:number) => {
-        //삭제된 아이디만 제외하고 목록을 새로 고침
-        setPosts(prevPosts => prevPosts.filter(post => post.id !== deleteId));
     };
 
     return (
@@ -125,13 +91,13 @@ const CommunityBoard= () => {
                     {/* Search Bar */}
                     <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                        type="text"
-                        placeholder="게시글을 검색해보세요..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    />
+                        <input
+                            type="text"
+                            placeholder="게시글을 검색해보세요..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        />
                     </div>
 
                     {/* Categories */}
@@ -195,93 +161,11 @@ const CommunityBoard= () => {
 
                 {/* Posts List */}
                 <div className="space-y-4">
-                    {sortedPosts.map((post) => (
-                        <div key={post.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
-                            <div className="space-y-4">
-                                {/* Post Header */}
-                                <div className="flex items-start justify-between">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="text-3xl">{post.authorAvatar}</div>
-                                            <div>
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="font-semibold text-gray-900">{post.author}</span>
-                                                    <span className="px-2 py-1 bg-indigo-100 text-indigo-600 text-xs rounded-full">
-                                                        {post.category}
-                                                    </span>
-                                                        {post.isPopular && (
-                                                    <span className="flex items-center text-orange-500 text-xs">
-                                                        <TrendingUp size={14} className="mr-1" />
-                                                        인기
-                                                    </span>
-                                                    )}
-                                                </div>
-                                                <div className="flex items-center text-sm text-gray-500 mt-1">
-                                                    <Clock size={14} className="mr-1" />
-                                                    {post.createdAt}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <div className="flex space-x-2">
-                                        <button className="text-gray-400 hover:text-indigo-600 transition-colors">
-                                            <Bookmark size={20} />
-                                        </button>
-                                        <button className="text-gray-400 hover:text-indigo-600 transition-colors">
-                                            <Share2 size={20} />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Post Content */}
-                                <div className="space-y-2">
-                                    <h3 className="text-xl font-bold text-gray-900 hover:text-indigo-600 cursor-pointer">
-                                        {post.title}
-                                    </h3>
-                                    <p className="text-gray-600 line-clamp-2">
-                                        {post.content}
-                                    </p>
-                                </div>
-
-                                {/* Tags */}
-                                <div className="flex flex-wrap gap-2 justify-between">
-                                    <div className="space-x-1">
-                                        {post.tags.map((tag, index) => (
-                                            <span key={index} className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    {userRole === 'admin' &&
-                                        <DeleteButton
-                                            postId={post.id}
-                                            onDeleteSuccess={handleDelete}
-                                        />
-                                    }
-                                </div>
-
-                                {/* Post Stats */}
-                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                            <div className="flex items-center space-x-1">
-                                                <Eye size={16} />
-                                                <span>{post.views}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <ThumbsUp size={16} />
-                                                <span>{post.likes}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <MessageCircle size={16} />
-                                                <span>{post.comments.length}</span>
-                                            </div>
-                                        </div>
-                                        <button className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                                            <Link to={`${communityPageUrl}/${post.id}`}>자세히 보기 →</Link>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <PostSection
+                        posts={sortedPosts}
+                        setPosts={setPosts}
+                    ></PostSection>
+                </div>
 
                     {/* Pagination */}
                     <div className="flex justify-center space-x-2 pt-6">
@@ -341,16 +225,12 @@ const CommunityBoard= () => {
                         <h3 className="text-lg font-bold text-gray-900 mb-4">게시판 통계</h3>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">전체 게시글</span>
-                            <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
+                                <span className="text-gray-600">전체 게시글</span>
+                                <span className="text-lg font-bold text-indigo-600">{posts.length > 0 && posts.length}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                            <span className="text-gray-600">오늘 작성</span>
-                            <span className="text-lg font-bold text-green-600">{todayPostsCount}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                            <span className="text-gray-600">활성 회원</span>
-                            <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
+                                <span className="text-gray-600">활성 회원</span>
+                                <span className="text-lg font-bold text-blue-600">{activeMembers}</span>
                             </div>
                         </div>
                     </div>
@@ -382,6 +262,6 @@ const CommunityBoard= () => {
             </div>
         </div>
     );
-    };
+};
 
 export default CommunityBoard;

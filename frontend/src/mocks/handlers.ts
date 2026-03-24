@@ -1,579 +1,241 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from "msw";
+import { USER_DB } from "./userDB";
+import { POSTS_DB } from "./postDB";
+import type { Comment } from "../types/posts.type";
+import { dateFormatter } from "../utils/date";
 
-const API_URL_SIGNIN = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN
-const API_URL_SIGNUP = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNUP
+const API_URL_USERS = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 const API_URL_PROFILE = import.meta.env.VITE_REACT_APP_AUTH_API_URL_PROFILE
-const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_API_URL_COMMUNITY_BOARD
-const API_URL_LOGOUT = import.meta.env.VITE_REACT_APP_AUTH_API_URL_LOGOUT
-let DB = [
-  {
-    id: 0,
-    username: 'testSupervisor',
-    password: 'asd1357852@',
-    email: 'test@example.com',
-    phoneNumber:'010-2531-9402',
-    bio: '테스트 관리자입니다.',
-    location: '서울',
-    joinDate: '2024-10-18',
-    role: 'admin',
-    avatar: '👤',
-    loggedin: false
-  }
-];
+const API_URL_COMMUNITY_BOARD = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
 
-let POSTS_DB = [
-  {
-        id: 1,
-        title: 'React 스터디 3개월 하고 나니 확실히 달라진 점',
-        content: `안녕하세요! 지난 3개월간 React 스터디를 진행하면서 느낀 점들을 공유하고 싶어서 글을 작성합니다.
-
-처음에는 useState조차 헷갈렸는데, 이제는 useEffect, useContext, 심지어 커스텀 훅까지 만들 수 있게 되었습니다.
-
-**가장 큰 변화 3가지**
-
-1. 컴포넌트 설계 능력 향상
-처음에는 모든 것을 하나의 컴포넌트에 다 넣었는데, 이제는 재사용 가능한 작은 컴포넌트로 분리하는 게 자연스러워졌습니다.
-
-2. 상태 관리에 대한 이해
-언제 useState를 쓰고, 언제 useContext를 쓰고, 언제 Redux가 필요한지 판단할 수 있게 되었습니다.
-
-3. 디버깅 실력
-에러 메시지를 보면 어디가 문제인지 빠르게 파악하고 해결할 수 있게 되었습니다.
-
-스터디를 통해 가장 좋았던 점은 혼자 공부할 때보다 훨씬 빠르게 성장할 수 있었다는 것입니다. 
-같이 코드 리뷰하고, 서로 모르는 부분을 알려주면서 함께 성장하는 느낌이 정말 좋았습니다.
-
-React 공부하시는 분들께 스터디를 적극 추천드립니다! 💪`,
-        author: '개발새싹',
-        authorId:0,
-        authorAvatar: '🌱',
-        category: '스터디 후기',
-        createdAt: '2024-10-18 14:30',
-        views: 342,
-        likes: 28,
-        isPopular: true,
-        comments: [
-          {
-            id: 1,
-            author: '코딩초보',
-            authorAvatar: '👨‍💻',
-            content: '저도 React 스터디 시작하려고 하는데 도움이 많이 되었습니다! 혹시 어떤 방식으로 진행하셨나요?',
-            createdAt: '2024-10-18 15:20',
-            likes: 5
-          },
-          {
-            id: 2,
-            author: '프론트엔드개발자',
-            authorAvatar: '💻',
-            content: '3개월 만에 이정도 성장하셨다니 대단하시네요! 꾸준함이 정말 중요한 것 같아요.',
-            createdAt: '2024-10-18 16:45',
-            likes: 3
-          },
-          {
-            id: 3,
-            author: 'React마스터',
-            authorAvatar: '⚛️',
-            content: '잘 읽었습니다. 다음 단계로는 TypeScript와 Next.js를 공부해보시는 것을 추천드려요!',
-            createdAt: '2024-10-18 17:10',
-            likes: 8
-          }
-        ],
-        tags: ['React', '후기', '성장']
-      },
-      {
-    id: 2,
-    title: 'TOEIC 900점 달성! 3개월 공부법 공유합니다',
-    content: `드디어 목표했던 900점을 달성했습니다! 🎉
-
-3개월 전만 해도 700점대에서 정체되어 있었는데, 스터디 덕분에 꾸준히 할 수 있었어요.
-제가 실천했던 방법들을 공유해봅니다.
-
-**공부 방법**
-
-1. 매일 아침 30분 LC 듣기 연습
-- 출근/등교 시간을 활용했어요
-- 1.2배속으로 듣다가 실전에서는 여유롭게 들렸습니다
-
-2. 점심시간 RC 문법 정리
-- 하루 10문제씩 꾸준히 풀기
-- 틀린 문제는 반드시 노트에 정리
-
-3. 저녁 스터디 시간 (2시간)
-- 실전 모의고사 풀이
-- 스터디원들과 오답 공유 및 토론
-
-**가장 효과적이었던 팁**
-
-- Part 5, 6는 패턴 암기가 답입니다
-- Part 7은 속도가 생명! 시간 재면서 연습하세요
-- 단어는 토익 빈출 단어장 하나만 5번 반복
-
-**추천 교재**
-- 해커스 토익 보카 (단어)
-- ETS 토익 정기시험 기출문제집 (실전)
-- 시원스쿨 LC 1000제 (듣기)
-
-스터디 없이 혼자 했다면 절대 900점 못 넘었을 거예요.
-같이 공부하시는 분들, 포기하지 마시고 화이팅하세요! 💪`,
-    author: '영어마스터',
-    authorId:0,
-    authorAvatar: '📚',
-    category: '정보공유',
-    createdAt: '2024-10-18 13:15',
-    views: 521,
-    likes: 45,
-    isPopular: true,
-    comments: [
-      {
-        id: 1,
-        author: '토익준비생',
-        authorAvatar: '📝',
-        content: '와 정말 대단하시네요! 저도 700점대인데 용기 얻었습니다. 혹시 스터디는 어떻게 구하셨나요?',
-        createdAt: '2024-10-18 13:45',
-        likes: 8
-      },
-      {
-        id: 2,
-        author: '영어공부중',
-        authorAvatar: '✏️',
-        content: '3개월 만에 200점이나 올리셨다니... 저도 도전해보겠습니다! 교재 추천 감사해요',
-        createdAt: '2024-10-18 14:20',
-        likes: 5
-      },
-      {
-        id: 3,
-        author: '취준생',
-        authorAvatar: '🎓',
-        content: '900점 축하드립니다! Part 7 시간 부족한데 어떻게 극복하셨는지 더 자세히 알 수 있을까요?',
-        createdAt: '2024-10-18 15:10',
-        likes: 12
-      }
-    ],
-    tags: ['TOEIC', '영어', '합격후기']
-  },
-  {
-    id: 3,
-    title: '온라인 스터디 처음인데 어떻게 시작하면 좋을까요?',
-    content: `안녕하세요, 온라인 스터디가 처음이라 궁금한 점이 많아서 질문 드립니다.
-
-**현재 상황**
-- 프로그래밍 독학 중인 직장인입니다
-- 혼자 공부하다 보니 계속 미루게 되더라구요
-- 온라인으로 같이 공부할 사람을 찾고 싶어요
-
-**궁금한 점들**
-
-1. 플랫폼 선택
-줌으로 하는 게 좋을까요, 아니면 디스코드나 다른 플랫폼이 있을까요?
-화면 공유하면서 같이 공부하는 방식이 효과적인가요?
-
-2. 스터디 시간
-평일 저녁 2시간씩 vs 주말 4시간씩
-어떤 게 더 지속 가능할까요?
-
-3. 스터디원 모집
-어디서 구하는 게 좋을까요? 오픈채팅? 커뮤니티?
-
-4. 진행 방식
-- 각자 공부하고 모여서 발표?
-- 아니면 같이 모여서 공부?
-- 서로 진도 체크는 어떻게 하나요?
-
-경험 있으신 분들 조언 부탁드립니다! 🙏`,
-    author: '스터디초보',
-    authorId:2,
-    authorAvatar: '🤔',
-    category: '질문답변',
-    createdAt: '2024-10-18 12:00',
-    views: 156,
-    likes: 12,
-    isPopular: false,
-    comments: [
-      {
-        id: 1,
-        author: '온라인스터디러',
-        authorAvatar: '💻',
-        content: '저는 디스코드 추천합니다! 화면 공유도 편하고 음성 채팅도 안정적이에요. 줌은 시간 제한이 있어서 불편할 수 있어요.',
-        createdAt: '2024-10-18 12:30',
-        likes: 15
-      },
-      {
-        id: 2,
-        author: '스터디장',
-        authorAvatar: '👨‍🏫',
-        content: '평일 저녁이 더 좋아요. 주말은 약속 생기면 빠지기 쉬워서 지속성이 떨어집니다. 2시간씩 꾸준히 하는 게 답입니다!',
-        createdAt: '2024-10-18 13:15',
-        likes: 10
-      },
-      {
-        id: 3,
-        author: '프로그래밍러버',
-        authorAvatar: '⚡',
-        content: '같은 고민 했었는데 각자 공부하고 모여서 발표하는 방식이 더 효과적이었어요. 준비하면서 더 깊이 공부하게 되더라구요.',
-        createdAt: '2024-10-18 14:00',
-        likes: 8
-      }
-    ],
-    tags: ['질문', '온라인스터디', '초보']
-  },
-  {
-    id: 4,
-    title: '정보처리기사 실기 합격! 공부 자료 공유합니다',
-    content: `정보처리기사 실기 시험에 합격했습니다! 🎊
-
-제가 공부하면서 정리한 자료와 팁들을 공유하고자 합니다.
-많은 도움이 되셨으면 좋겠습니다.
-
-**공부 기간 및 방법**
-- 총 2개월 준비 (필기 합격 후)
-- 평일 2시간, 주말 4시간 투자
-- 기출문제 중심 학습
-
-**과목별 공부법**
-
-1. 소프트웨어 설계 (20점)
-- UML 다이어그램 암기 필수
-- 디자인 패턴 개념 정리
-- GoF 패턴 23가지는 꼭 외우세요
-
-2. 소프트웨어 개발 (20점)
-- C언어 코드 구현 문제가 자주 나옴
-- 포인터, 배열 개념 확실히 하기
-- 최근 Python 문제도 증가 추세
-
-3. 데이터베이스 구축 (20점)
-- SQL 쿼리 작성 연습
-- 정규화 과정 이해
-- 트랜잭션, 동시성 제어 개념
-
-4. 프로그래밍 언어 활용 (20점)
-- Java 클래스 설계 문제
-- 예외 처리, 컬렉션 프레임워크
-- 실제 코드 작성해보면서 이해
-
-5. 정보시스템 구축관리 (20점)
-- 네트워크 프로토콜
-- 보안 관련 용어 (암호화, 인증 등)
-- 프로젝트 관리 기법
-
-**꿀팁**
-✅ 기출문제 5개년치는 최소 3번 반복
-✅ 암기는 이해 후에 하기 (무작정 외우면 소용없음)
-✅ 실제 손으로 SQL, 코드 작성 연습
-✅ 시험 전날 용어 정리 노트 마지막 점검
-
-**추천 자료**
-- 시나공 정보처리기사 실기 (교재)
-- 유튜브 "널널한 개발자" 채널
-- 기출문제 사이트: 큐넷
-
-필기 합격하신 분들, 실기도 충분히 할 수 있습니다!
-포기하지 마시고 끝까지 화이팅하세요! 💪`,
-    author: 'IT개발자',
-    authorId:0,
-    authorAvatar: '💻',
-    category: '정보공유',
-    createdAt: '2024-10-18 11:20',
-    views: 289,
-    likes: 34,
-    isPopular: false,
-    comments: [
-      {
-        id: 1,
-        author: '자격증준비',
-        authorAvatar: '📚',
-        content: '축하드립니다! 저도 실기 준비 중인데 SQL이 너무 어렵네요 ㅠㅠ 어떻게 공부하셨나요?',
-        createdAt: '2024-10-18 12:00',
-        likes: 6
-      },
-      {
-        id: 2,
-        author: '개발자지망생',
-        authorAvatar: '🔥',
-        content: '자료 정리 너무 깔끔하네요! 저장해서 공부에 참고하겠습니다. 감사합니다!',
-        createdAt: '2024-10-18 13:30',
-        likes: 4
-      }
-    ],
-    tags: ['정보처리기사', '합격', '자료공유']
-  },
-  {
-    id: 5,
-    title: '독서 토론 스터디 정말 재미있어요!',
-    content: `매주 일요일마다 하는 독서 토론 스터디에 참여한 지 2달이 되었는데요,
-정말 만족스럽습니다. 다양한 관점을 들을 수 있어서 좋아요.
-
-**우리 스터디 소개**
-
-- 인원: 6명 (20~30대)
-- 시간: 매주 일요일 오후 2시
-- 방식: 온라인 (Zoom)
-- 분야: 자기계발, 인문학, 소설 등 다양
-
-**진행 방식**
-
-1주차: 책 선정 및 각자 독서
-- 매달 초 다음 달 책 4권 선정
-- 일주일에 1권씩 읽기
-
-2주차: 토론 진행 (2시간)
-- 각자 인상 깊었던 부분 공유 (10분씩)
-- 자유 토론 시간
-- 책에 대한 평점 및 후기
-
-**지금까지 읽은 책들**
-📕 "아몬드" - 손원평
-📗 "달러구트 꿈 백화점" - 이미예
-📘 "죽고 싶지만 떡볶이는 먹고 싶어" - 백세희
-📙 "코스모스" - 칼 세이건
-
-**좋았던 점**
-
-혼자 읽을 때는 대충 읽고 넘어갔던 부분도
-토론하면서 다시 생각해보게 되더라구요.
-
-특히 같은 책을 읽어도 사람마다
-다르게 해석하는 게 신기했어요.
-
-"어떻게 저런 관점으로 볼 수 있지?"
-하면서 새로운 시각을 얻게 됩니다.
-
-**아쉬운 점**
-가끔 책이 너무 길거나 어려우면
-다 못 읽고 오는 경우가 있어요 ㅎㅎ
-하지만 그래도 토론은 재미있습니다!
-
-독서 좋아하시는 분들께 정말 추천드려요 📚✨`,
-    author: '책읽는사람',
-    authorId:3,
-    authorAvatar: '📖',
-    category: '자유토론',
-    createdAt: '2024-10-18 10:45',
-    views: 198,
-    likes: 19,
-    isPopular: false,
-    comments: [
-      {
-        id: 1,
-        author: '북러버',
-        authorAvatar: '📕',
-        content: '오 저도 독서 토론 스터디 찾고 있었는데! 혹시 인원 더 받으시나요?',
-        createdAt: '2024-10-18 11:20',
-        likes: 7
-      },
-      {
-        id: 2,
-        author: '책벌레',
-        authorAvatar: '🐛',
-        content: '달러구트 꿈 백화점 저도 읽었는데 정말 재미있었어요! 다음에 어떤 책 읽으실 예정인가요?',
-        createdAt: '2024-10-18 12:00',
-        likes: 5
-      }
-    ],
-    tags: ['독서', '토론', '추천']
-  },
-  {
-    id: 6,
-    title: '스터디 중간에 포기하고 싶을 때 극복하는 방법',
-    content: `스터디를 하다 보면 중간에 지치거나 포기하고 싶을 때가 있죠.
-저도 그랬는데, 이렇게 극복했습니다.
-
-**제가 겪었던 슬럼프**
-
-3개월째 되니까 갑자기 의욕이 떨어지더라구요.
-처음엔 열정적이었는데 점점 귀찮아지고...
-"이거 해서 뭐하지?" 하는 생각도 들었어요.
-
-특히 다른 스터디원들은 열심히 하는데
-나만 뒤처지는 것 같아서 스트레스 받았습니다.
-
-**극복 방법**
-
-1. 초심 되돌아보기 💭
-- 왜 시작했는지 다시 생각해보기
-- 스터디 첫날 내가 적었던 목표 다시 읽기
-- 지금까지 얼마나 성장했는지 돌아보기
-
-2. 작은 목표 세우기 🎯
-- 거창한 목표 말고 "오늘 1시간만 집중하자"
-- 이번 주만 버티자, 이번 달만 버티자
-- 작은 성취감을 느끼는 게 중요해요
-
-3. 스터디원들과 솔직하게 얘기하기 💬
-- "요즘 좀 지쳐서..."라고 털어놓기
-- 다들 비슷한 경험 있어서 공감해줘요
-- 같이 힘내자고 응원받으면 다시 힘이 나요
-
-4. 잠깐 쉬어가기 ☕
-- 1주일 정도 스터디 쉬는 것도 방법
-- 번아웃 오기 전에 미리 쉬는 게 낫습니다
-- 쉬고 나면 다시 하고 싶어져요
-
-5. 환경 바꿔보기 🌟
-- 카페 가서 공부하기
-- 스터디 시간대 조정하기
-- 새로운 학습 자료 찾아보기
-
-6. 보상 시스템 만들기 🎁
-- 이번 주 목표 달성하면 맛있는 거 먹기
-- 한 달 채우면 갖고 싶었던 거 사기
-- 스스로에게 당근을 주세요!
-
-**마음가짐**
-
-"완벽하게 하려고 하지 말자"
-100% 완벽하게 할 수 없어요.
-70%만 해도 충분합니다.
-
-"다른 사람과 비교하지 말자"
-각자의 속도가 있어요.
-느려도 괜찮아요.
-
-"포기하는 것도 용기다"
-정말 안 맞으면 그만두는 것도 괜찮습니다.
-하지만 슬럼프 때문이라면 한 번 더 생각해보세요.
-
-**결론**
-
-저는 이렇게 극복하고 지금 6개월째 스터디 하고 있어요!
-중간에 힘들 때도 있었지만 포기하지 않아서 다행이에요.
-
-여러분도 지금 힘드시다면
-잠깐 숨 고르고 다시 시작하세요 💪
-
-우리 모두 끝까지 화이팅! 🔥`,
-    author: '끈기왕',
-    authorId:0,
-    authorAvatar: '💪',
-    category: '자유토론',
-    createdAt: '2024-10-18 09:30',
-    views: 412,
-    likes: 56,
-    isPopular: true,
-    comments: [
-      {
-        id: 1,
-        author: '공부중독',
-        authorAvatar: '📝',
-        content: '와 정말 공감되는 내용이네요. 저도 요즘 슬럼프인데 힘이 나네요. 감사합니다!',
-        createdAt: '2024-10-18 10:00',
-        likes: 18
-      },
-      {
-        id: 2,
-        author: '노력파',
-        authorAvatar: '🔥',
-        content: '작은 목표 세우기 정말 중요한 것 같아요. 저도 실천해보겠습니다!',
-        createdAt: '2024-10-18 10:45',
-        likes: 12
-      },
-      {
-        id: 3,
-        author: '꾸준함',
-        authorAvatar: '🌱',
-        content: '6개월이나 하셨다니 정말 대단하세요! 저는 이제 2개월인데 본받고 싶네요',
-        createdAt: '2024-10-18 11:30',
-        likes: 9
-      }
-    ],
-    tags: ['동기부여', '꿀팁', '멘탈관리']
-  }
-];
-
-
-
-const testGetPostDetail = http.get(`${API_URL_COMMUNITY_BOARD}/:id`,({params}) => {
-  const {id} = params;
+const testViewCount = http.patch(`${API_URL_COMMUNITY_BOARD}/post/:id/views`, async ({ params }) => {
+  const { id } = params;
   
-  try {
-    const post = POSTS_DB.find(p=>p.id === Number(id));
+  // 1. DB에서 해당 ID를 가진 포스트 찾기
+  const postIndex = POSTS_DB.posts.findIndex(post => post.id === Number(id));
 
-    if(!post){
-      return new HttpResponse(null,{status:404,statusText:"Post Not found"})
-    }
+  if (postIndex !== -1) {
+    // 2. 실제 데이터(메모리 내 DB) 업데이트
+    POSTS_DB.posts[postIndex].views += 1;
     
-    return HttpResponse.json(post,{status:200})
+    // 로그로 확인해보기 (터미널이나 브라우저 콘솔)
+    console.log(`Post ${id} 조회수 증가 완료:`, POSTS_DB.posts[postIndex].views);
 
-  } catch(error) {
-    return HttpResponse.json({message:"서버 에러"},{status:200})
+    return HttpResponse.json(
+      { message: "조회수 업데이트 성공", updatedPost: POSTS_DB.posts[postIndex] },
+      { status: 200 }
+    );
   }
+
+  // 포스트를 찾지 못한 경우 예외 처리
+  return HttpResponse.json(
+    { message: "포스트를 찾을 수 없습니다." },
+    { status: 404 }
+  );
 });
 
-const testDeletePosts = http.delete(`${API_URL_COMMUNITY_BOARD}/:id`,({params}) => {
-    const {id} = params
-    POSTS_DB = POSTS_DB.filter(post => post.id !== Number(id));
-    return new HttpResponse(null, {status:204}); //204 No Content
+const testUpdateUser = http.patch(`${API_URL_USERS}/:id`, async ({ params, request }) => {
+    const { id } = params;
+    const editForm = await request.json() as any;
+
+    const idx = USER_DB.users.findIndex(u => String(u.id) === String(id));
+
+    if (idx !== -1) {
+        USER_DB.users[idx] = { ...USER_DB.users[idx], ...editForm };
+        console.log('업데이트 성공:', USER_DB.users[idx]);
+        
+        return HttpResponse.json(USER_DB.users[idx], { status: 200 });
+    }
+
+    // 데이터가 없어서 404가 나는 경우 콘솔에 표시
+    console.error(`ID ${id}에 해당하는 유저를 찾을 수 없어 404를 반환합니다.`);
+    return new HttpResponse(null, { status: 404 });
 });
 
-const testGetPosts = http.get(API_URL_COMMUNITY_BOARD, ({ request }) => {
-    // 1. URL 객체를 생성하여 쿼리 스트링을 파싱
-    const url = new URL(request.url);
-    const authorId = url.searchParams.get('authorId');
-    
-    console.log("실제 호출된 URL:", request.url);
-    console.log("찾으려는 authorId:", authorId);
+const testDeleteComment = http.delete(
+  `${API_URL_COMMUNITY_BOARD}/posts/:postId/comments/:commentId`, 
+  ({ params }) => {
+    const { postId, commentId } = params;
+    const postIdx = POSTS_DB.posts.findIndex(post => post.id === Number(postId));
+
+    if (postIdx !== -1) {
+      
+      POSTS_DB.posts[postIdx].comments = POSTS_DB.posts[postIdx].comments.filter(
+        (comment) => comment.id !== Number(commentId)
+      );
+      
+      console.log(`게시글 ${postId}번의 ${commentId}번 댓글 삭제 완료`);
+      return HttpResponse.json({ message: "삭제 성공" }, { status: 200 });
+    }
+
+    // 게시글을 못 찾았을 경우 에러 응답
+    return new HttpResponse(null, { status: 404 });
+  }
+);
+
+const testUpdateComment = http.put(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
+  const {id} = params
+  const editComment = await request.json() as Comment;
+  const idx = POSTS_DB.posts.findIndex(post => post.id === Number(id))
+  if (idx === -1) {
+    return HttpResponse.json(null,{status:404,statusText:"Post Not found"});
+  }
+
+    POSTS_DB.posts[idx].comments[editComment.id] = editComment;
+
+    return HttpResponse.json(editComment, { status: 200 });
+  },
+);
+
+const testCreateComment = http.post(
+  `${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,
+  async ({ params, request }) => {
+    const { id } = params;
+    const newComment = (await request.json()) as Comment;
+    const idx = POSTS_DB.posts.findIndex((post) => post.id === Number(id));
+    if (idx === -1) {
+      return HttpResponse.json(null, {
+        status: 404,
+        statusText: "Post Not found",
+      });
+    }
+
+    POSTS_DB.posts[idx].comments.push(newComment);
+
+    return HttpResponse.json(newComment, { status: 200 });
+  },
+);
+
+const testGetPostDetail = http.get(
+  `${API_URL_COMMUNITY_BOARD}/post/:id`,
+  ({ params }) => {
+    const { id } = params;
 
     try {
-        // 2. authorId 쿼리가 있으면 필터링, 없으면 전체 목록 반환
-        if (authorId) {
-            const filtered_POSTS_DB = POSTS_DB.filter(
-                post => post.authorId === Number(authorId)
-            );
-            return HttpResponse.json(filtered_POSTS_DB, { status: 200 });
-        }
-        
-        // 쿼리가 없으면 전체 DB 반환
-        return HttpResponse.json(POSTS_DB, { status: 200 });
+      const post = POSTS_DB.posts.find((p) => p.id === Number(id));
 
+      if (!post) {
+        return new HttpResponse(null, {
+          status: 404,
+          statusText: "Post Not found",
+        });
+      }
+
+      return HttpResponse.json(post, { status: 200 });
     } catch (error) {
-        return HttpResponse.json({ message: "서버 에러" }, { status: 500 });
+      return HttpResponse.json({ message: "서버 에러" }, { status: 200 });
     }
+  },
+);
+
+const testDeletePost = http.delete(
+  `${API_URL_COMMUNITY_BOARD}/post/:id`,
+  ({ params }) => {
+    const { id } = params;
+    POSTS_DB.posts = POSTS_DB.posts.filter((post) => post.id !== Number(id));
+    return new HttpResponse(null, { status: 204 }); //204 No Content
+  },
+);
+
+const testGetPosts = http.get(`${API_URL_COMMUNITY_BOARD}/posts`, ({ request }) => {
+  // 1. URL 객체를 생성하여 쿼리 스트링을 파싱
+  const url = new URL(request.url);
+  const authorId = url.searchParams.get("authorId");
+
+  console.log("실제 호출된 URL:", request.url);
+  console.log("찾으려는 authorId:", authorId);
+
+  try {
+    // 2. authorId 쿼리가 있으면 필터링, 없으면 전체 목록 반환
+    if (authorId) {
+      const filtered_POSTS_DB = POSTS_DB.posts.filter(
+        (post) => post.authorId === Number(authorId),
+      );
+      return HttpResponse.json(filtered_POSTS_DB, { status: 200 });
+    }
+
+    // 쿼리가 없으면 전체 DB 반환
+    return HttpResponse.json(POSTS_DB, { status: 200 });
+  } catch (error) {
+    return HttpResponse.json({ message: "서버 에러" }, { status: 500 });
+  }
 });
 
-const testCreatePost = http.post(API_URL_COMMUNITY_BOARD, async ({ request }) => {
-  const newPost = (await request.json()) as any;
-  console.log('받은 새 게시글 데이터:', newPost);
+const testUpdatePost = http.patch(
+  `${API_URL_COMMUNITY_BOARD}/post/:id`,
+  async ({ params, request }) => {
+    const { id } = params;
+    const updateData = (await request.json()) as any; // 클라이언트가 보낸 수정 데이터
+
+    // 1. DB에서 해당 ID를 가진 포스트의 인덱스 찾기
+    const idx = POSTS_DB.posts.findIndex((post) => post.id === Number(id));
+
+    // 2. 해당 포스트가 없을 경우 404 에러 반환
+    if (idx === -1) {
+      return new HttpResponse(null, {
+        status: 404,
+        statusText: "Post not found",
+      });
+    }
+
+    // 3. 기존 데이터 유지 + 새로운 데이터로 덮어쓰기 (업데이트)
+    POSTS_DB.posts[idx] = {
+      ...POSTS_DB.posts[idx], // 기존 데이터 (id, author 등)
+      ...updateData, // 수정된 데이터 (title, content 등)
+    };
+
+    console.log(`[MSW] ${id}번 게시글 수정 완료:`, POSTS_DB.posts[idx]);
+
+    // 4. 업데이트된 전체 객체 반환
+    return HttpResponse.json(id, { status: 200 });
+  },
+);
+
+const testCreatePost = http.post( `${API_URL_COMMUNITY_BOARD}/post`,
+  async ({ request }) => {
+    const newPost = (await request.json()) as any;
+    console.log("받은 새 게시글 데이터:", newPost);
     const postWithId = {
       ...newPost,
-      id: POSTS_DB.length + 1,
-      createdAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      id: POSTS_DB.posts.length + 1,
+      createdAt: new Date().toISOString().slice(0, 16).replace("T", " "),
       views: 0,
       likes: 0,
       comments: 0,
-      isPopular: false
+      isPopular: false,
     };
-    POSTS_DB.push(postWithId);
+    POSTS_DB.posts.push(postWithId);
     return HttpResponse.json(postWithId, { status: 200 });
+  },
+);
+
+const testLogOut = http.post(`${API_URL_USERS}/auth/:id`, async ({params}) => {
+  const { id } = params;
+  const user = USER_DB.users.find(u => u.id === Number(id));
+ 
+  return HttpResponse.json({
+        ...user,
+        isLoggedin: false,
+      }, { status: 200 });
 });
 
-const testLogOut = http.post(API_URL_LOGOUT, async () => {
-    return HttpResponse.json({ message: '로그아웃 성공' }, { status: 200 });
-});
-
-const testSignin = http.post(API_URL_SIGNIN, async ({ request }) => {
-    const { username, password } = (await request.json()) as any;
-    const user = DB.find(u => u.username === username && u.password == password)
-    
+const testLogin = http.post(`${API_URL_USERS}/auth`, async ({ request }) => {
+    const { email, password } = await (request.json()) as any
+    const user = USER_DB.users.find(u => u.email === email && u.password == password);
     if (user) {
       return HttpResponse.json({
-        accessToken: 'mocked-jwt-token-xyz', // signin 함수에서 체크하는 키
-        // 로그인 성공 시 유저 정보를 한꺼번에 응답!
-        userInfo: user
+        ...user,
+        isLoggedin:true,
+        accessToken: 'mocked-jwt-token-xyz'
       }, { status: 200 });
     }
-
-    return new HttpResponse(
-      JSON.stringify({ message: '아이디 또는 비밀번호가 틀렸습니다.' }),
-      { 
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
-  })
-
-const testSignup = http.post(API_URL_SIGNUP, async({ request }) => {
-    const { username, password, email,phoneNumber } = (await request.json()) as any;
-    const isDuplicate = DB.some(user => user.username === username)
+    
+    return new HttpResponse(null, { status: 401 });
+  });
+  
+const testCreateUser = http.post(`${API_URL_USERS}`, async({ request }) => {
+    const { nickname, password, email,phoneNumber } = (await request.json()) as any;
+    const isDuplicate = USER_DB.users.some(user => user.nickname === nickname)
     
     if (isDuplicate){
       return new HttpResponse(
@@ -584,69 +246,77 @@ const testSignup = http.post(API_URL_SIGNUP, async({ request }) => {
         }
       );
     }
-    let today = new Date();  
-    let year = today.getFullYear();
-    let month = today.getMonth() + 1;
-    let date = today.getDate();
-
     const newUser = {
-      id:DB.length +1,
-      username: `${username}`,
+      id:USER_DB.users.length +1,
+      nickname: `${nickname}`,
       password: `${password}`,
       phoneNumber:`${phoneNumber}`,
       email: `${email}`,
       bio: '기본 자기소개입니다.',
       location: '서울, 대한민국',
-      loggedin: false,
-      joinDate: `${year}년 ${month}월 ${date}일`,
       role: 'user',
-      avatar: '👨‍💻'
+      avatar: '👨‍💻',
+      createdAt: dateFormatter(),
+      updatedAt: dateFormatter(),
+      isLoggedin:false,
+      isDeleted:false,
+      Refresh:'',
+      accessToken:''
     }
 
-    DB.push(newUser);
-    console.log(username,password,email,DB)
+    USER_DB.users.push(newUser);
     return HttpResponse.json(newUser, { status: 200 });
     
 });
 
-const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({params}) => {
 
-  const {id} = params;
-
-  //DB에서 유저 찾기 (없으면 기본 목데이터 반환)
-  const user = DB.find(u => u.id === Number(id))
-
+const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
+  const { id } = params;
+  const user = USER_DB.users.find((u) => u.id === Number(id));
+  
   if (user) {
     return HttpResponse.json(
       {
         id: 1,
-        username: user.username,
+        nickname: user.nickname,
         email: user.email,
         bio: user.bio,
         location: user.location,
-        joinDate: user.joinDate,
         role: user.role,
         avatar: user.avatar,
-        loggedin: user.loggedin
-      }, { status:200});
+        createdAt:user.createdAt ,
+        updatedAt:user.updatedAt ,
+        isLoggedin:user.isLoggedin ,
+        isDeleted:user.isDeleted ,
+        Refresh:'',
+        accessToken:''
+      },
+      { status: 200 },
+    );
   }
 
   return new HttpResponse(
-    JSON.stringify({ message: '유저가 존재하지 않습니다.' }),
-    { 
+    JSON.stringify({ message: "유저가 존재하지 않습니다." }),
+    {
       status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    }
+      headers: { "Content-Type": "application/json" },
+    },
   );
-}) 
+});
 
 export const handlers = [
-  testSignin,
-  testSignup,
+  testCreateUser,
+  testUpdateUser,
+  testLogin,
   testLogOut,
   testProfile,
   testGetPostDetail,
   testGetPosts,
   testCreatePost,
-  testDeletePosts,
+  testDeletePost,
+  testUpdatePost,
+  testCreateComment,
+  testUpdateComment,
+  testDeleteComment,
+  testViewCount
 ];

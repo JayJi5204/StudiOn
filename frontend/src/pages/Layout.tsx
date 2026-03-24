@@ -7,12 +7,24 @@ import { LogOut,BookOpen } from "lucide-react";
 const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN 
 const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP
 const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE
-const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
+const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_BOARD
 const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
 
 const Layout = () => {
   let navigate = useNavigate();
   const {userInfo,setUserInfo} = useUserInfoStore();
+
+  const handleLogout = async () => {
+          try {
+              const userData = await authService.logout(userInfo.id)
+              setUserInfo(userData);
+              navigate('/');
+          } catch (error) {
+              console.log("로그아웃 실패");
+              alert("로그아웃 실패");
+          }
+              
+  }
 
   const LogoutContent = () => {
     return (
@@ -30,11 +42,11 @@ const Layout = () => {
   const LoginContent = () => {
     return (
       <div className="flex space-x-4">
-        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.username}님</div>
+        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.nickname}님</div>
         
         <button
           onClick={() => { 
-              const nextPage = userInfo.loggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
+              const nextPage = userInfo.isLoggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
               navigate(nextPage)
           }}
           className="rounded-xl hover:bg-red-50 transition-colors font-medium cursor-pointer"
@@ -45,15 +57,7 @@ const Layout = () => {
         </button>
 
         <button
-            onClick={() => {
-                authService.logout(userInfo).then(() => {
-                  setUserInfo({
-                      ...userInfo,
-                      loggedin: false,
-                  });
-                  navigate(`${signinPageUrl}`);
-                });
-            }}
+            onClick={handleLogout}
             className='items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
         >
             <LogOut className="w-5 h-5" />
@@ -63,7 +67,7 @@ const Layout = () => {
   };
 
   const renderLogInOutContent = () => {
-    return userInfo.loggedin ? <LoginContent/> : <LogoutContent/>;
+    return userInfo.isLoggedin ? <LoginContent/> : <LogoutContent/>;
   }
 
   return (

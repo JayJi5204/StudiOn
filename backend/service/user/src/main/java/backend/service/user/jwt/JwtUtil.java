@@ -19,9 +19,9 @@ public class JwtUtil {
     private final long refreshTokenExpiration;
 
     public JwtUtil(
-            @Value("${token.secret}") String secret,
-            @Value("${token.access-expiration-time}") long accessTokenExpiration,
-            @Value("${token.refresh-expiration-time}") long refreshTokenExpiration
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.access-expiration-time}") long accessTokenExpiration,
+            @Value("${jwt.refresh-expiration-time}") long refreshTokenExpiration
     ) {
         // 💡 수정된 부분: Keys.hmacShaKeyFor를 사용하여 SecretKey를 생성합니다.
         // 이 방식이 String Secret을 안전하게 처리하는 최신 JJWT 권장 방식입니다.

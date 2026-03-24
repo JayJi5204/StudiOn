@@ -1,9 +1,11 @@
-import {useState } from 'react';
-import {useNavigate } from 'react-router';
-import {authService} from '../services/auth.service';
+import React,{ useState} from 'react';
+import { useNavigate } from 'react-router';
+import { authService } from '../services/auth.service';
+import { usePosts } from '../hooks/usePosts';
 import useUserInfoStore from '../store/userInfoStore';
-import PostsContent from '../components/profile/PostsContent';
-
+import MyPostsContent from '../components/profile/MyPostsContent';
+import { TabButton } from '../components/button/TabButton';
+import { QuickActionButton } from '../components/button/QuickActionButton';
 import {
     User,
     Mail,
@@ -22,10 +24,17 @@ import {
     Clock,
     Users,
 } from 'lucide-react';
-import { usePosts } from '../hooks/usePosts';
+import type { IUser } from '../types/user.type';
+import { dateFormatter } from '../utils/date';
+
+interface StudyProgressBarProps {
+    progress:number,
+}
 
 // 스터디 진행도 바 컴포넌트
-const StudyProgressBar = ({ progress }: { progress: number }) => {
+const StudyProgressBar = ({ 
+    progress 
+}: StudyProgressBarProps ) => {
     const getColor = (p:number) => {
         if (p === 100) return 'bg-green-500';
         if (p > 70) return 'bg-blue-500';
@@ -50,14 +59,13 @@ const ProfilePage = () => {
 
     const {userInfo,setUserInfo} = useUserInfoStore();
     const [isEditing, setIsEditing] = useState(false);
-    const [activeTab, setActiveTab] = useState('overview');
-    const [editForm,setEditForm] = useState(userInfo);
-    const { posts: myPosts} = usePosts(
-            { authorId: userInfo.id, page: 1, limit: 10 },
-            { requireAuth: false } // 이미 로그인된 상태이므로 requireAuth는 기본값 false
+    const [activeTab, setActiveTab] = useState<string>('overview');
+    const [editForm,setEditForm] = useState<IUser>(userInfo);
+    const { posts } = usePosts(
+            { page: 1, limit: 10 },
+            Boolean(userInfo.isLoggedin)
         );
     
-    // 사용자 정보
     // 통계 정보
     const stats = {
         studiesJoined: 12,
@@ -107,16 +115,28 @@ const ProfilePage = () => {
             image: '💻'
         }
     ];
-    
+    const handleLogout = async () => {
+        try {
+            const userData = await authService.logout(userInfo.id)
+            setUserInfo(userData);
+            navigate('/');
+        } catch (error) {
+            console.log("로그아웃 실패");
+            alert("로그아웃 실패");
+        }
+            
+    }
     // 입력 필드 변경 핸들러
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setEditForm(prev => ({ ...prev, [name]: value }));
+        setEditForm(prev => ({ ...prev, [name]: value ,['updatedAt']:dateFormatter()}));
+        console.log(editForm)
     };
 
     // 저장 핸들러
-    const handleSave = () => {
-        setUserInfo(editForm);
+    const handleSave = async () => {
+        const updatedUser = await authService.updateUser(editForm.id,editForm)
+        setUserInfo(editForm || updatedUser);
         setIsEditing(false);
     };
 
@@ -214,9 +234,10 @@ const ProfilePage = () => {
             case 'studies':
                 return <StudiesContent />;
             case 'posts':
-                return <PostsContent
-                            myPosts={myPosts}
-                        />;
+                return <MyPostsContent
+                            myPosts={posts}  // 위에서 선언한 posts 변수
+                            userId={userInfo.id}  // 현재 컨텍스트의 userId 변수
+                        />
             case 'achievements':
                 return <AchievementsContent />;
             default:
@@ -228,7 +249,7 @@ const ProfilePage = () => {
         <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 <h1 className='text-3xl font-extrabold text-gray-900 mb-8 sm:mb-10 text-center lg:text-left'>
-                    {userInfo.username} 님의 프로필
+                    {userInfo.nickname} 님의 프로필
                 </h1>
                 <div className='grid lg:grid-cols-3 gap-8'>
                     {/* Left Sidebar - Profile Card */}
@@ -247,7 +268,7 @@ const ProfilePage = () => {
 
                                 {!isEditing ? (
                                     <>
-                                        <h2 className='text-2xl font-bold text-gray-900 mt-2 mb-1'>{userInfo.username}</h2>
+                                        <h2 className='text-2xl font-bold text-gray-900 mt-2 mb-1'>{userInfo.nickname}</h2>
                                         <p className='text-gray-600 mb-4 px-2 italic text-sm'>{userInfo.bio}</p>
                                         {/* User Information */}
                                         <div className='space-y-4 border-t border-gray-200 pt-6 pb-6'>
@@ -261,7 +282,7 @@ const ProfilePage = () => {
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <Calendar className='w-5 h-5 mr-3 text-indigo-500' />
-                                                <span className='text-sm font-medium'>가입일: {userInfo.joinDate}</span>
+                                                <span className='text-sm font-medium'>가입일: {userInfo.createdAt}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <User className='w-5 h-5 mr-3 text-indigo-500' />
@@ -274,8 +295,8 @@ const ProfilePage = () => {
                                     <div className="space-y-4 mb-4">
                                         <input
                                             type="text"
-                                            name='username'
-                                            value={editForm.username}
+                                            name='nickname'
+                                            value={editForm.nickname}
                                             onChange={handleInputChange}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-100 text-lg font-medium"
                                             placeholder="사용자명"
@@ -342,19 +363,10 @@ const ProfilePage = () => {
 
                             {/* Quick Actions */}
                             <div className='space-y-2 mt-6 pt-6 border-t border-gray-200'>
-                                <QuickActionButton icon={Settings} label='설정' />
-                                <QuickActionButton icon={Bell} label='알림' />
+                                <QuickActionButton icon={<Settings/>} label='설정' />
+                                <QuickActionButton icon={<Bell/>} label='알림' />
                                 <button
-                                    onClick={() => {
-                                        authService.logout(userInfo).then(() => {
-                                            setUserInfo({
-                                                ...userInfo,
-                                                loggedin: false,
-                                            });
-                                            navigate('/');
-                                            });
-                                        navigate('/');
-                                    }}
+                                    onClick={handleLogout}
                                     className='w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
                                 >
                                     <LogOut className="w-5 h-5" />
@@ -396,35 +408,22 @@ const ProfilePage = () => {
     );
 };
 
+
+interface StatsItemProps {
+    value:number, 
+    label:string, 
+    color:string,
+};
 // 보조 컴포넌트: 통계 항목
-const StatItem = ({ value, label, color }) => (
+const StatItem = ({ 
+    value, 
+    label, 
+    color 
+}:StatsItemProps) => (
     <div className='text-center p-2 bg-gray-50 rounded-xl shadow-inner'>
         <div className={`text-2xl font-extrabold ${color}`}>{value}</div>
         <div className='text-sm text-gray-600 font-medium'>{label}</div>
     </div>
 );
-
-// 보조 컴포넌트: 빠른 실행 버튼
-const QuickActionButton = ({ icon: Icon, label }) => (
-    <button className='w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-indigo-50 rounded-xl transition-colors font-medium'>
-        <Icon className="w-5 h-5 text-indigo-500" />
-        <span>{label}</span>
-    </button>
-);
-
-// 보조 컴포넌트: 탭 버튼
-const TabButton = ({ tabKey, activeTab, setActiveTab, label }) => (
-    <button
-        onClick={() => setActiveTab(tabKey)}
-        className={`pb-3 px-3 sm:px-4 font-bold text-sm sm:text-base transition-colors duration-200 border-b-2 ${
-            activeTab === tabKey
-                ? 'text-indigo-600 border-indigo-600'
-                : 'text-gray-600 border-transparent hover:border-gray-300 hover:text-gray-900'
-        } whitespace-nowrap`}
-    >
-        {label}
-    </button>
-);
-
 
 export default ProfilePage;

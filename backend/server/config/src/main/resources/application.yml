@@ -1,15 +1,19 @@
 server:
   port: 8888
 
+encrypt:
+  key: ${ENCRYPT_KEY}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+
 spring:
   application:
     name: config-server
-
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
 
   output:
     ansi:
@@ -29,4 +33,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, info, httpexchanges, busrefresh
+        include: refresh, health, beans, info, httpexchanges

@@ -27,22 +27,6 @@ public class CommentController {
         return commentService.create(commentCreateRequestDto);
     }
 
-    @Operation(summary = "댓글 단건 조회", description = "댓글 ID로 특정 댓글을 조회합니다.")
-    @GetMapping("/get/{commentId}")
-    public CommentResponseDto get(
-            @Parameter(description = "댓글 ID", example = "279305241031393280")
-            @PathVariable("commentId") Long commentId) {
-        return commentService.get(commentId);
-    }
-
-    @Operation(summary = "댓글 전체 조회 (일반 페이징)", description = "특정 게시글의 댓글을 페이지 번호 기반으로 조회합니다.")
-    @GetMapping("/getAll")
-    public CommentPageResponse getAllComment(
-            @Parameter(description = "게시글 ID", example = "10") @RequestParam("boardId") Long boardId,
-            @Parameter(description = "페이지 번호", example = "1") @RequestParam("page") Long page,
-            @Parameter(description = "페이지당 개수", example = "10") @RequestParam("pageSize") Long pageSize) {
-        return commentService.getAll(boardId, page, pageSize);
-    }
 
     @Operation(summary = "댓글 무한 스크롤 조회", description = "마지막 댓글의 정보를 기준으로 다음 댓글 목록을 가져옵니다.")
     @GetMapping("/infinite-scroll")
@@ -61,7 +45,7 @@ public class CommentController {
     }
 
     @Operation(summary = "사용자별 댓글 목록 조회", description = "특정 사용자가 작성한 모든 댓글을 조회합니다.")
-    @GetMapping("/getCommentWithUserId/{userId}")
+    @GetMapping("/users/{userId}")
     public List<CommentResponseDto> getBoardWhoCreateWithUserId(
             @Parameter(description = "사용자 ID", example = "279296958190669820") @PathVariable("userId") Long userId) {
         return commentService.getBoardWhoCreateWithUserId(userId);

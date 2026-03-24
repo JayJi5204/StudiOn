@@ -1,8 +1,7 @@
-import {useState } from 'react';
 import { Formik, Form} from 'formik';
-import SigninUserField from './SigninUserField.formik.component'; 
+import SigninEmailField from './SigninEmailField.formik.component'; 
 import SigninPasswordField from './SigninPassworField.formik.component'; 
-import SigninRememberMe from './SigninRememberMeField.component';
+import SigninRememberMe from './SigninRememberMeField.formik.component';
 import SigninSubmitButton from '../button/SubmitButton';
 import GoogleLoginButton from '../button/GoogleLoginButton';
 import { signinSchema, signinInitialValues} from '../../schemas/authSchema'; 
@@ -13,35 +12,28 @@ import useUserInfoStore from '../../store/userInfoStore';
 const SigninForm = () => {
     let navigate = useNavigate();
 
-    const [message,setMessage] = useState<string>('');
-    const {userInfo,setUserInfo } = useUserInfoStore();
+    const { setUserInfo } = useUserInfoStore();
 
-    const handleSignin = (formValue:{username:string,password:string}) => {
-        const {username,password} = formValue;
-        setMessage('');
-        
-        authService.login(username,password).then(response => {
-            const userData = response.data;
-            if (userData.accessToken !== 'mocked-jwt-token-xyz') {
-                setMessage('정상적인 로그인 응답이 아닙니다.');
-                navigate('/');
-                return;
-            }
-            
-            setUserInfo({
-                ...userData.userInfo,
-                loggedin: true,
-            });
+    const handleSignin = async (
+        formValue:{
+            email:string,
+            password:string
+        }) => {
+        const {email,password} = formValue;
 
-            console.log('로그인 성공:', userInfo);
+        try {
+            const userData = await authService.login(email,password);
+            setUserInfo(userData);
+            console.log('로그인 성공:', userData);
+            alert('로그인 되었습니다.');
             navigate('/');
-        }).catch(error => {
-            setMessage(error.response.data.message);
-            alert('로그인에 실패했습니다: ' + error.response.data.message);
+
+        } catch (error) {
+            console.log(error);
+            alert('이메일 또는 비밀번호가 틀렸습니다.');
             navigate('/');
-        });
+        };
         
-        console.log(message)
     };
 
     return (
@@ -53,12 +45,12 @@ const SigninForm = () => {
             
             <div className="space-y-6 mb-2">
                 <Formik
-                initialValues={signinInitialValues}
-                validationSchema={signinSchema}
-                onSubmit={handleSignin}
+                    initialValues={signinInitialValues}
+                    validationSchema={signinSchema}
+                    onSubmit={handleSignin}
                 >
                     <Form>
-                        <SigninUserField />
+                        <SigninEmailField />
                         <SigninPasswordField />
                         <SigninRememberMe />
                         <SigninSubmitButton

@@ -1,16 +1,23 @@
 import { useState } from 'react';
 import { X,FileText, Save, Eye, ChevronDown } from 'lucide-react';
 import { postService } from '../services/posts.service';
-import { useNavigate } from 'react-router';
+import { useLocation,useNavigate } from 'react-router';
 import useUserInfoStore from '../store/userInfoStore';
+import type { IPost } from '../types/posts.type';
 
 const WritePostPage = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const editData = location.state as IPost;
+    const isEditMode = !!editData;
     const {userInfo} = useUserInfoStore();
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [tags, setTags] = useState<string[]>([]);
+
+    const [title, setTitle] = useState(editData?.title || '');
+    const [content, setContent] = useState(editData?.content || '');
+    const [selectedCategory, setSelectedCategory] = useState(editData?.category || '');
+    const [tags, setTags] = useState<string[]>(editData?.tags || []);
+
     const [tagInput, setTagInput] = useState('');
     const [showCategoryMenu, setShowCategoryMenu] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
@@ -37,17 +44,43 @@ const WritePostPage = () => {
             alert('제목, 내용, 카테고리를 모두 입력해주세요.');
             return;
         }
-        // 여기에 게시글 저장 로직 추가
-        postService.createPost({
-                title,
-                content,
-                category: selectedCategory,
-                tags,
-            }, 
-            userInfo.id
-        );
-        alert('게시글이 작성되었습니다!');
-        navigate(communityPageUrl);
+
+        try {
+
+            if (isEditMode) {
+                //게시글 수정 로직 추가
+                const res = await postService.updatePost(
+                    editData.id,
+                    {
+                        title,
+                        content,
+                        category: selectedCategory,
+                        tags,
+                    }, 
+                )
+                alert('게시글이 수정되었습니다!');
+                navigate(communityPageUrl);
+                console.log("수정 성공:", res);
+            } else {
+                
+                // 게시글 저장 로직 추가
+                const res = await postService.createPost(
+                    userInfo.id,
+                    {
+                        title,
+                        content,
+                        category: selectedCategory,
+                        tags,
+                    }, 
+                );
+                console.log("작성 성공:", res);
+                alert('게시글이 작성되었습니다!');
+                navigate(communityPageUrl);
+            }
+        } catch (error) { 
+            console.error("저장 실패:", error);
+            alert('저장에 실패했습니다.');
+        }
 
     };
 

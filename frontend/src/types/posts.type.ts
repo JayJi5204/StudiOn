@@ -1,4 +1,8 @@
-export default interface Post {
+export interface IPosts {
+  posts: IPost[];
+}
+
+export interface IPost {
   id: number;
   title: string;
   content: string;
@@ -7,18 +11,24 @@ export default interface Post {
   authorAvatar: string;
   category: string;
   createdAt: string;
+  updatedAt: string;
   views: number;
   likes: number;
-  isPopular: boolean;
   comments: Comment[];
   tags: string[];
 }
 
-interface Comment {
+export interface Comments {
+  comments:Comment[]
+}
+
+export interface Comment {
   id: number;
   author: string;
+  authorId: number;
   authorAvatar: string;
   content: string;
   createdAt: string;
+  updatedAt: string;
   likes: number;
 }
