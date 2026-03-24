@@ -1,29 +1,36 @@
 import {useState } from 'react';
 import { Link} from 'react-router';
-import { Search, Plus, MessageCircle, Eye, ThumbsUp, TrendingUp, Clock, Filter, ChevronDown, Bookmark, Share2 } from 'lucide-react';
+import { 
+    Search, 
+    Plus, 
+    MessageCircle, 
+    ThumbsUp, 
+    TrendingUp,
+    Filter, 
+    ChevronDown 
+} from 'lucide-react';
 import useUserInfoStore from '../store/userInfoStore';
 import { usePosts } from '../hooks/usePosts';
+import PostSection from '../components/communityboard/PostSection';
 
 const CommunityBoard= () => {
     const isLoggedin = useUserInfoStore((state) => state.userInfo.isLoggedin);
-    const { posts } = usePosts(
+    const { posts,setPosts } = usePosts(
             { page: 1, limit: 10 },
             Boolean(isLoggedin)
         );
-    const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
-
-    const totalPosts = posts.length;
-    //activeMembers 추후 수정 
-    const activeMembers = 8934;
-
+    
+    
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
     const [sortBy, setSortBy] = useState('latest');
     const [showSortMenu, setShowSortMenu] = useState(false);
 
-    const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
+    //activeMembers 추후 수정 
+    const activeMembers = 8934;
     const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
-    console.log(posts)
+    const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
+    
     const filteredPosts = posts.filter(post => {
         const matchesCategory = selectedCategory === '전체' || post.category === selectedCategory;
         const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -154,81 +161,11 @@ const CommunityBoard= () => {
 
                 {/* Posts List */}
                 <div className="space-y-4">
-                    {sortedPosts.map((post) => (
-                        <div key={post.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
-                            <div className="space-y-4">
-                                {/* Post Header */}
-                                <div className="flex items-start justify-between">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="text-3xl">{post.authorAvatar}</div>
-                                            <div>
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="font-semibold text-gray-900">{post.author}</span>
-                                                    <span className="px-2 py-1 bg-indigo-100 text-indigo-600 text-xs rounded-full">
-                                                        {post.category}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center text-sm text-gray-500 mt-1">
-                                                    <Clock size={14} className="mr-1" />
-                                                    {post.createdAt}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <div className="flex space-x-2">
-                                        <button className="text-gray-400 hover:text-indigo-600 transition-colors">
-                                            <Bookmark size={20} />
-                                        </button>
-                                        <button className="text-gray-400 hover:text-indigo-600 transition-colors">
-                                            <Share2 size={20} />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Post Content */}
-                                <div className="space-y-2">
-                                    <h3 className="text-xl font-bold text-gray-900 hover:text-indigo-600 cursor-pointer">
-                                        {post.title}
-                                    </h3>
-                                    <p className="text-gray-600 line-clamp-2">
-                                        {post.content}
-                                    </p>
-                                </div>
-
-                                {/* Tags */}
-                                <div className="flex flex-wrap gap-2 justify-between">
-                                    <div className="space-x-1">
-                                        {post.tags.map((tag, index) => (
-                                            <span key={index} className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Post Stats */}
-                                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                            <div className="flex items-center space-x-1">
-                                                <Eye size={16} />
-                                                <span>{post.views}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <ThumbsUp size={16} />
-                                                <span>{post.likes}</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <MessageCircle size={16} />
-                                                <span>{post.comments.length}</span>
-                                            </div>
-                                        </div>
-                                        <button className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                                            <Link to={`${communityPageUrl}/${post.id}`}>자세히 보기 →</Link>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <PostSection
+                        posts={sortedPosts}
+                        setPosts={setPosts}
+                    ></PostSection>
+                </div>
 
                     {/* Pagination */}
                     <div className="flex justify-center space-x-2 pt-6">
@@ -289,7 +226,7 @@ const CommunityBoard= () => {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600">전체 게시글</span>
-                                <span className="text-lg font-bold text-indigo-600">{totalPosts}</span>
+                                <span className="text-lg font-bold text-indigo-600">{posts.length > 0 && posts.length}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600">활성 회원</span>

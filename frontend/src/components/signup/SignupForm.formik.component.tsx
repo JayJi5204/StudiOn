@@ -16,12 +16,16 @@ const SignupForm = () => {
 
     let navigate = useNavigate();
     
-    const handleSignUp = async (formValue:{username:string,password:string,email:string}) => {
-        const {username,email,password} = formValue;
+    const handleSignUp = async (formValue:{
+        nickname:string,
+        password:string,
+        email:string
+    }) => {
+        const {nickname,email,password} = formValue;
 
         try {
             const userData = await authService.creatUser(
-                username,
+                nickname,
                 email,
                 password
             );

@@ -2,7 +2,7 @@ import axios from "axios";
 import type { Comment } from "../types/posts.type";
 
 
-const API_URL = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD
+const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD
 
 export const commentService = {
     createComment: async (

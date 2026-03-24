@@ -12,7 +12,7 @@ import useUserInfoStore from '../../store/userInfoStore';
 const SigninForm = () => {
     let navigate = useNavigate();
 
-    const {userInfo,setUserInfo } = useUserInfoStore();
+    const { setUserInfo } = useUserInfoStore();
 
     const handleSignin = async (
         formValue:{
@@ -23,14 +23,8 @@ const SigninForm = () => {
 
         try {
             const userData = await authService.login(email,password);
-            setUserInfo(
-                {
-                    ...userData,
-                    isLoggedin:true
-                }
-            );
-
-            console.log('로그인 성공:', userInfo);
+            setUserInfo(userData);
+            console.log('로그인 성공:', userData);
             alert('로그인 되었습니다.');
             navigate('/');
 

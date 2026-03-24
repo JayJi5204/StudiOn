@@ -29,5 +29,5 @@ export const usePost = (
         loadPost();
       },[id]);
 
-    return {post,setPost,isLoading}
+    return {post,setPost,isLoading};
 }

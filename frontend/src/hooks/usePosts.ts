@@ -23,7 +23,6 @@ export const usePosts = (
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  //데이터 로드 (파라미터 변경 시에만 실행)
   useEffect(() => {
     if (!isLoggedin) {
       alert('게시글은 로그인 후 이용 가능합니다.');

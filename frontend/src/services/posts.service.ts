@@ -8,7 +8,7 @@ export const postService = {
     authorId: string | number,
     postData: Partial<IPost>
   ): Promise<IPost> => {
-    const response = await axios.post<IPost>(API_URL,{
+    const response = await axios.post<IPost>(`${API_URL}/post`,{
       ...postData,
       authorId:authorId,
     }
@@ -22,7 +22,7 @@ export const postService = {
       }
     ): Promise<IPost[]> => {
 
-      const response = await axios.get<IPosts>(API_URL,{
+      const response = await axios.get<IPosts>(`${API_URL}/posts`,{
           params // axios가 자동으로 ?userId=1&page=1... 형태로 변환
       });
     
@@ -33,7 +33,7 @@ export const postService = {
     id: string | number 
   ): Promise<IPost> => {
     
-    const response = await axios.get<IPost>(`${API_URL}/${id}`);
+    const response = await axios.get<IPost>(`${API_URL}/post/${id}`);
 
     return response.data
   },
@@ -42,14 +42,21 @@ export const postService = {
     id: string | number,
     postData:Partial<IPost>
   ):Promise<IPost> => {
-    const response = await axios.patch<IPost>(`${API_URL}/${id}`,postData);
+    const response = await axios.patch<IPost>(`${API_URL}/post/${id}`,postData);
     return response.data;
   },
   
   deletePost: async (
     id: string | number
   ): Promise<void> => {
-    const response = await axios.delete(`${API_URL}/${id}`);
+    const response = await axios.delete(`${API_URL}/post/${id}`);
     return response.data;
-  } 
+  },
+
+  updateViewCount: async (
+    id: string | number
+  ) => {
+    const response = await axios.patch(`${API_URL}/post/${id}/views`);
+    return response.data;
+  }
 };

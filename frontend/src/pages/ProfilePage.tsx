@@ -25,6 +25,7 @@ import {
     Users,
 } from 'lucide-react';
 import type { IUser } from '../types/user.type';
+import { dateFormatter } from '../utils/date';
 
 interface StudyProgressBarProps {
     progress:number,
@@ -65,7 +66,6 @@ const ProfilePage = () => {
             Boolean(userInfo.isLoggedin)
         );
     
-    // 사용자 정보
     // 통계 정보
     const stats = {
         studiesJoined: 12,
@@ -115,11 +115,22 @@ const ProfilePage = () => {
             image: '💻'
         }
     ];
-    
+    const handleLogout = async () => {
+        try {
+            const userData = await authService.logout(userInfo.id)
+            setUserInfo(userData);
+            navigate('/');
+        } catch (error) {
+            console.log("로그아웃 실패");
+            alert("로그아웃 실패");
+        }
+            
+    }
     // 입력 필드 변경 핸들러
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setEditForm(prev => ({ ...prev, [name]: value }));
+        setEditForm(prev => ({ ...prev, [name]: value ,['updatedAt']:dateFormatter()}));
+        console.log(editForm)
     };
 
     // 저장 핸들러
@@ -238,7 +249,7 @@ const ProfilePage = () => {
         <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 <h1 className='text-3xl font-extrabold text-gray-900 mb-8 sm:mb-10 text-center lg:text-left'>
-                    {userInfo.username} 님의 프로필
+                    {userInfo.nickname} 님의 프로필
                 </h1>
                 <div className='grid lg:grid-cols-3 gap-8'>
                     {/* Left Sidebar - Profile Card */}
@@ -257,7 +268,7 @@ const ProfilePage = () => {
 
                                 {!isEditing ? (
                                     <>
-                                        <h2 className='text-2xl font-bold text-gray-900 mt-2 mb-1'>{userInfo.username}</h2>
+                                        <h2 className='text-2xl font-bold text-gray-900 mt-2 mb-1'>{userInfo.nickname}</h2>
                                         <p className='text-gray-600 mb-4 px-2 italic text-sm'>{userInfo.bio}</p>
                                         {/* User Information */}
                                         <div className='space-y-4 border-t border-gray-200 pt-6 pb-6'>
@@ -271,7 +282,7 @@ const ProfilePage = () => {
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <Calendar className='w-5 h-5 mr-3 text-indigo-500' />
-                                                <span className='text-sm font-medium'>가입일: {userInfo.joinDate}</span>
+                                                <span className='text-sm font-medium'>가입일: {userInfo.createdAt}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
                                                 <User className='w-5 h-5 mr-3 text-indigo-500' />
@@ -284,8 +295,8 @@ const ProfilePage = () => {
                                     <div className="space-y-4 mb-4">
                                         <input
                                             type="text"
-                                            name='username'
-                                            value={editForm.username}
+                                            name='nickname'
+                                            value={editForm.nickname}
                                             onChange={handleInputChange}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-100 text-lg font-medium"
                                             placeholder="사용자명"
@@ -355,16 +366,7 @@ const ProfilePage = () => {
                                 <QuickActionButton icon={<Settings/>} label='설정' />
                                 <QuickActionButton icon={<Bell/>} label='알림' />
                                 <button
-                                    onClick={() => {
-                                        authService.logout(userInfo).then(() => {
-                                            setUserInfo({
-                                                ...userInfo,
-                                                isLoggedin: false,
-                                            });
-                                            navigate('/');
-                                            });
-                                        navigate('/');
-                                    }}
+                                    onClick={handleLogout}
                                     className='w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
                                 >
                                     <LogOut className="w-5 h-5" />

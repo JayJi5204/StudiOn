@@ -4,7 +4,7 @@ import { usePost } from '../hooks/usePost';
 import { usePosts} from '../hooks/usePosts';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
-import CommentSection from '../components/comunityboard/CommentSection';
+import CommentSection from '../components/communityboard/CommentSection';
 import { dateFormatter } from '../utils/date';
 import { 
   ArrowLeft, 

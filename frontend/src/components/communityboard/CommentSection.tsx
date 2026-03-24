@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { dateFormatter } from '../../utils/date';
 import type { Comment } from '../../types/posts.type';
 import type { IUser } from '../../types/user.type';
-import { commentService } from '../../services/commentService';
+import { commentService } from '../../services/comment.service';
 import CommentItem from './CommentItem';
 
 interface CommentSectionProps {
@@ -84,7 +84,7 @@ const CommentSection = ({
                     onClick={()=>{handleCommentSubmit(
                         {
                             id: comments.length + 1,
-                            author: userInfo.username,
+                            author: userInfo.nickname,
                             authorId: userInfo.id,
                             authorAvatar: userInfo.avatar,
                             content: commentText.trim(),
@@ -102,7 +102,7 @@ const CommentSection = ({
             
             {/* Comments List */}
             <div className="space-y-6">
-                {comments.map((comment) => (
+                {comments.length > 0 && comments.map((comment) => (
                     <CommentItem
                         key={comment.id}
                         userId={userInfo.id}
@@ -117,4 +117,4 @@ const CommentSection = ({
     );
 };
 
-export default CommentSection
+export default CommentSection;
