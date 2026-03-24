@@ -269,6 +269,25 @@ const testCreateUser = http.post(`${API_URL_USERS}`, async({ request }) => {
     
 });
 
+const testDeleteUser = http.delete(`${API_URL_USERS}/:id`, ({ params }) => {
+  const { id } = params;
+  
+  // 1. 유저 찾기
+  const idx = USER_DB.users.findIndex(u => u.id === Number(id));
+
+  // 2. 유저가 존재할 경우 (idx가 -1이 아닐 때)
+  if (idx !== -1) {
+    // 삭제 플래그 업데이트
+    USER_DB.users[idx].isDeleted = true;
+
+    // 수정된 유저 객체 반환
+    return HttpResponse.json(USER_DB.users[idx], { status: 200 });
+  }
+
+  // 3. 유저가 존재하지 않을 경우 404 반환
+  return HttpResponse.json({ message: "User not found" }, { status: 404 });
+});
+
 
 const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
   const { id } = params;
@@ -307,6 +326,7 @@ const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
 export const handlers = [
   testCreateUser,
   testUpdateUser,
+  testDeleteUser,
   testLogin,
   testLogOut,
   testProfile,
