@@ -7,7 +7,7 @@ import {test,expect} from 'vitest'
 
 test('signin Test with user', async () => {
 
-    const url = `http://localhost:8167${import.meta.env.VITE_REACT_APP_API_URL_USERS}/login`
+    const url = import.meta.env.VITE_REACT_APP_AUTH_API_URL_SIGNIN;
 
     const response = await fetch(url, {
         method: 'POST', // 핸들러가 http.post 이므로 반드시 POST

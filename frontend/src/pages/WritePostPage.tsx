@@ -22,9 +22,9 @@ const WritePostPage = () => {
     const [showCategoryMenu, setShowCategoryMenu] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
 
-    const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
+    const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
     const categories = ['자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
-    
+
     const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && tagInput.trim() !== '') {
             e.preventDefault();
