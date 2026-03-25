@@ -23,6 +23,7 @@ import {
     Award,
     Clock,
     Users,
+    UserMinus
 } from 'lucide-react';
 import type { IUser } from '../types/user.type';
 import { dateFormatter } from '../utils/date';
@@ -115,6 +116,18 @@ const ProfilePage = () => {
             image: '💻'
         }
     ];
+
+    const handleDeleteUser = async (id:number) => {
+        try {
+            const userData = await authService.deleteUser(id);
+            setUserInfo(userData);
+            navigate('/')
+        } catch (error) {
+            alert('회원 탈퇴 실패.');
+            alert('다시 시도해주세요.');
+        }
+    }
+
     const handleLogout = async () => {
         try {
             const userData = await authService.logout(userInfo.id)
@@ -287,6 +300,15 @@ const ProfilePage = () => {
                                             <div className='flex items-center text-gray-700'>
                                                 <User className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <span className='text-sm font-medium'>권한: {userInfo.role}</span>
+                                            </div>
+                                            <div className='flex items-center text-gray-700'>
+                                                <UserMinus className='w-5 h-5 mr-3 text-indigo-500' />
+                                                <button 
+                                                    className='text-sm font-medium'
+                                                    onClick={()=>{handleDeleteUser(userInfo.id)}}
+                                                >
+                                                    회원 탈퇴
+                                                </button>
                                             </div>
                                         
                                         </div>
