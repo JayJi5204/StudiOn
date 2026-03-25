@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { MoreVertical,ThumbsUp, Send } from "lucide-react";
 import EditButton from "../button/EditButton";
-import type { Comment } from "../../types/posts.type";
+import type { IComment } from "../../types/posts.type";
 
 interface CommentItemProps {
     userId:number;
     userRole:string;
-    comment:Comment;
-    handleUpdateComment: (editComment:Comment) => void;
+    comment:IComment;
+    handleUpdateComment: (editComment:IComment) => void;
     handleDeleteComment: () => void;
 }
 

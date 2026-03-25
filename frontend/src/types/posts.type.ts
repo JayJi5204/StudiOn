@@ -14,15 +14,15 @@ export interface IPost {
   updatedAt: string;
   views: number;
   likes: number;
-  comments: Comment[];
+  comments: IComment[];
   tags: string[];
 }
 
-export interface Comments {
-  comments:Comment[]
+export interface IComments {
+  comments:IComment[]
 }
 
-export interface Comment {
+export interface IComment {
   id: number;
   author: string;
   authorId: number;

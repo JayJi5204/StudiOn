@@ -1,15 +1,14 @@
 import axios from "axios";
-import type { Comment } from "../types/posts.type";
-
+import type { IComment } from "../types/posts.type";
 
 const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD
 
 export const commentService = {
     createComment: async (
         postId: string | number,
-        commentData:Comment
-    ):Promise<Comment>  => {
-        const response = await axios.post<Comment>(`${API_URL}/posts/${postId}/comments`,
+        commentData:IComment
+    ):Promise<IComment>  => {
+        const response = await axios.post<IComment>(`${API_URL}/posts/${postId}/comments`,
             {
                 postId,
                 ...commentData,
@@ -24,8 +23,8 @@ export const commentService = {
 
     updateComment: async (
         postId:string | number,
-        commentData:Comment,
-    ):Promise<Comment> => {
+        commentData:IComment,
+    ):Promise<IComment> => {
         const response = await axios.put(`${API_URL}/posts/${postId}/comments`,
             {
                 ...commentData,
@@ -37,7 +36,7 @@ export const commentService = {
     deleteComment: async (
         postId: string | number,
         commentId: string | number
-    ):Promise<Comment> => {
+    ):Promise<IComment> => {
         const response = await axios.delete(`${API_URL}/posts/${postId}/comments/${commentId}`);
         return response.data;
     }

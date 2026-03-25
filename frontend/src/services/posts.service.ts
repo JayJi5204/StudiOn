@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { IPosts, IPost } from '../types/posts.type';
 
-const API_URL = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
+const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD;
 
 export const postService = {
   createPost: async (

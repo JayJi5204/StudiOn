@@ -72,10 +72,10 @@ const CommunityBoard= () => {
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-900">자유게시판</h1>
                     <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-2">
-                    <Plus size={20} />
-                    <Link to={writePostPageUrl}>
-                        <span>글쓰기</span>
-                    </Link>
+                        <Plus size={20} />
+                        <Link to={writePostPageUrl}>
+                            <span>글쓰기</span>
+                        </Link>
                     </button>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { dateFormatter } from '../../utils/date';
-import type { Comment } from '../../types/posts.type';
+import type { IComment } from '../../types/posts.type';
 import type { IUser } from '../../types/user.type';
 import { commentService } from '../../services/comment.service';
 import CommentItem from './CommentItem';
@@ -8,7 +8,7 @@ import CommentItem from './CommentItem';
 interface CommentSectionProps {
     postId:number;
     userInfo:IUser;
-    initialComments:Comment[];
+    initialComments:IComment[];
 };
 
 const CommentSection = ({
@@ -17,7 +17,7 @@ const CommentSection = ({
     initialComments, 
 }: CommentSectionProps) => {
 
-    const [comments,setComments] = useState<Comment[]>(initialComments);
+    const [comments,setComments] = useState<IComment[]>(initialComments);
     const [commentText, setCommentText] = useState('');
 
     const handleDeleteComment = async (postId:number,commentId:number) => {
@@ -31,7 +31,7 @@ const CommentSection = ({
             alert('댓글 삭제에 실패했습니다.');
         }
     }
-    const handleUpdateComment = async (editComment:Comment) => {
+    const handleUpdateComment = async (editComment:IComment) => {
         try {
             //API 호출
             await commentService.updateComment(editComment.id,editComment);
@@ -45,15 +45,16 @@ const CommentSection = ({
             alert('댓글 수정에 실패했습니다.');
         }
     }
-    const handleCommentSubmit = async (newComment:Comment) => {
+    const handleCommentSubmit = async (newComment:IComment) => {
         if (newComment.content.trim() === '') {
             return 
         }
 
         try {
-            const res = await commentService.createComment(postId,newComment);
+            console.log(postId,typeof(postId))
+            const commentData = await commentService.createComment(postId,newComment);
     
-            console.log('댓글 생성 완료',res);
+            console.log('댓글 생성 완료', commentData);
             setComments(prev => [...prev, newComment]);
             alert('댓글이 작성되었습니다!');
             setCommentText('');

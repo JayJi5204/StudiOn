@@ -91,6 +91,7 @@ const WritePostPage = () => {
             setSelectedCategory('');
             setTags([]);
             setTagInput('');
+            navigate(-1);
         }
     };
 
