@@ -29,7 +29,6 @@ export let POSTS_DB = {
                         createdAt: '2024-10-18 14:30',
                         views: 342,
                         likes: 28,
-                        isPopular: true,
                         comments: [
                         {
                             id: 1,
@@ -100,7 +99,6 @@ export let POSTS_DB = {
                     createdAt: '2024-10-18 13:15',
                     views: 521,
                     likes: 45,
-                    isPopular: true,
                     comments: [
                     {
                         id: 1,
@@ -165,7 +163,6 @@ export let POSTS_DB = {
                     createdAt: '2024-10-18 12:00',
                     views: 156,
                     likes: 12,
-                    isPopular: false,
                     comments: [
                     {
                         id: 1,
@@ -254,7 +251,6 @@ export let POSTS_DB = {
                     createdAt: '2024-10-18 11:20',
                     views: 289,
                     likes: 34,
-                    isPopular: false,
                     comments: [
                     {
                         id: 1,
@@ -329,7 +325,6 @@ export let POSTS_DB = {
                     createdAt: '2024-10-18 10:45',
                     views: 198,
                     likes: 19,
-                    isPopular: false,
                     comments: [
                     {
                         id: 1,
@@ -427,7 +422,6 @@ export let POSTS_DB = {
                     createdAt: '2024-10-18 09:30',
                     views: 412,
                     likes: 56,
-                    isPopular: true,
                     comments: [
                     {
                         id: 1,

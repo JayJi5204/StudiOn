@@ -1,8 +1,8 @@
-export interface Posts {
-  posts: Post[];
+export interface IPosts {
+  posts: IPost[];
 }
 
-export interface Post {
+export interface IPost {
   id: number;
   title: string;
   content: string;
@@ -11,23 +11,24 @@ export interface Post {
   authorAvatar: string;
   category: string;
   createdAt: string;
+  updatedAt: string;
   views: number;
   likes: number;
-  isPopular: boolean;
-  comments: Comment[];
+  comments: IComment[];
   tags: string[];
 }
 
-export interface comments {
-  comments:Comment[]
+export interface IComments {
+  comments:IComment[]
 }
 
-export interface Comment {
+export interface IComment {
   id: number;
   author: string;
   authorId: number;
   authorAvatar: string;
   content: string;
   createdAt: string;
+  updatedAt: string;
   likes: number;
 }

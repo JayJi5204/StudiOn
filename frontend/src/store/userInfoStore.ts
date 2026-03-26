@@ -4,24 +4,20 @@ import type { IUser } from '../types/user.type';
 
 const initialUserInfo = {
     id:0,
-    username:'',
+    nickname:'',
     password:'',
-    confirmPassword:'',
     phoneNumber:'',
     studyTime:0,
     email:'',
     bio:'',
     location:'',
-    joinDate:'',
     role:'',
     avatar:'',
-    loggedin:false,
-    rememberMe: false,
-    agreeTerms:false,
-    agreePrivacy: false,
-    JWT:'',
-    Refresh:'',
+    createdAt: '',
+    updatedAt: '',
+    isLoggedin:false,
     isDeleted:false,
+    Refresh:'',
     accessToken:''
 };
 

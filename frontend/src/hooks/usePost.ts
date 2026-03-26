@@ -1,23 +1,23 @@
 import React, { useState,useEffect } from "react";
 import { postService } from "../services/posts.service";
-import type { Post } from '../types/posts.type';
+import type { IPost } from '../types/posts.type';
 
 interface UsePostReturn{
-    post:Post;
-    setPost: React.Dispatch<React.SetStateAction<Post>>;
+    post:IPost;
+    setPost: React.Dispatch<React.SetStateAction<IPost>>;
     isLoading:boolean;
 }
 
 export const usePost = (
-    id:number
+    id: string | number
 ): UsePostReturn => {
-    const [post,setPost] = useState<Post>({} as Post);
+    const [post,setPost] = useState<IPost>({} as IPost);
     const [isLoading,setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const loadPost = async () => {
           try {
-            const data = await postService.getPostById(Number(id));
+            const data = await postService.getPostById(id);
             
             setPost(data);
             setIsLoading(true);
@@ -29,5 +29,5 @@ export const usePost = (
         loadPost();
       },[id]);
 
-    return {post,setPost,isLoading}
+    return {post,setPost,isLoading};
 }
