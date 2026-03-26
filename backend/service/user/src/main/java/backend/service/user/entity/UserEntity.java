@@ -28,21 +28,29 @@ public class UserEntity {
     private String password;
 
     @Column(nullable = false, length = 50)
-    private String username;
+    private String nickName;
+
+    private String phoneNumber;
+
+    private String profileImg;
+
+    private Long studyTime;
 
     @CreatedDate
     private LocalDateTime createAt;
 
     private Boolean isDeleted;
 
+    private Boolean isLogin;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static UserEntity create(Long userId, String username, String password, String email, String adminPassword) {
+    public static UserEntity create(Long userId, String nickName, String password, String email, String adminPassword, String phoneNumber) {
 
         UserEntity entity = new UserEntity();
         entity.userId = userId;
-        entity.username = username;
+        entity.nickName = nickName;
         entity.password = password;
         entity.email = email;
         entity.createAt = LocalDateTime.now();
@@ -53,17 +61,30 @@ public class UserEntity {
         } else {
             entity.role = UserRole.ADMIN;
         }
+        entity.phoneNumber = phoneNumber;
+        entity.isLogin = false;
+        entity.studyTime = 0L;
 
         return entity;
     }
 
-    public void update(String userName, String password, String email) {
-        this.username = userName;
+    public void update(String nickName, String password, String email,String phoneNumber) {
+        this.nickName = nickName;
         this.password = password;
         this.email = email;
+        this.phoneNumber = phoneNumber;
+
     }
 
     public void delete() {
         this.isDeleted = true;
+    }
+
+    public void login() {
+        this.isLogin = true;
+    }
+
+    public void logout(){
+        this.isLogin = false;
     }
 }

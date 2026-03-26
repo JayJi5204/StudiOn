@@ -8,15 +8,19 @@ import lombok.Getter;
 public class UpdateResponse {
 
     private String email;
-    private String username;
+    private String nickName;
     private UserRole role;
+    private String phoneNumber;
+    private String password;
 
 
     public static UpdateResponse from(UserEntity entity){
         UpdateResponse dto=new UpdateResponse();
-        dto.username = entity.getUsername();
+        dto.nickName = entity.getNickName();
         dto.email= entity.getEmail();
         dto.role=entity.getRole();
+        dto.password=entity.getPassword();
+        dto.phoneNumber=entity.getPhoneNumber();
         return dto;
     }
 }

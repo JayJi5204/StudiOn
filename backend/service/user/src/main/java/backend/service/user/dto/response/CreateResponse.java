@@ -15,16 +15,18 @@ public class CreateResponse {
     private LocalDateTime createAt;
     private Boolean isDeleted;
     private UserRole role;
+    private String phoneNumber;
 
 
     public static CreateResponse from(UserEntity entity) {
         CreateResponse dto = new CreateResponse();
         dto.userId=String.valueOf(entity.getUserId());
-        dto.username = entity.getUsername();
+        dto.username = entity.getNickName();
         dto.email = entity.getEmail();
         dto.createAt = entity.getCreateAt();
         dto.isDeleted = entity.getIsDeleted();
         dto.role = entity.getRole();
+        dto.phoneNumber = entity.getPhoneNumber();
         return dto;
     }
 }

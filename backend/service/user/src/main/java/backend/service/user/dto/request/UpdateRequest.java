@@ -9,7 +9,9 @@ public class UpdateRequest {
     @Email
     private String email;
 
-    private String username;
+    private String nickName;
 
     private String password;
+
+    private String phoneNumber;
 }
