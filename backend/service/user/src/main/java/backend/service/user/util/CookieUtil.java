@@ -1,7 +1,11 @@
 package backend.service.user.util;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 public class CookieUtil {
@@ -31,5 +35,15 @@ public class CookieUtil {
                 .httpOnly(true)
                 .secure(false)
                 .build();
+    }
+
+    public String getCookieValue(HttpServletRequest request, String key) {
+        if (request.getCookies() == null) return null;
+
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(key))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -5,7 +5,7 @@ import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.GetResponseWithComment;
 import backend.service.board.dto.response.PageResponse;
 import backend.service.board.dto.response.DeletedResponse;
-import backend.service.board.dto.response.GetResponse;
+import backend.service.board.dto.response.GetBoardResponse;
 import backend.service.board.enumType.Category;
 import backend.service.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 등록합니다.")
     @PostMapping("/create")
-    public GetResponse create(@RequestBody CreateRequest createRequest) {
+    public GetBoardResponse create(@RequestBody CreateRequest createRequest) {
         return boardService.create(createRequest);
     }
 
@@ -60,7 +60,7 @@ public class BoardController {
 
     @Operation(summary = "사용자별 작성 게시글 조회", description = "특정 사용자가 작성한 모든 게시글을 리스트로 반환합니다.")
     @GetMapping("/users/{userId}")
-    public List<GetResponse> getBoardWhoCreate(
+    public List<GetBoardResponse> getBoardWhoCreate(
             @Parameter(description = "작성자 ID", example = "279296958190669824")
             @PathVariable("userId") Long userId) {
         return boardService.getBoardWhoCreate(userId);
@@ -68,7 +68,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/update/{boardId}")
-    public GetResponse update(
+    public GetBoardResponse update(
             @Parameter(description = "수정할 게시글 ID", example = "279296958190669824") @PathVariable Long boardId,
             @RequestBody UpdateRequest updateRequest) {
         return boardService.update(boardId, updateRequest);

@@ -1,7 +1,6 @@
 package backend.service.user.controller;
 
 import backend.service.user.dto.request.CreateRequest;
-import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
@@ -10,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -78,4 +78,10 @@ public class UserController {
         return userService.logout(response);
     }
 
+    @Operation(summary = "토큰 재발급", description = "refreshToken을 이용하여 accessToken을 재발급합니다.")
+    @SecurityRequirements
+    @PostMapping("/reissue")
+    public void reissue(HttpServletRequest request, HttpServletResponse response) {
+        userService.reissue(request, response);
+    }
 }

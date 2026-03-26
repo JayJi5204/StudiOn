@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/users/create",
                                 "/api/users/login",
+                                "/api/users/reissue",
                                 "/health-check",
                                 "/actuator/**",
                                 "/v3/api-docs/**",

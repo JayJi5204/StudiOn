@@ -14,17 +14,20 @@ import backend.common.jwt.JwtUtil;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.util.CookieUtil;
 import backend.service.user.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Log4j2
 @Service
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
+    private final StringRedisTemplate redisTemplate;
 
     private final BoardClient boardClient;
     private final CommentClient commentClient;
@@ -98,15 +102,55 @@ public class UserServiceImpl implements UserService {
         String userId = String.valueOf(entity.getUserId());
 
         String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString());
-
         String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString());
 
+        redisTemplate.opsForValue().set(userId, refreshToken, 7, TimeUnit.DAYS);
+
         ResponseCookie accessCookie = cookieUtil.createCookie("accessToken", accessToken, 1800);
+        ResponseCookie refreshCookie = cookieUtil.createCookie("refreshToken", refreshToken, 7 * 24 * 60 * 60);
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
         entity.login();
 
         return LoginResponse.from(entity);
+    }
+
+    @Transactional
+    public void reissue(HttpServletRequest request, HttpServletResponse response) {
+        // 쿠키에서 refreshToken 추출
+        String refreshToken = cookieUtil.getCookieValue(request, "refreshToken");
+
+        if (refreshToken == null) {
+            throw new RuntimeException("refreshToken이 없습니다.");
+        }
+
+        // 만료 확인
+        if (jwtUtil.isExpired(refreshToken)) {
+            throw new RuntimeException("refreshToken이 만료되었습니다.");
+        }
+
+        String userId = jwtUtil.getUserId(refreshToken);
+        String email = jwtUtil.getEmail(refreshToken);
+        String role = jwtUtil.getRole(refreshToken);
+
+        // Redis에 저장된 refreshToken과 비교
+        String savedToken = redisTemplate.opsForValue().get(userId);
+
+        if (savedToken == null || !savedToken.equals(refreshToken)) {
+            throw new RuntimeException("유효하지 않은 refreshToken입니다.");
+        }
+
+        String newAccessToken = jwtUtil.createAccessToken(userId, email, role);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId, email, role);
+
+        redisTemplate.opsForValue().set(userId, newRefreshToken, 7, TimeUnit.DAYS);
+
+        ResponseCookie accessCookie = cookieUtil.createCookie("accessToken", newAccessToken, 1800);
+        ResponseCookie refreshCookie = cookieUtil.createCookie("refreshToken", newRefreshToken, 7 * 24 * 60 * 60);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
     }
 
     @Override
@@ -173,8 +217,13 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("유저 없음");
         }
 
+        redisTemplate.delete(String.valueOf(userId));
+
         ResponseCookie deleteAccessCookie = cookieUtil.deleteCookie("accessToken");
+        ResponseCookie deleteRefreshCookie = cookieUtil.deleteCookie("refreshToken");
+
         response.addHeader(HttpHeaders.SET_COOKIE, deleteAccessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteRefreshCookie.toString());
 
         SecurityContextHolder.clearContext();
 
@@ -182,6 +231,4 @@ public class UserServiceImpl implements UserService {
 
         return LogoutResponse.from(entity);
     }
-
-
 }

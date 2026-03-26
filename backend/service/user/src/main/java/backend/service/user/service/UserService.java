@@ -2,7 +2,6 @@ package backend.service.user.service;
 
 
 import backend.service.user.dto.request.CreateRequest;
-import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
@@ -30,4 +29,6 @@ public interface UserService {
     GetUserResponse getUserByAdmin(Long userId);
 
     LogoutResponse logout(HttpServletResponse response);
+
+    void reissue(HttpServletRequest request, HttpServletResponse response);
 }
