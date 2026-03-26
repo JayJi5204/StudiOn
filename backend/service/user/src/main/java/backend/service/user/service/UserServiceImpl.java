@@ -4,7 +4,6 @@ import backend.common.id.Snowflake;
 import backend.service.user.dto.otherDto.BoardDto;
 import backend.service.user.dto.otherDto.CommentDto;
 import backend.service.user.dto.request.CreateRequest;
-import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
@@ -13,10 +12,15 @@ import backend.service.user.feignClient.BoardClient;
 import backend.service.user.feignClient.CommentClient;
 import backend.common.jwt.JwtUtil;
 import backend.service.user.repository.UserRepository;
+import backend.service.user.util.CookieUtil;
 import backend.service.user.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
 
     private final BoardClient boardClient;
     private final CommentClient commentClient;
@@ -38,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public CreateResponse create(CreateRequest dto) {
 
-        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getUsername(), encoder.encode(dto.getPassword()), dto.getEmail(), dto.getAdminPassword()));
+        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getNickName(), encoder.encode(dto.getPassword()), dto.getEmail(), dto.getAdminPassword(),dto.getPhoneNumber()));
 
         return CreateResponse.from(entity);
     }
@@ -54,7 +59,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("유저 없음");
         }
 
-        entity.update(dto.getUsername(), dto.getPassword(), dto.getEmail());
+        entity.update(dto.getNickName(), dto.getPassword(), dto.getEmail(), dto.getPhoneNumber());
 
         userRepository.save(entity);
 
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public DeletedResponse delete(DeleteRequest dto) {
+    public DeletedResponse delete() {
 
         Long userId = SecurityUtil.getCurrentUserId();
 
@@ -78,6 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public LoginResponse login(LoginRequest dto, HttpServletResponse response) {
         UserEntity entity = userRepository.findByEmail(dto.getEmail());
 
@@ -95,7 +101,12 @@ public class UserServiceImpl implements UserService {
 
         String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString());
 
-        return LoginResponse.from(entity, accessToken);
+        ResponseCookie accessCookie = cookieUtil.createCookie("accessToken", accessToken, 1800);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        entity.login();
+
+        return LoginResponse.from(entity);
     }
 
     @Override
@@ -149,5 +160,28 @@ public class UserServiceImpl implements UserService {
 
         return GetUserResponse.from(entity, boards, comments);
     }
+
+    @Override
+    @Transactional
+    public LogoutResponse logout(HttpServletResponse response) {
+
+        Long userId = SecurityUtil.getCurrentUserId();
+
+        UserEntity entity = userRepository.findByUserId(userId);
+
+        if (entity == null) {
+            throw new RuntimeException("유저 없음");
+        }
+
+        ResponseCookie deleteAccessCookie = cookieUtil.deleteCookie("accessToken");
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccessCookie.toString());
+
+        SecurityContextHolder.clearContext();
+
+        entity.logout();
+
+        return LogoutResponse.from(entity);
+    }
+
 
 }

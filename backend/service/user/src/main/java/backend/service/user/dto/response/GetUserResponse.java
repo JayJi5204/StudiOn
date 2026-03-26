@@ -3,7 +3,6 @@ package backend.service.user.dto.response;
 import backend.service.user.dto.otherDto.BoardDto;
 import backend.service.user.dto.otherDto.CommentDto;
 import backend.service.user.entity.UserEntity;
-import backend.service.user.enumType.UserRole;
 import lombok.Getter;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class GetUserResponse {
                                        List<CommentDto> responseComments) {
         GetUserResponse dto = new GetUserResponse();
         dto.email = entity.getEmail();
-        dto.username = entity.getUsername();
+        dto.username = entity.getNickName();
         dto.boards = responseBoards;
         dto.comments = responseComments;
         return dto;

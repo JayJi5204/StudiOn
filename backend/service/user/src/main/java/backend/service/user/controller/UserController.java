@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -68,9 +67,15 @@ public class UserController {
     }
 
     @Operation(summary = "회원 탈퇴", description = "사용자 계정을 삭제합니다.")
-    @DeleteMapping("/delete/{userId}")
-    public DeletedResponse delete(@RequestBody DeleteRequest dto) {
-        return userService.delete(dto);
+    @DeleteMapping("/delete")
+    public DeletedResponse delete() {
+        return userService.delete();
+    }
+
+    @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
+    @PostMapping("/logout")
+    public LogoutResponse logout(HttpServletResponse response) {
+        return userService.logout(response);
     }
 
 }

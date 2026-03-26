@@ -12,8 +12,9 @@ import java.util.List;
 public class GetMyInfoResponse {
 
     private String email;
-    private String username;
+    private String nickName;
     private String userId;
+    private String phoneNumber;
     private UserRole role;
     private List<BoardDto> boards;
     private List<CommentDto> comments;
@@ -23,8 +24,9 @@ public class GetMyInfoResponse {
                                        List<CommentDto> responseComments) {
         GetMyInfoResponse dto = new GetMyInfoResponse();
         dto.email = entity.getEmail();
-        dto.username = entity.getUsername();
+        dto.nickName = entity.getNickName();
         dto.userId = String.valueOf(entity.getUserId());
+        dto.phoneNumber = entity.getPhoneNumber();
         dto.role = entity.getRole();
         dto.boards = responseBoards;
         dto.comments = responseComments;
