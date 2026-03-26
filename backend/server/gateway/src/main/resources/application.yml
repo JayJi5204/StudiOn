@@ -36,12 +36,19 @@ spring:
               predicates:
                 - Path=/user-service/health-check, 
                   /user-service/api/users/create, 
-                  /user-service/api/users/login, 
+                  /user-service/api/users/login,
                   /user-service/v3/api-docs/**, 
                   /user-service/swagger-ui/**, 
                   /user-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+            - id: user-service-reissue
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/api/users/reissue
+              filters:
                 - RewritePath=/user-service/(?<segment>.*),/$\{segment}
 
             - id: user-service-secure

@@ -8,7 +8,7 @@ import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.GetResponseWithComment;
 import backend.service.board.dto.response.PageResponse;
 import backend.service.board.dto.response.DeletedResponse;
-import backend.service.board.dto.response.GetResponse;
+import backend.service.board.dto.response.GetBoardResponse;
 import backend.service.board.entity.BoardEntity;
 import backend.service.board.enumType.Category;
 import backend.service.board.feignClient.CommentClient;
@@ -38,12 +38,12 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Transactional
-    public GetResponse create(CreateRequest dto) {
+    public GetBoardResponse create(CreateRequest dto) {
         BoardEntity boardEntity = boardRepository.save(
                 BoardEntity.create(snowflake.nextId(), dto.getUserId(), dto.getTitle(), dto.getContent(),dto.getCategory())
 
         );
-        return GetResponse.from(boardEntity);
+        return GetBoardResponse.from(boardEntity);
     }
 
     @Override
@@ -72,18 +72,18 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<GetResponse> getBoardWhoCreate(Long userId) {
+    public List<GetBoardResponse> getBoardWhoCreate(Long userId) {
         List<BoardEntity> entity = boardRepository.findAllByUserId(userId);
         return entity.stream()
-                .map(GetResponse::from)
+                .map(GetBoardResponse::from)
                 .toList();
     }
 
     @Transactional
-    public GetResponse update(Long boardId, UpdateRequest dto) {
+    public GetBoardResponse update(Long boardId, UpdateRequest dto) {
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow();
         boardEntity.update(dto.getTitle(), dto.getContent(), dto.getCategory());
-        return GetResponse.from(boardEntity);
+        return GetBoardResponse.from(boardEntity);
     }
 
 

@@ -21,6 +21,8 @@ public class BoardEntity {
     private Long userId;
     private String title;
     private String content;
+    private Long viewCount;
+    private Long likeCount;
     @Enumerated(EnumType.STRING)
     private Category category;
     @CreatedDate
@@ -35,6 +37,8 @@ public class BoardEntity {
         boardEntity.title = title;
         boardEntity.content = content;
         boardEntity.category = category;
+        boardEntity.viewCount = 0L;
+        boardEntity.likeCount = 0L;
         boardEntity.createAt = LocalDateTime.now();
         boardEntity.modifiedAt = boardEntity.createAt;
         return boardEntity;

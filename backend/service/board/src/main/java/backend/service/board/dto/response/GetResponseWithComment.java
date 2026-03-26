@@ -16,6 +16,8 @@ public class GetResponseWithComment {
     private String title;
     private String content;
     private Category category;
+    private Long viewCount;
+    private Long  likeCount;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
     private List<CommentDto> comment;
@@ -29,6 +31,8 @@ public class GetResponseWithComment {
         dto.title = entity.getTitle();
         dto.content = entity.getContent();
         dto.category = entity.getCategory();
+        dto.viewCount = entity.getViewCount();
+        dto.likeCount = entity.getLikeCount();
         dto.createAt = entity.getCreateAt();
         dto.modifiedAt = entity.getModifiedAt();
         dto.comment = responseComments;

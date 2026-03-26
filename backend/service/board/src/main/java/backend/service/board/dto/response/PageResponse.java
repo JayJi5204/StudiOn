@@ -13,6 +13,8 @@ public class PageResponse {
     private String userId;
     private String title;
     private Category category;
+    private Long viewCount;
+    private Long  likeCount;
     private LocalDateTime createAt;
 
     public static PageResponse from(BoardEntity boardEntity) {
@@ -23,6 +25,8 @@ public class PageResponse {
         pageResponseDto.userId = String.valueOf(boardEntity.getUserId());
         pageResponseDto.title = boardEntity.getTitle();
         pageResponseDto.category = boardEntity.getCategory();
+        pageResponseDto.viewCount = boardEntity.getViewCount();
+        pageResponseDto.likeCount = boardEntity.getLikeCount();
         pageResponseDto.createAt = boardEntity.getCreateAt();
 
         return pageResponseDto;
