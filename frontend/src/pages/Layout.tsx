@@ -1,18 +1,30 @@
-import { Link } from "react-router-dom";
-import { Outlet, useNavigate } from "react-router";
+import {Link } from "react-router-dom";
+import { Outlet,useNavigate } from "react-router";
 import { authService } from "../services/auth.service";
 import useUserInfoStore from "../store/userInfoStore";
-import { LogOut, BookOpen } from "lucide-react";
+import { LogOut,BookOpen } from "lucide-react";
 
-const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
-const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP;
-const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE;
-const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
-const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
+const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN 
+const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP
+const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE
+const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_BOARD
+const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
 
 const Layout = () => {
   let navigate = useNavigate();
-  const { userInfo, setUserInfo } = useUserInfoStore();
+  const {userInfo,setUserInfo} = useUserInfoStore();
+
+  const handleLogout = async () => {
+          try {
+              const userData = await authService.logout(userInfo.id)
+              setUserInfo(userData);
+              navigate('/');
+          } catch (error) {
+              console.log("로그아웃 실패");
+              alert("로그아웃 실패");
+          }
+              
+  }
 
   const LogoutContent = () => {
     return (
@@ -25,50 +37,42 @@ const Layout = () => {
         </button>
       </div>
     );
-  };
+  ;}
 
   const LoginContent = () => {
     return (
       <div className="flex space-x-4">
-        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">
-          {userInfo.username}님
-        </div>
-
+        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.nickname}님</div>
+        
         <button
-          onClick={() => {
-            const nextPage = userInfo.loggedin
-              ? `${profilePageUrl}/${userInfo.id}`
-              : redirectUrl;
-            navigate(nextPage);
+          onClick={() => { 
+              const profilePage = userInfo.isLoggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
+              navigate(profilePage)
           }}
           className="rounded-xl hover:bg-red-50 transition-colors font-medium cursor-pointer"
         >
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mb-4 shadow-lg ring-4 ring-indigo-300/50">
-            {userInfo.avatar}
-          </div>
+            <div className='aspect-auto w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mt-4 mb-4 shadow-lg ring-4 ring-indigo-300/50'>
+                <img 
+                    src={userInfo.avatar} 
+                    alt='avatar' 
+                    className='w-full h-full object-cover rounded-full'
+                />
+            </div>
         </button>
 
         <button
-          onClick={() => {
-            authService.logout(userInfo).then(() => {
-              setUserInfo({
-                ...userInfo,
-                loggedin: false,
-              });
-              navigate(`${signinPageUrl}`);
-            });
-          }}
-          className="items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium"
+            onClick={handleLogout}
+            className='items-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium'
         >
-          <LogOut className="w-5 h-5" />
+            <LogOut className="w-5 h-5" />
         </button>
       </div>
     );
   };
 
   const renderLogInOutContent = () => {
-    return userInfo.loggedin ? <LoginContent /> : <LogoutContent />;
-  };
+    return userInfo.isLoggedin ? <LoginContent/> : <LogoutContent/>;
+  }
 
   return (
     <>
@@ -82,32 +86,14 @@ const Layout = () => {
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <Link
-                to="/study"
-                className="text-gray-600 hover:text-indigo-600 transition-colors"
-              >
-                스터디 찾기
-              </Link>
-              <Link
-                to="/create-study"
-                className="text-gray-600 hover:text-indigo-600 transition-colors"
-              >
-                스터디 만들기
-              </Link>
-              <Link
-                to="/my-studies"
-                className="text-gray-600 hover:text-indigo-600 transition-colors"
-              >
-                내 스터디
-              </Link>
-              <Link
-                to={communityBoardUrl}
-                className="text-gray-600 hover:text-indigo-600 transition-colors"
-              >
-                커뮤니티
-              </Link>
+              <Link to="/study" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 찾기</Link>
+              <Link to="/create-study" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 만들기</Link>
+              <Link to="/my-studies" className="text-gray-600 hover:text-indigo-600 transition-colors">내 스터디</Link>
+              <Link to={communityBoardUrl} className="text-gray-600 hover:text-indigo-600 transition-colors">커뮤니티</Link>
             </nav>
-            <div>{renderLogInOutContent()}</div>
+            <div>
+              {renderLogInOutContent()}
+            </div>
           </div>
         </div>
       </header>
@@ -123,68 +109,30 @@ const Layout = () => {
                 <BookOpen className="mr-2" />
                 StudyTogether
               </div>
-              <p className="text-gray-300">
-                함께 성장하는 온라인 스터디 플랫폼
-              </p>
+              <p className="text-gray-300">함께 성장하는 온라인 스터디 플랫폼</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">서비스</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>
-                  <a href="#" className="hover:text-white">
-                    스터디 찾기
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    스터디 만들기
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    커뮤니티
-                  </a>
-                </li>
+                <li><a href="#" className="hover:text-white">스터디 찾기</a></li>
+                <li><a href="#" className="hover:text-white">스터디 만들기</a></li>
+                <li><a href="#" className="hover:text-white">커뮤니티</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">지원</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>
-                  <a href="#" className="hover:text-white">
-                    고객센터
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    이용가이드
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    FAQ
-                  </a>
-                </li>
+                <li><a href="#" className="hover:text-white">고객센터</a></li>
+                <li><a href="#" className="hover:text-white">이용가이드</a></li>
+                <li><a href="#" className="hover:text-white">FAQ</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">회사</h4>
               <ul className="space-y-2 text-gray-300">
-                <li>
-                  <a href="#" className="hover:text-white">
-                    회사소개
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    개인정보처리방침
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white">
-                    이용약관
-                  </a>
-                </li>
+                <li><a href="#" className="hover:text-white">회사소개</a></li>
+                <li><a href="#" className="hover:text-white">개인정보처리방침</a></li>
+                <li><a href="#" className="hover:text-white">이용약관</a></li>
               </ul>
             </div>
           </div>
@@ -192,9 +140,9 @@ const Layout = () => {
             <p>&copy; 2024 StudyTogether. All rights reserved.</p>
           </div>
         </div>
-      </footer>
+    </footer>
     </>
   );
-};
+}
 
 export default Layout;

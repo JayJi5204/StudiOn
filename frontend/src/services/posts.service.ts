@@ -1,14 +1,14 @@
 import axios from 'axios';
-import type { Posts,Post } from '../types/posts.type';
+import type { IPosts, IPost } from '../types/posts.type';
 
-const API_URL = import.meta.env.VITE_REACT_APP_URL_COMMUNITY_BOARD;
+const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD;
 
 export const postService = {
   createPost: async (
-    postData:Partial<Post>,
-    authorId:number
-  ): Promise<Post> => {
-    const response = await axios.post<Post>(API_URL,{
+    authorId: string | number,
+    postData: Partial<IPost>
+  ): Promise<IPost> => {
+    const response = await axios.post<IPost>(`${API_URL}/post`,{
       ...postData,
       authorId:authorId,
     }
@@ -17,12 +17,12 @@ export const postService = {
   },
   getPosts: async (
       params:{
-        page?:number; 
-        limit?:number
+        page?: string | number; 
+        limit?: string | number
       }
-    ): Promise<Post[]> => {
+    ): Promise<IPost[]> => {
 
-      const response = await axios.get<Posts>(API_URL,{
+      const response = await axios.get<IPosts>(`${API_URL}/posts`,{
           params // axios가 자동으로 ?userId=1&page=1... 형태로 변환
       });
     
@@ -30,26 +30,33 @@ export const postService = {
   },
 
   getPostById: async ( 
-    id: string | Number 
-  ): Promise<Post> => {
+    id: string | number 
+  ): Promise<IPost> => {
     
-    const response = await axios.get<Post>(`${API_URL}/${id}`);
+    const response = await axios.get<IPost>(`${API_URL}/post/${id}`);
 
     return response.data
   },
 
   updatePost: async (
-    id:number,
-    postData:Partial<Post>
-  ):Promise<Post> => {
-    const response = await axios.patch<Post>(`${API_URL}/updatepost/post/${id}`,postData);
+    id: string | number,
+    postData:Partial<IPost>
+  ):Promise<IPost> => {
+    const response = await axios.patch<IPost>(`${API_URL}/post/${id}`,postData);
     return response.data;
   },
   
   deletePost: async (
-    id:number
+    id: string | number
   ): Promise<void> => {
-    const response = await axios.delete(`${API_URL}/${id}`);
+    const response = await axios.delete(`${API_URL}/post/${id}`);
     return response.data;
-  } 
+  },
+
+  updateViewCount: async (
+    id: string | number
+  ) => {
+    const response = await axios.patch(`${API_URL}/post/${id}/views`);
+    return response.data;
+  }
 };

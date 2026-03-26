@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import type { Post } from '../../types/posts.type';
+import type { IPost } from '../../types/posts.type';
 import {
     MessageSquare,
     Eye,
@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 interface MyPostsContentProps {
-    myPosts:Post[]
+    myPosts:IPost[]
     userId:number
 }
 

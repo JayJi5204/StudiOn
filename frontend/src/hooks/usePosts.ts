@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/posts.service';
-import type { Post } from '../types/posts.type';
+import type { IPost } from '../types/posts.type';
 
 interface UsePostsReturn {
-  posts: Post[];
+  posts: IPost[];
   isLoading: boolean;
-  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
+  setPosts: React.Dispatch<React.SetStateAction<IPost[]>>;
 }
 
 interface PostQueryParams {
@@ -16,16 +16,15 @@ interface PostQueryParams {
 
 export const usePosts = (
   params: PostQueryParams,  
-  userloggedIn: boolean,
+  isLoggedin: boolean,
 ): UsePostsReturn => {
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  //데이터 로드 (파라미터 변경 시에만 실행)
   useEffect(() => {
-    if (!userloggedIn) {
+    if (!isLoggedin) {
       alert('게시글은 로그인 후 이용 가능합니다.');
       navigate('/');
       return

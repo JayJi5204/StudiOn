@@ -4,7 +4,8 @@ import { usePost } from '../hooks/usePost';
 import { usePosts} from '../hooks/usePosts';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
-import CommentSection from '../components/comunityboard/CommentSection';
+import CommentSection from '../components/communityboard/CommentSection';
+import { dateFormatter } from '../utils/date';
 import { 
   ArrowLeft, 
   Eye, 
@@ -21,11 +22,11 @@ import {
 const PostDetailPage = () => {
   const userInfo = useUserInfoStore((state) => state.userInfo);
   const navigate = useNavigate();
-  const { id } = useParams<{id:string}>();
-  const { post,isLoading } = usePost(Number(id));
+  const { id } = useParams();
+  const { post,isLoading } = usePost(String(id));
   const { setPosts } = usePosts(
             { page: 1, limit: 10 },
-            Boolean(userInfo.loggedin)
+            Boolean(userInfo.isLoggedin)
         );
   
   const [isLiked, setIsLiked] = useState(false);
@@ -33,17 +34,16 @@ const PostDetailPage = () => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
       
   const handleEdit = () => {
-    const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_UPDATE_POST;
+    const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE;
     navigate(`${updatePostPageUrl}/post/${id}`, { 
         state: { 
-            postData: {
-                id: post.id,
-                title: post.title,
-                content: post.content,
-                category: post.category,
-                tags: post.tags
-            } 
-        } 
+                id: post.id || '',
+                title: post.title || '',
+                content: post.content || '',
+                category: post.category || '',
+                updatedAt: dateFormatter() || '',
+                tags: post.tags || []
+        }
     });
   };
 

@@ -1,7 +1,7 @@
 import { Lock } from 'lucide-react'; 
 import InputForm from '../form/InputForm';
 
-const PasswordField: React.FC = () => {
+const PasswordField = () => {
 
   return (
     <InputForm

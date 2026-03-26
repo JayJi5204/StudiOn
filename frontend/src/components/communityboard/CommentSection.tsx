@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { dateFormatter } from '../../utils/date';
-import type { Comment } from '../../types/posts.type';
+import type { IComment } from '../../types/posts.type';
 import type { IUser } from '../../types/user.type';
-import { commentService } from '../../services/commentService';
+import { commentService } from '../../services/comment.service';
 import CommentItem from './CommentItem';
 
 interface CommentSectionProps {
     postId:number;
     userInfo:IUser;
-    initialComments:Comment[];
+    initialComments:IComment[];
 };
 
 const CommentSection = ({
@@ -17,32 +17,41 @@ const CommentSection = ({
     initialComments, 
 }: CommentSectionProps) => {
 
-    const [comments,setComments] = useState<Comment[]>(initialComments);
+    const [comments,setComments] = useState<IComment[]>(initialComments);
     const [commentText, setCommentText] = useState('');
 
-    const handleUpdateComment = async (editComment:Comment) => {
-        
+    const handleDeleteComment = async (postId:number,commentId:number) => {
+        try {
+            await commentService.deleteComment(postId,commentId);
+            setComments(prev => 
+                prev.filter(comment => comment.id !== commentId)
+        );
+        } catch (error) {
+            console.log('댓글 삭제 실패',error);
+            alert('댓글 삭제에 실패했습니다.');
+        }
+    }
+    const handleUpdateComment = async (editComment:IComment) => {
         try {
             //API 호출
-            const res = await commentService.updateComment(editComment.id,editComment);
+            await commentService.updateComment(editComment.id,editComment);
             //로컬 상태 반영
             setComments(prev => 
                 prev.map(c => c.id === editComment.id ? editComment : c)
             );
-            console.log(res);
             alert('댓글이 수정되었습니다.');
         } catch (error){
-            console.log('수정 실패',error);
-            alert('수정에 실패했습니다.');
+            console.log('댓글 수정 실패',error);
+            alert('댓글 수정에 실패했습니다.');
         }
     }
-    const handleCommentSubmit = async (newComment:Comment) => {
+    const handleCommentSubmit = async (newComment:IComment) => {
         if (newComment.content.trim() === '') {
             return 
         }
 
         try {
-            const res = await commentService.createComment(Number(postId),newComment);
+            const res = await commentService.createComment(postId,newComment);
     
             console.log('댓글 생성 완료',res);
             setComments(prev => [...prev, newComment]);
@@ -75,11 +84,12 @@ const CommentSection = ({
                     onClick={()=>{handleCommentSubmit(
                         {
                             id: comments.length + 1,
-                            author: userInfo.username,
-                            authorId: Number(userInfo.id),
-                            authorAvatar: String(userInfo.avatar),
+                            author: userInfo.nickname,
+                            authorId: userInfo.id,
+                            authorAvatar: userInfo.avatar,
                             content: commentText.trim(),
                             createdAt: dateFormatter(),
+                            updatedAt: dateFormatter(),
                             likes: 0
                         }
                     )}}
@@ -92,13 +102,14 @@ const CommentSection = ({
             
             {/* Comments List */}
             <div className="space-y-6">
-                {comments.map((comment) => (
+                {comments.length > 0 && comments.map((comment) => (
                     <CommentItem
                         key={comment.id}
-                        userId={Number(userInfo.id)}
-                        userRole={String(userInfo.role)}
+                        userId={userInfo.id}
+                        userRole={userInfo.role}
                         comment={comment}
-                        onUpdate={handleUpdateComment}
+                        handleUpdateComment={handleUpdateComment}
+                        handleDeleteComment={() => {handleDeleteComment(postId,comment.id)}}
                     />
                 ))}
             </div>
@@ -106,4 +117,4 @@ const CommentSection = ({
     );
 };
 
-export default CommentSection
+export default CommentSection;
