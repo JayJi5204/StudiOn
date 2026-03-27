@@ -1,6 +1,6 @@
 package backend.api.gateway.config;
 
-import backend.common.jwt.JwtValidator;
+import backend.api.gateway.filter.JwtValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

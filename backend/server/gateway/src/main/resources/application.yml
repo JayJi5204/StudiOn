@@ -37,6 +37,7 @@ spring:
                 - Path=/user-service/health-check, 
                   /user-service/api/users/create, 
                   /user-service/api/users/login,
+                  /user-service/v3/api-docs,
                   /user-service/v3/api-docs/**, 
                   /user-service/swagger-ui/**, 
                   /user-service/swagger-ui.html
@@ -64,7 +65,8 @@ spring:
             - id: board-service-public
               uri: lb://BOARD-SERVICE
               predicates:
-                - Path=/board-service/health-check, 
+                - Path=/board-service/health-check,
+                  /board-service/v3/api-docs,
                   /board-service/v3/api-docs/**, 
                   /board-service/swagger-ui/**, 
                   /board-service/swagger-ui.html
@@ -85,7 +87,8 @@ spring:
             - id: comment-service-public
               uri: lb://COMMENT-SERVICE
               predicates:
-                - Path=/comment-service/health-check, 
+                - Path=/comment-service/health-check,
+                  /comment-service/v3/api-docs,
                   /comment-service/v3/api-docs/**, 
                   /comment-service/swagger-ui/**, 
                   /comment-service/swagger-ui.html

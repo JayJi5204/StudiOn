@@ -16,11 +16,11 @@ public interface UserService {
 
     List<CreateResponse> getAllUsers();
 
-    GetMyInfoResponse getMyInfo();
+    GetMyInfoResponse getMyInfo(HttpServletRequest request);
 
-    UpdateResponse update(UpdateRequest dto);
+    UpdateResponse update(UpdateRequest dto ,HttpServletRequest request);
 
-    DeletedResponse delete();
+    DeletedResponse delete(HttpServletRequest request);
 
     LoginResponse login(LoginRequest dto, HttpServletResponse response);
 
@@ -28,7 +28,7 @@ public interface UserService {
 
     GetUserResponse getUserByAdmin(Long userId);
 
-    LogoutResponse logout(HttpServletResponse response);
+    LogoutResponse logout(HttpServletResponse response,HttpServletRequest request);
 
     void reissue(HttpServletRequest request, HttpServletResponse response);
 }

@@ -3,10 +3,13 @@ package backend.service.board.dto.request;
 import backend.service.board.enumType.Category;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CreateRequest {
-    private Long userId;
+    private String nickName;
     private String title;
     private String content;
     private Category category;
+    private List<String> tags;
 }

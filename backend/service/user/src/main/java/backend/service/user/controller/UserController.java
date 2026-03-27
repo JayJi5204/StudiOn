@@ -48,8 +48,8 @@ public class UserController {
 
     @Operation(summary = "내 정보 조회", description = "사용자의 정보를 조회합니다.")
     @GetMapping("/myInfo")
-    public GetMyInfoResponse getMyInfo() {
-        return userService.getMyInfo();
+    public GetMyInfoResponse getMyInfo(HttpServletRequest request) {
+        return userService.getMyInfo(request);
     }
 
     @Operation(summary = "특정 사용자 조회", description = "ID를 통해 특정 사용자의 정보를 조회합니다.")
@@ -62,20 +62,20 @@ public class UserController {
 
     @Operation(summary = "회원 정보 수정", description = "기존 사용자의 정보를 업데이트합니다.")
     @PutMapping("/update")
-    public UpdateResponse update(@RequestBody UpdateRequest dto) {
-        return userService.update(dto);
+    public UpdateResponse update(@RequestBody UpdateRequest dto,HttpServletRequest request) {
+        return userService.update(dto,request);
     }
 
     @Operation(summary = "회원 탈퇴", description = "사용자 계정을 삭제합니다.")
     @DeleteMapping("/delete")
-    public DeletedResponse delete() {
-        return userService.delete();
+    public DeletedResponse delete(HttpServletRequest request) {
+        return userService.delete(request);
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")
     @PostMapping("/logout")
-    public LogoutResponse logout(HttpServletResponse response) {
-        return userService.logout(response);
+    public LogoutResponse logout(HttpServletResponse response,HttpServletRequest request) {
+        return userService.logout(response,request);
     }
 
     @Operation(summary = "토큰 재발급", description = "refreshToken을 이용하여 accessToken을 재발급합니다.")

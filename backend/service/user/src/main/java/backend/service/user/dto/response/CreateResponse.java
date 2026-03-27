@@ -11,7 +11,7 @@ public class CreateResponse {
 
     private String userId;
     private String email;
-    private String username;
+    private String nickName;
     private LocalDateTime createAt;
     private Boolean isDeleted;
     private UserRole role;
@@ -21,7 +21,7 @@ public class CreateResponse {
     public static CreateResponse from(UserEntity entity) {
         CreateResponse dto = new CreateResponse();
         dto.userId=String.valueOf(entity.getUserId());
-        dto.username = entity.getNickName();
+        dto.nickName = entity.getNickName();
         dto.email = entity.getEmail();
         dto.createAt = entity.getCreateAt();
         dto.isDeleted = entity.getIsDeleted();

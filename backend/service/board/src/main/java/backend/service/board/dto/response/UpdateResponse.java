@@ -2,13 +2,13 @@ package backend.service.board.dto.response;
 
 import backend.service.board.entity.BoardEntity;
 import backend.service.board.enumType.Category;
-import lombok.Getter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-public class GetBoardResponse {
+@Data
+public class UpdateResponse {
 
     private String boardId;
     private String nickName;
@@ -21,8 +21,8 @@ public class GetBoardResponse {
     private LocalDateTime modifiedAt;
     private LocalDateTime createAt;
 
-    public static GetBoardResponse from(BoardEntity entity, Long viewCount, Long likeCount) {
-        GetBoardResponse dto = new GetBoardResponse();
+    public static UpdateResponse from(BoardEntity entity, Long viewCount, Long likeCount) {
+        UpdateResponse dto = new UpdateResponse();
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
         dto.title = entity.getTitle();

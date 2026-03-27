@@ -1,6 +1,5 @@
 package backend.api.gateway.filter;
 
-import backend.common.jwt.JwtValidator;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;

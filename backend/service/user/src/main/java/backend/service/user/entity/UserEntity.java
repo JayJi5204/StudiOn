@@ -32,7 +32,7 @@ public class UserEntity {
 
     private String phoneNumber;
 
-    private String profileImg;
+    private String profileAvatar;
 
     private Long studyTime;
 
@@ -41,7 +41,7 @@ public class UserEntity {
 
     private Boolean isDeleted;
 
-    private Boolean isLogin;
+    private Boolean isLoggedIn;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
@@ -62,7 +62,7 @@ public class UserEntity {
             entity.role = UserRole.ADMIN;
         }
         entity.phoneNumber = phoneNumber;
-        entity.isLogin = false;
+        entity.isLoggedIn = false;
         entity.studyTime = 0L;
 
         return entity;
@@ -81,10 +81,10 @@ public class UserEntity {
     }
 
     public void login() {
-        this.isLogin = true;
+        this.isLoggedIn = true;
     }
 
     public void logout(){
-        this.isLogin = false;
+        this.isLoggedIn = false;
     }
 }

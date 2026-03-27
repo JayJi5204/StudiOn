@@ -1,4 +1,4 @@
-package backend.common.jwt;
+package backend.api.gateway.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

@@ -10,7 +10,7 @@ import backend.service.user.dto.response.*;
 import backend.service.user.entity.UserEntity;
 import backend.service.user.feignClient.BoardClient;
 import backend.service.user.feignClient.CommentClient;
-import backend.common.jwt.JwtUtil;
+import backend.service.user.util.JwtUtil;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.util.CookieUtil;
 import backend.service.user.util.SecurityUtil;
@@ -53,9 +53,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UpdateResponse update(UpdateRequest dto) {
+    public UpdateResponse update(UpdateRequest dto, HttpServletRequest request) {
 
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = SecurityUtil.getCurrentUserId(request);
 
         UserEntity entity = userRepository.findByUserId(userId);
 
@@ -71,9 +71,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public DeletedResponse delete() {
+    public DeletedResponse delete(HttpServletRequest request) {
 
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = SecurityUtil.getCurrentUserId(request);
 
         UserEntity entity = userRepository.findByUserId(userId);
 
@@ -160,9 +160,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetMyInfoResponse getMyInfo() {
+    public GetMyInfoResponse getMyInfo(HttpServletRequest request) {
 
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = SecurityUtil.getCurrentUserId(request);
 
         UserEntity entity = userRepository.findByUserId(userId);
 
@@ -207,9 +207,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public LogoutResponse logout(HttpServletResponse response) {
+    public LogoutResponse logout(HttpServletResponse response,HttpServletRequest request) {
 
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = SecurityUtil.getCurrentUserId(request);
 
         UserEntity entity = userRepository.findByUserId(userId);
 

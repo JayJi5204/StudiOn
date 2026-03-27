@@ -2,27 +2,20 @@ package backend.service.board.service;
 
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
-import backend.service.board.dto.response.GetResponseWithComment;
-import backend.service.board.dto.response.PageResponse;
-import backend.service.board.dto.response.DeletedResponse;
-import backend.service.board.dto.response.GetBoardResponse;
+import backend.service.board.dto.response.*;
 import backend.service.board.enumType.Category;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface BoardService {
-
-    GetBoardResponse create(CreateRequest createRequest);
-
+    CreateResponse create(CreateRequest dto, HttpServletRequest request);
+    GetResponseWithComment getBoard(Long boardId);
     Page<PageResponse> getPage(Category category, int page, int size);
-
-    GetResponseWithComment getBoard(Long userId);
-
-    GetBoardResponse update(Long boardId, UpdateRequest updateRequest);
-
-    DeletedResponse delete(Long boardId);
-
     List<GetBoardResponse> getBoardWhoCreate(Long userId);
-
+    UpdateResponse update(Long boardId, UpdateRequest dto, HttpServletRequest request);
+    DeletedResponse delete(Long boardId, HttpServletRequest request);
+    Long like(Long boardId, HttpServletRequest request);
+    Long unlike(Long boardId, HttpServletRequest request);
 }

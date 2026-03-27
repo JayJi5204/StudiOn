@@ -1,15 +1,16 @@
-package backend.common.jwt;
+package backend.service.user.util;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Component
 public class JwtUtil {
 
     private final SecretKey secretKey;
@@ -27,13 +28,6 @@ public class JwtUtil {
         this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
-    @PostConstruct
-    public void test() {
-        System.out.println("=== JwtUtil Loaded ===");
-        System.out.println("SecretKey initialized successfully.");
-        System.out.println("accessTokenExpiration = " + accessTokenExpiration);
-        System.out.println("refreshTokenExpiration = " + refreshTokenExpiration);
-    }
 
     public String getUserId(String token) {
         return Jwts.parser()
