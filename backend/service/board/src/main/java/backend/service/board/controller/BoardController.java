@@ -2,15 +2,13 @@ package backend.service.board.controller;
 
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
-import backend.service.board.dto.response.GetResponseWithComment;
-import backend.service.board.dto.response.PageResponse;
-import backend.service.board.dto.response.DeletedResponse;
-import backend.service.board.dto.response.GetBoardResponse;
+import backend.service.board.dto.response.*;
 import backend.service.board.enumType.Category;
 import backend.service.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +25,8 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 등록합니다.")
     @PostMapping("/create")
-    public GetBoardResponse create(@RequestBody CreateRequest createRequest) {
-        return boardService.create(createRequest);
+    public CreateResponse create(@RequestBody CreateRequest createRequest, HttpServletRequest request) {
+        return boardService.create(createRequest,request);
     }
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID를 통해 상세 내용을 조회합니다.")
@@ -68,16 +66,32 @@ public class BoardController {
 
     @Operation(summary = "게시글 수정")
     @PutMapping("/update/{boardId}")
-    public GetBoardResponse update(
+    public UpdateResponse update(
             @Parameter(description = "수정할 게시글 ID", example = "279296958190669824") @PathVariable Long boardId,
-            @RequestBody UpdateRequest updateRequest) {
-        return boardService.update(boardId, updateRequest);
+            @RequestBody UpdateRequest updateRequest,HttpServletRequest request) {
+        return boardService.update(boardId, updateRequest,request);
     }
 
     @Operation(summary = "게시글 삭제")
     @DeleteMapping("/delete/{boardId}")
     public DeletedResponse delete(
-            @Parameter(description = "삭제할 게시글 ID", example = "279296958190669824") @PathVariable Long boardId) {
-        return boardService.delete(boardId);
+            @Parameter(description = "삭제할 게시글 ID", example = "279296958190669824") @PathVariable Long boardId,    HttpServletRequest request) {
+        return boardService.delete(boardId,request);
+    }
+
+    @Operation(summary = "좋아요", description = "게시글에 좋아요를 추가합니다.")
+    @PostMapping("/like/{boardId}")
+    public Long like(
+            @Parameter(description = "좋아요할 게시글 ID", example = "279296958190669824")
+            @PathVariable Long boardId, HttpServletRequest request) {
+        return boardService.like(boardId,request);
+    }
+
+    @Operation(summary = "좋아요 취소", description = "게시글에 좋아요를 취소합니다.")
+    @DeleteMapping("/like/{boardId}")
+    public Long unlike(
+            @Parameter(description = "좋아요 취소할 게시글 ID", example = "279296958190669824")
+            @PathVariable Long boardId,HttpServletRequest request) {
+        return boardService.unlike(boardId,request);
     }
 }

@@ -9,7 +9,7 @@ public class LoginResponse {
 
     private String userId;
     private String email;
-    private String username;
+    private String nickName;
     private UserRole role;
     private Boolean isLogin;
 
@@ -18,7 +18,7 @@ public class LoginResponse {
         LoginResponse response = new LoginResponse();
         response.userId = String.valueOf(entity.getUserId());
         response.email = entity.getEmail();
-        response.username = entity.getNickName();
+        response.nickName = entity.getNickName();
         response.role = entity.getRole();
         response.isLogin = true;
 

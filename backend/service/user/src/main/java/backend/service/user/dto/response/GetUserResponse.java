@@ -11,7 +11,7 @@ import java.util.List;
 public class GetUserResponse {
 
     private String email;
-    private String username;
+    private String nickName;
     private List<BoardDto> boards;
     private List<CommentDto> comments;
 
@@ -20,7 +20,7 @@ public class GetUserResponse {
                                        List<CommentDto> responseComments) {
         GetUserResponse dto = new GetUserResponse();
         dto.email = entity.getEmail();
-        dto.username = entity.getNickName();
+        dto.nickName = entity.getNickName();
         dto.boards = responseBoards;
         dto.comments = responseComments;
         return dto;

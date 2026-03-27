@@ -1,7 +1,6 @@
-package backend.service.user.util;
+package backend.service.board.util;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 
 public class SecurityUtil {
 

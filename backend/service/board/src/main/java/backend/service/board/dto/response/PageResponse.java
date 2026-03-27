@@ -10,25 +10,22 @@ import java.time.LocalDateTime;
 public class PageResponse {
 
     private String boardId;
-    private String userId;
+    private String nickName;
     private String title;
     private Category category;
     private Long viewCount;
     private Long  likeCount;
     private LocalDateTime createAt;
 
-    public static PageResponse from(BoardEntity boardEntity) {
-
+    public static PageResponse from(BoardEntity boardEntity, Long viewCount, Long likeCount) {
         PageResponse pageResponseDto = new PageResponse();
-
         pageResponseDto.boardId = String.valueOf(boardEntity.getBoardId());
-        pageResponseDto.userId = String.valueOf(boardEntity.getUserId());
+        pageResponseDto.nickName = boardEntity.getNickName();
         pageResponseDto.title = boardEntity.getTitle();
         pageResponseDto.category = boardEntity.getCategory();
-        pageResponseDto.viewCount = boardEntity.getViewCount();
-        pageResponseDto.likeCount = boardEntity.getLikeCount();
+        pageResponseDto.viewCount = viewCount;
+        pageResponseDto.likeCount = likeCount;
         pageResponseDto.createAt = boardEntity.getCreateAt();
-
         return pageResponseDto;
     }
 }

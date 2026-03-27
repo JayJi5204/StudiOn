@@ -12,7 +12,6 @@ import jakarta.transaction.Transactional;
 import backend.common.id.Snowflake;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import backend.service.comment.kafka.KafkaProducer;
 import java.util.List;
 
 import static java.util.function.Predicate.not;

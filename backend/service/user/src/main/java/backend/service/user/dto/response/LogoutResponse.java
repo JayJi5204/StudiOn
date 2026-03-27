@@ -10,7 +10,7 @@ public class LogoutResponse {
 
     public static LogoutResponse from(UserEntity entity) {
         LogoutResponse dto = new LogoutResponse();
-        dto.isLogin=entity.getIsLogin();
+        dto.isLogin=entity.getIsLoggedIn();
         dto.message = "로그아웃 되었습니다.";
         return dto;
     }
