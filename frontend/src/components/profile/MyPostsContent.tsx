@@ -21,7 +21,7 @@ const MyPostsContent = ({
     return (
         <div className='space-y-4'>
             {_myPosts.map((myPost) => (
-                <div key={myPost.id} className='bg-white rounded-2xl shadow-lg p-5 transition-transform duration-300 hover:shadow-xl hover:scale-[1.01]'>
+                <div key={myPost.boardId} className='bg-white rounded-2xl shadow-lg p-5 transition-transform duration-300 hover:shadow-xl hover:scale-[1.01]'>
                     <div className='flex justify-between items-center mb-2'>
                         <h4 className='text-lg font-semibold text-indigo-700 hover:text-indigo-900 cursor-pointer'>{myPost.title}</h4>
                         <span className='text-xs text-gray-500'>{myPost.createdAt}</span>
@@ -36,7 +36,7 @@ const MyPostsContent = ({
                             <span className='flex items-center'><MessageSquare className='w-4 h-4 mr-1 text-blue-400'/> {myPost.comments.length}</span>
                         </div>
                         <button className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
-                            <Link to={`/profile/${myPost.authorId}/myposts/${myPost.id}`}>자세히 보기 →</Link>
+                            <Link to={`/profile/${myPost.authorId}/myposts/${myPost.boardId}`}>자세히 보기 →</Link>
                         </button>
                     </div>
                 </div>

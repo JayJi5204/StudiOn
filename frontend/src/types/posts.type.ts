@@ -3,7 +3,7 @@ export interface IPosts {
 }
 
 export interface IPost {
-  id: number;
+  boardId: number;
   title: string;
   content: string;
   author: string;
@@ -23,7 +23,7 @@ export interface IComments {
 }
 
 export interface IComment {
-  id: number;
+  commentId:number;
   author: string;
   authorId: number;
   authorAvatar: string;

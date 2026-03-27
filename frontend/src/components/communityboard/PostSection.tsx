@@ -26,7 +26,7 @@ const PostSection = ({
     const handleLikeClick = (postId:number) => {
         setPosts(prevPosts => 
             prevPosts.map(post => 
-                (isLike && post.id === postId) 
+                (isLike && post.boardId === postId) 
                     ? { ...post, likes: post.likes - 1 } 
                     : { ...post, likes: post.likes + 1 }
             )
@@ -38,7 +38,7 @@ const PostSection = ({
             await postService.updateViewCount(postId)
             setPosts(prevPosts => 
                 prevPosts.map(post => 
-                    (!isView && post.id === postId) 
+                    (!isView && post.boardId === postId) 
                         ? { ...post, views: post.views + 1 }
                         : post
                 )
@@ -53,7 +53,7 @@ const PostSection = ({
     return (
         <>
             {posts.map((post) => (
-                <div key={post.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
+                <div key={post.boardId} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
                     <div className="space-y-4">
                         {/* Post Header */}
                         <div className="flex items-start justify-between">
@@ -110,7 +110,7 @@ const PostSection = ({
                                     <LikesButton
                                         likes={post.likes}
                                         handleLikeCount={()=>{
-                                            handleLikeClick(post.id);
+                                            handleLikeClick(post.boardId);
                                             setIsLike(!isLike);
                                         }}
                                     />
@@ -121,9 +121,9 @@ const PostSection = ({
                                 </div>
 
                                 <ViewButton
-                                    postId={post.id}
+                                    postId={post.boardId}
                                     handleViewClick={() => {
-                                        handleViewClick(post.id);
+                                        handleViewClick(post.boardId);
                                         setIsView(true);
                                     }}
                                 />

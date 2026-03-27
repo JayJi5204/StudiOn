@@ -16,14 +16,21 @@ const SignupForm = () => {
 
     let navigate = useNavigate();
     
-    const handleSignUp = async (formValue:{username:string,password:string,email:string}) => {
-        const {username,email,password} = formValue;
+    const handleSignUp = async (formValue:{
+        nickName:string,
+        password:string,
+        email:string,
+        phoneNumber:string
+    }) => {
+        const {nickName,email,password,phoneNumber} = formValue;
 
         try {
-            const userData = await authService.creatUser(
-                username,
+            const userData = await authService.createUser(
+                nickName,
                 email,
-                password
+                password,
+                "",
+                phoneNumber
             );
             console.log('회원가입 성공:',userData);
             navigate('/signin');

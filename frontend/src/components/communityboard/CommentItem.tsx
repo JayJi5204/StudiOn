@@ -31,7 +31,16 @@ const CommentItem = (
     return (
         <div className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
             <div className="flex items-start space-x-3">
-                <div className="text-2xl flex-shrink-0">{comment.authorAvatar}</div>
+                <div className="text-2xl flex-shrink-0">
+                    <div className='aspect-auto w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mt-4 mb-4 shadow-lg ring-4 ring-indigo-300/50'>
+                        <img 
+                            src={comment.authorAvatar} 
+                            alt='profileAavatar' 
+                            className='w-full h-full object-cover rounded-full'
+                        />
+                    </div>
+                    
+                    </div>
                     <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
                         <div>
@@ -41,7 +50,7 @@ const CommentItem = (
                         <div>
                             <div className="relative">
                                 
-                            {(userId == comment.id || userRole==='admin') && (
+                            {(userId == comment.authorId || userRole==='admin') && (
 
                                 <button 
                                     className="text-gray-400 hover:text-gray-600"

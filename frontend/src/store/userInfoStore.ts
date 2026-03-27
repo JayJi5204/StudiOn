@@ -3,18 +3,16 @@ import { persist } from 'zustand/middleware';
 import type { IUser } from '../types/user.type';
 
 const initialUserInfo = {
-    id:0,
+    userId:0,
     nickname:'',
     password:'',
     phoneNumber:'',
     studyTime:0,
     email:'',
     bio:'',
-    location:'',
     role:'',
-    avatar:'',
+    profileAvatar:'',
     createdAt: '',
-    updatedAt: '',
     isLoggedin:false,
     isDeleted:false,
     Refresh:'',
@@ -42,7 +40,7 @@ const useUserInfoStore = create<UserInfoState & UserInfoAction>()(
                 userInfo: { ...state.userInfo, [key]: value }
             })),
             updateAvatar: (newAvatar) => set((state) => ({
-                userInfo: { ...state.userInfo, avatar: newAvatar }
+                userInfo: { ...state.userInfo, profileAvatar: newAvatar }
             })),
         }),
         {

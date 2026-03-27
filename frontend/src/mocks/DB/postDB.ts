@@ -1,7 +1,7 @@
 export let POSTS_DB = {
     posts:[
             {
-                        id: 1,
+                        boardId: 1,
                         title: 'React 스터디 3개월 하고 나니 확실히 달라진 점',
                         content: `안녕하세요! 지난 3개월간 React 스터디를 진행하면서 느낀 점들을 공유하고 싶어서 글을 작성합니다.
 
@@ -31,7 +31,8 @@ export let POSTS_DB = {
                         likes: 28,
                         comments: [
                         {
-                            id: 1,
+                            commentId:1,
+                            authorId: 1,
                             author: '코딩초보',
                             authorAvatar: '👨‍💻',
                             content: '저도 React 스터디 시작하려고 하는데 도움이 많이 되었습니다! 혹시 어떤 방식으로 진행하셨나요?',
@@ -39,15 +40,17 @@ export let POSTS_DB = {
                             likes: 5
                         },
                         {
-                            id: 2,
+                            commentId:2,
                             author: '프론트엔드개발자',
+                            authorId: 2,
                             authorAvatar: '💻',
                             content: '3개월 만에 이정도 성장하셨다니 대단하시네요! 꾸준함이 정말 중요한 것 같아요.',
                             createdAt: '2024-10-18 16:45',
                             likes: 3
                         },
                         {
-                            id: 3,
+                            commentId:3,
+                            authorId: 3,
                             author: 'React마스터',
                             authorAvatar: '⚛️',
                             content: '잘 읽었습니다. 다음 단계로는 TypeScript와 Next.js를 공부해보시는 것을 추천드려요!',
@@ -58,7 +61,7 @@ export let POSTS_DB = {
                         tags: ['React', '후기', '성장']
                     },
                     {
-                    id: 2,
+                    boardId: 2,
                     title: 'TOEIC 900점 달성! 3개월 공부법 공유합니다',
                     content: `드디어 목표했던 900점을 달성했습니다! 🎉
 
@@ -101,7 +104,8 @@ export let POSTS_DB = {
                     likes: 45,
                     comments: [
                     {
-                        id: 1,
+                        commentId:1,
+                        authorId: 1,
                         author: '토익준비생',
                         authorAvatar: '📝',
                         content: '와 정말 대단하시네요! 저도 700점대인데 용기 얻었습니다. 혹시 스터디는 어떻게 구하셨나요?',
@@ -109,7 +113,8 @@ export let POSTS_DB = {
                         likes: 8
                     },
                     {
-                        id: 2,
+                        commentId:1,
+                        authorId: 2,
                         author: '영어공부중',
                         authorAvatar: '✏️',
                         content: '3개월 만에 200점이나 올리셨다니... 저도 도전해보겠습니다! 교재 추천 감사해요',
@@ -117,7 +122,8 @@ export let POSTS_DB = {
                         likes: 5
                     },
                     {
-                        id: 3,
+                        commentId:1,
+                        authorId: 3,
                         author: '취준생',
                         authorAvatar: '🎓',
                         content: '900점 축하드립니다! Part 7 시간 부족한데 어떻게 극복하셨는지 더 자세히 알 수 있을까요?',
@@ -128,7 +134,7 @@ export let POSTS_DB = {
                     tags: ['TOEIC', '영어', '합격후기']
                 },
                 {
-                    id: 3,
+                    boardId: 3,
                     title: '온라인 스터디 처음인데 어떻게 시작하면 좋을까요?',
                     content: `안녕하세요, 온라인 스터디가 처음이라 궁금한 점이 많아서 질문 드립니다.
 
@@ -165,7 +171,8 @@ export let POSTS_DB = {
                     likes: 12,
                     comments: [
                     {
-                        id: 1,
+                        commentId:1,
+                        authorId: 1,
                         author: '온라인스터디러',
                         authorAvatar: '💻',
                         content: '저는 디스코드 추천합니다! 화면 공유도 편하고 음성 채팅도 안정적이에요. 줌은 시간 제한이 있어서 불편할 수 있어요.',
@@ -173,7 +180,8 @@ export let POSTS_DB = {
                         likes: 15
                     },
                     {
-                        id: 2,
+                        commentId:2,
+                        authorId: 2,
                         author: '스터디장',
                         authorAvatar: '👨‍🏫',
                         content: '평일 저녁이 더 좋아요. 주말은 약속 생기면 빠지기 쉬워서 지속성이 떨어집니다. 2시간씩 꾸준히 하는 게 답입니다!',
@@ -181,7 +189,8 @@ export let POSTS_DB = {
                         likes: 10
                     },
                     {
-                        id: 3,
+                        commentId:3,
+                        authorId: 3,
                         author: '프로그래밍러버',
                         authorAvatar: '⚡',
                         content: '같은 고민 했었는데 각자 공부하고 모여서 발표하는 방식이 더 효과적이었어요. 준비하면서 더 깊이 공부하게 되더라구요.',
@@ -192,7 +201,7 @@ export let POSTS_DB = {
                     tags: ['질문', '온라인스터디', '초보']
                 },
                 {
-                    id: 4,
+                    boardId: 4,
                     title: '정보처리기사 실기 합격! 공부 자료 공유합니다',
                     content: `정보처리기사 실기 시험에 합격했습니다! 🎊
 
@@ -253,7 +262,8 @@ export let POSTS_DB = {
                     likes: 34,
                     comments: [
                     {
-                        id: 1,
+                        commentId:1,
+                        authorId: 1,
                         author: '자격증준비',
                         authorAvatar: '📚',
                         content: '축하드립니다! 저도 실기 준비 중인데 SQL이 너무 어렵네요 ㅠㅠ 어떻게 공부하셨나요?',
@@ -261,7 +271,8 @@ export let POSTS_DB = {
                         likes: 6
                     },
                     {
-                        id: 2,
+                        commentId:2,
+                        authorId:2,
                         author: '개발자지망생',
                         authorAvatar: '🔥',
                         content: '자료 정리 너무 깔끔하네요! 저장해서 공부에 참고하겠습니다. 감사합니다!',
@@ -272,7 +283,7 @@ export let POSTS_DB = {
                     tags: ['정보처리기사', '합격', '자료공유']
                 },
                 {
-                    id: 5,
+                    boardId: 5,
                     title: '독서 토론 스터디 정말 재미있어요!',
                     content: `매주 일요일마다 하는 독서 토론 스터디에 참여한 지 2달이 되었는데요,
                 정말 만족스럽습니다. 다양한 관점을 들을 수 있어서 좋아요.
@@ -327,7 +338,8 @@ export let POSTS_DB = {
                     likes: 19,
                     comments: [
                     {
-                        id: 1,
+                        commentId:1,
+                        authorId: 1,
                         author: '북러버',
                         authorAvatar: '📕',
                         content: '오 저도 독서 토론 스터디 찾고 있었는데! 혹시 인원 더 받으시나요?',
@@ -335,7 +347,8 @@ export let POSTS_DB = {
                         likes: 7
                     },
                     {
-                        id: 2,
+                        commentId:2,
+                        authorId: 2,
                         author: '책벌레',
                         authorAvatar: '🐛',
                         content: '달러구트 꿈 백화점 저도 읽었는데 정말 재미있었어요! 다음에 어떤 책 읽으실 예정인가요?',
@@ -346,7 +359,7 @@ export let POSTS_DB = {
                     tags: ['독서', '토론', '추천']
                 },
                 {
-                    id: 6,
+                    boardId: 6,
                     title: '스터디 중간에 포기하고 싶을 때 극복하는 방법',
                     content: `스터디를 하다 보면 중간에 지치거나 포기하고 싶을 때가 있죠.
                 저도 그랬는데, 이렇게 극복했습니다.
@@ -424,7 +437,8 @@ export let POSTS_DB = {
                     likes: 56,
                     comments: [
                     {
-                        id: 1,
+                        commentId:1,
+                        authorId: 1,
                         author: '공부중독',
                         authorAvatar: '📝',
                         content: '와 정말 공감되는 내용이네요. 저도 요즘 슬럼프인데 힘이 나네요. 감사합니다!',
@@ -432,7 +446,8 @@ export let POSTS_DB = {
                         likes: 18
                     },
                     {
-                        id: 2,
+                        commentId:2,
+                        authorId: 2,
                         author: '노력파',
                         authorAvatar: '🔥',
                         content: '작은 목표 세우기 정말 중요한 것 같아요. 저도 실천해보겠습니다!',
@@ -440,7 +455,8 @@ export let POSTS_DB = {
                         likes: 12
                     },
                     {
-                        id: 3,
+                        commentId:3,
+                        authorId: 3,
                         author: '꾸준함',
                         authorAvatar: '🌱',
                         content: '6개월이나 하셨다니 정말 대단하세요! 저는 이제 2개월인데 본받고 싶네요',

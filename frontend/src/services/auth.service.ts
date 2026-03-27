@@ -5,15 +5,19 @@ import type { IUser } from "../types/user.type";
 const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 
 export const authService = {
-    creatUser: async (
-        nickname:string,
+    createUser: async (
+        nickName:string,
         email:string,
-        password:string
+        password:string,
+        adminPassword:string,
+        phoneNumber:string
     ):Promise<Partial<IUser>> => {
-        const response = await axios.post(`${BASE_API_URL}`, {
-            nickname,
+        const response = await axios.post(`${BASE_API_URL}/create`, {
+            nickName,
             email,
             password,
+            adminPassword,
+            phoneNumber,
         });
         return response.data;
     },

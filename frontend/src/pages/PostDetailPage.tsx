@@ -37,7 +37,7 @@ const PostDetailPage = () => {
     const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE;
     navigate(`${updatePostPageUrl}/post/${id}`, { 
         state: { 
-                id: post.id || '',
+                id: post.boardId || '',
                 title: post.title || '',
                 content: post.content || '',
                 category: post.category || '',
@@ -51,7 +51,7 @@ const PostDetailPage = () => {
         //삭제할 포스트를 제외하고 목록을 새로 고침
         try {
           await postService.deletePost(deleteId);
-          setPosts(prevPosts => prevPosts.filter(post => post.id !== deleteId));
+          setPosts(prevPosts => prevPosts.filter(post => post.boardId !== deleteId));
           alert("삭제되었습니다.");
           navigate(-1);
         }
@@ -128,7 +128,7 @@ const PostDetailPage = () => {
                     {post.category}
                   </span>
                   <div className="relative">
-                    {(userInfo.role==='admin' || userInfo.id === post.authorId) && (
+                    {(userInfo.role==='admin' || userInfo.userId === post.authorId) && (
                         <button
                             onClick={() => setShowMoreMenu(!showMoreMenu)}
                             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -148,7 +148,7 @@ const PostDetailPage = () => {
                         </button>
                         <button 
                           className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
-                          onClick={() => {handleDelete(post.id)}}  
+                          onClick={() => {handleDelete(post.boardId)}}  
                         >
                           <Trash2 size={16} />
                           <span>삭제</span>
@@ -251,7 +251,7 @@ const PostDetailPage = () => {
               </div>
             </article>
             <CommentSection
-              postId={post.id}
+              postId={post.boardId}
               initialComments={post.comments}
               userInfo={userInfo}
             />

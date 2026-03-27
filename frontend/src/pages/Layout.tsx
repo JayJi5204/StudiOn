@@ -46,15 +46,15 @@ const Layout = () => {
         
         <button
           onClick={() => { 
-              const profilePage = userInfo.isLoggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
+              const profilePage = userInfo.isLoggedin ? `${profilePageUrl}/${userInfo.userId}`: redirectUrl
               navigate(profilePage)
           }}
           className="rounded-xl hover:bg-red-50 transition-colors font-medium cursor-pointer"
         >
             <div className='aspect-auto w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mt-4 mb-4 shadow-lg ring-4 ring-indigo-300/50'>
                 <img 
-                    src={userInfo.avatar} 
-                    alt='avatar' 
+                    src={userInfo.profileAvatar} 
+                    alt='profileAavatar' 
                     className='w-full h-full object-cover rounded-full'
                 />
             </div>

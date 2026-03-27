@@ -121,7 +121,7 @@ const ProfilePage = () => {
     const DEFAULT_AVATAR = "😊";
     const handleReset = (e: React.MouseEvent): void => {
         e.stopPropagation(); // 부모 요소로의 이벤트 전파 방지
-        setUserInfo({ ...userInfo, avatar: DEFAULT_AVATAR});
+        setUserInfo({ ...userInfo, profileAvatar: DEFAULT_AVATAR});
         
         // input에 남아있는 파일 경로도 비워줘야 다시 같은 파일을 올릴 수 있음
         if (fileInputRef.current) {
@@ -146,7 +146,7 @@ const ProfilePage = () => {
             reader.onload = (e) => {
                     const result = e.target?.result as string;
                     console.log(result)
-                    setUserInfo({ ...userInfo, avatar: result.toString()});
+                    setUserInfo({ ...userInfo, profileAvatar: result});
                 };
             reader.readAsDataURL(file);
         }
@@ -165,7 +165,7 @@ const ProfilePage = () => {
 
     const handleLogout = async () => {
         try {
-            const userData = await authService.logout(userInfo.id)
+            const userData = await authService.logout(userInfo.userId)
             setUserInfo(userData);
             navigate('/');
         } catch (error) {
@@ -284,7 +284,7 @@ const ProfilePage = () => {
             case 'posts':
                 return <MyPostsContent
                             myPosts={posts}  // 위에서 선언한 posts 변수
-                            userId={userInfo.id}  // 현재 컨텍스트의 userId 변수
+                            userId={userInfo.userId}  // 현재 컨텍스트의 userId 변수
                         />
             case 'achievements':
                 return <AchievementsContent />;
@@ -309,8 +309,8 @@ const ProfilePage = () => {
                                 <div className='relative inline-block'>
                                     <div className='w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mb-4 shadow-lg ring-4 ring-indigo-300/50'>
                                         <img 
-                                            src={userInfo.avatar} 
-                                            alt='avatar' 
+                                            src={userInfo.profileAvatar} 
+                                            alt='profileAvatar' 
                                             className='aspect-auto w-full h-full rounded-full object-cover'
                                         />
                                     </div>
@@ -328,7 +328,7 @@ const ProfilePage = () => {
                                         <Camera className='w-5 h-5 text-gray-600' />
                                     </button>
 
-                                    {userInfo.avatar !== DEFAULT_AVATAR && (
+                                    {userInfo.profileAvatar !== DEFAULT_AVATAR && (
                                         <button 
                                             type="button"
                                             onClick={handleReset}
@@ -351,10 +351,6 @@ const ProfilePage = () => {
                                                 <span className='text-sm font-medium'>{userInfo.email}</span>
                                             </div>
                                             <div className='flex items-center text-gray-700'>
-                                                <MapPin className='w-5 h-5 mr-3 text-indigo-500' />
-                                                <span className='text-sm font-medium'>{userInfo.location}</span>
-                                            </div>
-                                            <div className='flex items-center text-gray-700'>
                                                 <Calendar className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <span className='text-sm font-medium'>가입일: {userInfo.createdAt}</span>
                                             </div>
@@ -366,7 +362,7 @@ const ProfilePage = () => {
                                                 <UserMinus className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <button 
                                                     className='text-sm font-medium'
-                                                    onClick={()=>{handleDeleteUser(userInfo.id)}}
+                                                    onClick={()=>{handleDeleteUser(userInfo.userId)}}
                                                 >
                                                     회원 탈퇴
                                                 </button>

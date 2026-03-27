@@ -195,7 +195,7 @@ const CommunityBoard= () => {
                         </h3>
                         <div className="space-y-4">
                             {popularPosts.map((post, index) => (
-                            <div key={post.id} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                            <div key={post.boardId} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                                 <div className="flex items-start space-x-2">
                                 <span className="flex-shrink-0 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                                     {index + 1}

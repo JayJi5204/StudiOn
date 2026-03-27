@@ -12,7 +12,7 @@ const testViewCount = http.patch(`${API_URL_COMMUNITY_BOARD}/post/:id/views`, as
   const { id } = params;
   
   // 1. DB에서 해당 ID를 가진 포스트 찾기
-  const postIndex = POSTS_DB.posts.findIndex(post => post.id === Number(id));
+  const postIndex = POSTS_DB.posts.findIndex(post => post.boardId === Number(id));
 
   if (postIndex !== -1) {
     // 2. 실제 데이터(메모리 내 DB) 업데이트
@@ -38,7 +38,7 @@ const testUpdateUser = http.patch(`${API_URL_USERS}/:id`, async ({ params, reque
     const { id } = params;
     const editForm = await request.json() as any;
 
-    const idx = USER_DB.users.findIndex(u => String(u.id) === String(id));
+    const idx = USER_DB.users.findIndex(u => String(u.userId) === String(id));
 
     if (idx !== -1) {
         USER_DB.users[idx] = { ...USER_DB.users[idx], ...editForm };
@@ -56,12 +56,12 @@ const testDeleteComment = http.delete(
   `${API_URL_COMMUNITY_BOARD}/posts/:postId/comments/:commentId`, 
   ({ params }) => {
     const { postId, commentId } = params;
-    const postIdx = POSTS_DB.posts.findIndex(post => post.id === Number(postId));
+    const postIdx = POSTS_DB.posts.findIndex(post => post.boardId === Number(postId));
 
     if (postIdx !== -1) {
       
       POSTS_DB.posts[postIdx].comments = POSTS_DB.posts[postIdx].comments.filter(
-        (comment) => comment.id !== Number(commentId)
+        (comment) => comment.commentId !== Number(commentId)
       );
       
       console.log(`게시글 ${postId}번의 ${commentId}번 댓글 삭제 완료`);
@@ -76,12 +76,12 @@ const testDeleteComment = http.delete(
 const testUpdateComment = http.put(`${API_URL_COMMUNITY_BOARD}/posts/:id/comments`,async ({params,request})=>{
   const {id} = params
   const editComment = await request.json() as IComment;
-  const idx = POSTS_DB.posts.findIndex(post => post.id === Number(id))
+  const idx = POSTS_DB.posts.findIndex(post => post.boardId === Number(id))
   if (idx === -1) {
     return HttpResponse.json(null,{status:404,statusText:"Post Not found"});
   }
 
-    POSTS_DB.posts[idx].comments[editComment.id] = editComment;
+    POSTS_DB.posts[idx].comments[editComment.commentId] = editComment;
 
     return HttpResponse.json(editComment, { status: 200 });
   },
@@ -92,7 +92,7 @@ const testCreateComment = http.post(
   async ({ params, request }) => {
     const { id } = params;
     const newComment = (await request.json()) as IComment;
-    const idx = POSTS_DB.posts.findIndex((post) => post.id === Number(id));
+    const idx = POSTS_DB.posts.findIndex((post) => post.boardId === Number(id));
     if (idx === -1) {
       return HttpResponse.json(null, {
         status: 404,
@@ -112,7 +112,7 @@ const testGetPostDetail = http.get(
     const { id } = params;
 
     try {
-      const post = POSTS_DB.posts.find((p) => p.id === Number(id));
+      const post = POSTS_DB.posts.find((p) => p.boardId === Number(id));
 
       if (!post) {
         return new HttpResponse(null, {
@@ -132,7 +132,7 @@ const testDeletePost = http.delete(
   `${API_URL_COMMUNITY_BOARD}/post/:id`,
   ({ params }) => {
     const { id } = params;
-    POSTS_DB.posts = POSTS_DB.posts.filter((post) => post.id !== Number(id));
+    POSTS_DB.posts = POSTS_DB.posts.filter((post) => post.boardId !== Number(id));
     return new HttpResponse(null, { status: 204 }); //204 No Content
   },
 );
@@ -168,7 +168,7 @@ const testUpdatePost = http.patch(
     const updateData = (await request.json()) as any; // 클라이언트가 보낸 수정 데이터
 
     // 1. DB에서 해당 ID를 가진 포스트의 인덱스 찾기
-    const idx = POSTS_DB.posts.findIndex((post) => post.id === Number(id));
+    const idx = POSTS_DB.posts.findIndex((post) => post.boardId === Number(id));
 
     // 2. 해당 포스트가 없을 경우 404 에러 반환
     if (idx === -1) {
@@ -210,7 +210,7 @@ const testCreatePost = http.post( `${API_URL_COMMUNITY_BOARD}/post`,
 
 const testLogOut = http.post(`${API_URL_USERS}/auth/:id`, async ({params}) => {
   const { id } = params;
-  const user = USER_DB.users.find(u => u.id === Number(id));
+  const user = USER_DB.users.find(u => u.userId === Number(id));
  
   return HttpResponse.json({
         ...user,
@@ -246,17 +246,15 @@ const testCreateUser = http.post(`${API_URL_USERS}`, async({ request }) => {
       );
     }
     const newUser = {
-      id:USER_DB.users.length +1,
+      userId:USER_DB.users.length +1,
       nickname: `${nickname}`,
       password: `${password}`,
       phoneNumber:`${phoneNumber}`,
       email: `${email}`,
       bio: '기본 자기소개입니다.',
-      location: '서울, 대한민국',
       role: 'user',
-      avatar: '👨‍💻',
+      profileAvatar: '👨‍💻',
       createdAt: dateFormatter(),
-      updatedAt: dateFormatter(),
       isLoggedin:false,
       isDeleted:false,
       Refresh:'',
@@ -271,7 +269,7 @@ const testDeleteUser = http.delete(`${API_URL_USERS}/:id`, ({ params }) => {
   const { id } = params;
   
   // 1. 유저 찾기
-  const idx = USER_DB.users.findIndex(u => u.id === Number(id));
+  const idx = USER_DB.users.findIndex(u => u.userId === Number(id));
 
   // 2. 유저가 존재할 경우 (idx가 -1이 아닐 때)
   if (idx !== -1) {
@@ -289,7 +287,7 @@ const testDeleteUser = http.delete(`${API_URL_USERS}/:id`, ({ params }) => {
 
 const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
   const { id } = params;
-  const user = USER_DB.users.find((u) => u.id === Number(id));
+  const user = USER_DB.users.find((u) => u.userId === Number(id));
   
   if (user) {
     return HttpResponse.json(
@@ -298,11 +296,9 @@ const testProfile = http.get(`${API_URL_PROFILE}/:id`, ({ params }) => {
         nickname: user.nickname,
         email: user.email,
         bio: user.bio,
-        location: user.location,
         role: user.role,
-        avatar: user.avatar,
+        profileAvatar: user.profileAvatar,
         createdAt:user.createdAt ,
-        updatedAt:user.updatedAt ,
         isLoggedin:user.isLoggedin ,
         isDeleted:user.isDeleted ,
         Refresh:'',

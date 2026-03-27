@@ -24,7 +24,7 @@ const CommentSection = ({
         try {
             await commentService.deleteComment(postId,commentId);
             setComments(prev => 
-                prev.filter(comment => comment.id !== commentId)
+                prev.filter(comment => comment.commentId !== commentId)
         );
         } catch (error) {
             console.log('댓글 삭제 실패',error);
@@ -34,10 +34,10 @@ const CommentSection = ({
     const handleUpdateComment = async (editComment:IComment) => {
         try {
             //API 호출
-            await commentService.updateComment(editComment.id,editComment);
+            await commentService.updateComment(editComment.commentId,editComment);
             //로컬 상태 반영
             setComments(prev => 
-                prev.map(c => c.id === editComment.id ? editComment : c)
+                prev.map(c => c.commentId === editComment.commentId ? editComment : c)
             );
             alert('댓글이 수정되었습니다.');
         } catch (error){
@@ -54,6 +54,7 @@ const CommentSection = ({
             const res = await commentService.createComment(postId,newComment);
     
             console.log('댓글 생성 완료',res);
+            console.log(newComment)
             setComments(prev => [...prev, newComment]);
             alert('댓글이 작성되었습니다!');
             setCommentText('');
@@ -83,10 +84,10 @@ const CommentSection = ({
                   <button
                     onClick={()=>{handleCommentSubmit(
                         {
-                            id: comments.length + 1,
+                            commentId: comments.length + 1,
                             author: userInfo.nickname,
-                            authorId: userInfo.id,
-                            authorAvatar: userInfo.avatar,
+                            authorId: userInfo.userId,
+                            authorAvatar: userInfo.profileAvatar,
                             content: commentText.trim(),
                             createdAt: dateFormatter(),
                             updatedAt: dateFormatter(),
@@ -104,12 +105,12 @@ const CommentSection = ({
             <div className="space-y-6">
                 {comments.length > 0 && comments.map((comment) => (
                     <CommentItem
-                        key={comment.id}
-                        userId={userInfo.id}
+                        key={comment.commentId}
+                        userId={userInfo.userId}
                         userRole={userInfo.role}
                         comment={comment}
                         handleUpdateComment={handleUpdateComment}
-                        handleDeleteComment={() => {handleDeleteComment(postId,comment.id)}}
+                        handleDeleteComment={() => {handleDeleteComment(postId,comment.commentId)}}
                     />
                 ))}
             </div>
