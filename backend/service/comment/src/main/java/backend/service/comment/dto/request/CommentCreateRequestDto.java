@@ -6,6 +6,7 @@ import lombok.Data;
 public class CommentCreateRequestDto {
     private Long userId;
     private Long boardId;
+    private String nickName;
     private String content;
     private String parentPath;
 

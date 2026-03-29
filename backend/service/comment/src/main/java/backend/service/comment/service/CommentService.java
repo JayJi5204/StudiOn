@@ -1,9 +1,9 @@
 package backend.service.comment.service;
 
 import backend.service.comment.dto.request.CommentCreateRequestDto;
-import backend.service.comment.dto.response.CommentPageResponse;
 import backend.service.comment.dto.response.CommentResponseDto;
 import backend.service.comment.dto.response.DeletedResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -18,5 +18,9 @@ public interface CommentService {
     List<CommentResponseDto> getBoardWhoCreateWithBoardId(Long boardId);
 
     List<CommentResponseDto> getBoardWhoCreateWithUserId(Long userId);
+
+    Long like(Long commentId, HttpServletRequest request);
+
+    Long unlike(Long commentId, HttpServletRequest request);
 
     }

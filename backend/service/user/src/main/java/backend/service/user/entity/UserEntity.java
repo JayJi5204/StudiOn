@@ -36,7 +36,6 @@ public class UserEntity {
 
     private Long studyTime;
 
-    @CreatedDate
     private LocalDateTime createAt;
 
     private Boolean isDeleted;

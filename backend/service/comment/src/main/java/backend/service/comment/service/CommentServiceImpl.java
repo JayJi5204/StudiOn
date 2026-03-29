@@ -1,27 +1,29 @@
 package backend.service.comment.service;
 
-import backend.service.comment.common.PageLimitCalculator;
 import backend.service.comment.dto.request.CommentCreateRequestDto;
-import backend.service.comment.dto.response.CommentPageResponse;
 import backend.service.comment.dto.response.CommentResponseDto;
 import backend.service.comment.dto.response.DeletedResponse;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
+import backend.service.comment.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import backend.common.id.Snowflake;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static java.util.function.Predicate.not;
-
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final Snowflake snowflake = new Snowflake();
+    private final CommentCountService commentCountService;
 
     @Transactional
     public CommentResponseDto create(CommentCreateRequestDto requestDto) {
@@ -36,9 +38,9 @@ public class CommentServiceImpl implements CommentService {
                                 commentRepository.findDescendantsTopPath(
                                         requestDto.getBoardId(), parentCommentPath.getPath()).orElse(null)),
                         requestDto.getUserId(),
-                        requestDto.getBoardId()));
+                        requestDto.getBoardId(), requestDto.getNickName()));
 
-        return CommentResponseDto.from(comment);
+        return CommentResponseDto.from(comment, 0L);
     }
 
     private CommentEntity findParent(CommentCreateRequestDto requestDto) {
@@ -53,8 +55,8 @@ public class CommentServiceImpl implements CommentService {
 
     public CommentResponseDto get(Long commentId) {
         return commentRepository.findById(commentId)
-                .map(CommentResponseDto::from)
-                .orElse(null); // 에러를 던지는 대신 null을 반환
+                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(commentId)))
+                .orElse(null);
     }
 
     @Transactional
@@ -65,7 +67,6 @@ public class CommentServiceImpl implements CommentService {
             } else {
                 delete(commentEntity);
             }
-
         });
         return DeletedResponse.from();
     }
@@ -84,39 +85,41 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    public CommentPageResponse getAll(Long boardId, Long page, Long pageSize) {
-        return CommentPageResponse.of(
-                commentRepository.findAll(boardId, (page - 1) * pageSize, pageSize).stream()
-                        .map(CommentResponseDto::from)
-                        .toList(),
-                commentRepository.count(boardId, PageLimitCalculator.calculatePageLimit(page, pageSize, 10L))
-        );
-    }
-
     public List<CommentResponseDto> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
+        Pageable pageable = PageRequest.of(0, pageSize.intValue());
+
         List<CommentEntity> comments = lastPath == null ?
-                commentRepository.findAllInfiniteScroll(boardId, pageSize) :
-                commentRepository.findAllInfiniteScroll(boardId, lastPath, pageSize);
+                commentRepository.findByBoardIdOrderByCommentPathPathAsc(boardId, pageable) :
+                commentRepository.findByBoardIdAndCommentPathPathGreaterThanOrderByCommentPathPathAsc(boardId, lastPath, pageable);
 
         return comments.stream()
-                .map(CommentResponseDto::from)
+                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
     @Override
     public List<CommentResponseDto> getBoardWhoCreateWithBoardId(Long boardId) {
-        List<CommentEntity> entities = commentRepository.findAllByBoardId(boardId);
-
-        return entities.stream()
-                .map(CommentResponseDto::from) // 혹은 직접 빌더/생성자 사용
+        return commentRepository.findAllByBoardId(boardId).stream()
+                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
     @Override
     public List<CommentResponseDto> getBoardWhoCreateWithUserId(Long userId) {
         return commentRepository.findAllByUserId(userId).stream()
-                .map(CommentResponseDto::from)
+                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
+    @Override
+    public Long like(Long commentId, HttpServletRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId(request);
+        return commentCountService.like(commentId, userId);
+    }
+
+    @Override
+    public Long unlike(Long commentId, HttpServletRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId(request);
+        return commentCountService.unlike(commentId, userId);
+    }
 }
