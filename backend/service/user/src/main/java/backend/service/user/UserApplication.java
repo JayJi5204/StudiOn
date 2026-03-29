@@ -11,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@EnableJpaAuditing
 @EnableDiscoveryClient
 @EnableFeignClients
 public class UserApplication {

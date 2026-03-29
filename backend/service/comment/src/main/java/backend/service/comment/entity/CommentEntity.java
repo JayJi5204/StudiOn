@@ -22,16 +22,20 @@ public class CommentEntity {
     private CommentPath commentPath;
     private Long userId;
     private Long boardId;
+    private String nickName;
+    private Long likeCount;
     private Boolean isDelete;
     private LocalDateTime createAt;
 
-    public static CommentEntity create(Long commentId, String content, CommentPath commentPath, Long userId, Long boardId) {
+    public static CommentEntity create(Long commentId, String content, CommentPath commentPath, Long userId, Long boardId,String nickName) {
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.commentId = commentId;
         commentEntity.content = content;
         commentEntity.commentPath=commentPath;
         commentEntity.userId = userId;
         commentEntity.boardId = boardId;
+        commentEntity.nickName = nickName;
+        commentEntity.likeCount = 0L;
         commentEntity.createAt = LocalDateTime.now();
         commentEntity.isDelete = false;
         return commentEntity;
@@ -44,5 +48,9 @@ public class CommentEntity {
 
     public void delete() {
         isDelete = true;
+    }
+
+    public void syncLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
     }
 }

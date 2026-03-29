@@ -23,12 +23,6 @@ spring:
     gateway:
       server:
         webflux:
-          default-filters:
-            - name: GlobalFilter
-              args:
-                baseMessage: Spring Cloud Gateway WebFlux Global Filter
-                preLogger: true
-                postLogger: true
           routes:
             # 1. USER-SERVICE
             - id: user-service-public
