@@ -12,6 +12,7 @@ public class UpdateResponse {
     private UserRole role;
     private String phoneNumber;
     private String password;
+    private String bio;
 
 
     public static UpdateResponse from(UserEntity entity){
@@ -21,6 +22,7 @@ public class UpdateResponse {
         dto.role=entity.getRole();
         dto.password=entity.getPassword();
         dto.phoneNumber=entity.getPhoneNumber();
+        dto.bio=entity.getBio();
         return dto;
     }
 }
