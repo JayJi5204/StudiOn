@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 public class LogoutResponse {
-    private Boolean isLogin;
+    private Boolean isLoggedIn;
     private String message;
 
     public static LogoutResponse from(UserEntity entity) {
         LogoutResponse dto = new LogoutResponse();
-        dto.isLogin=entity.getIsLoggedIn();
+        dto.isLoggedIn=entity.getIsLoggedIn();
         dto.message = "로그아웃 되었습니다.";
         return dto;
     }
