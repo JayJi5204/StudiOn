@@ -1,14 +1,17 @@
 dependencies {
 
-    // Web API
+    // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -20,23 +23,20 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
-    // Feign Client (MSA 서비스 호출)
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
     // Config Server
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
-    // Actuator (헬스체크 / 모니터링)
+    // Actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
 
-    // 내부 모듈
-    implementation project(':common')
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // Devtools
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // 공통 모듈
+    implementation project(':common')
 
     // Annotation processor
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -44,7 +44,4 @@ dependencies {
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
 }

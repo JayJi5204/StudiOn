@@ -28,12 +28,12 @@ spring:
             - id: user-service-public
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/user-service/health-check, 
-                  /user-service/api/users/create, 
+                - Path=/user-service/health-check,
+                  /user-service/api/users/create,
                   /user-service/api/users/login,
                   /user-service/v3/api-docs,
-                  /user-service/v3/api-docs/**, 
-                  /user-service/swagger-ui/**, 
+                  /user-service/v3/api-docs/**,
+                  /user-service/swagger-ui/**,
                   /user-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
@@ -61,8 +61,8 @@ spring:
               predicates:
                 - Path=/board-service/health-check,
                   /board-service/v3/api-docs,
-                  /board-service/v3/api-docs/**, 
-                  /board-service/swagger-ui/**, 
+                  /board-service/v3/api-docs/**,
+                  /board-service/swagger-ui/**,
                   /board-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
@@ -83,8 +83,8 @@ spring:
               predicates:
                 - Path=/comment-service/health-check,
                   /comment-service/v3/api-docs,
-                  /comment-service/v3/api-docs/**, 
-                  /comment-service/swagger-ui/**, 
+                  /comment-service/v3/api-docs/**,
+                  /comment-service/swagger-ui/**,
                   /comment-service/swagger-ui.html
               filters:
                 - RemoveRequestHeader=Cookie
@@ -98,6 +98,37 @@ spring:
                 - name: AuthorizationHeaderFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
+
+            # 4. CHAT-SERVICE WebSocket
+            - id: chat-service-websocket
+              uri: lb:ws://CHAT-SERVICE
+              predicates:
+                - Path=/chat-service/ws/**
+              filters:
+                - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
+
+            # 4. CHAT-SERVICE HTTP
+            - id: chat-service-public
+              uri: lb://CHAT-SERVICE
+              predicates:
+                - Path=/chat-service/health-check,
+                  /chat-service/ws/**,
+                  /chat-service/v3/api-docs/**,
+                  /chat-service/swagger-ui/**,
+                  /chat-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
+
+            - id: chat-service-secure
+              uri: lb://CHAT-SERVICE
+              predicates:
+                - Path=/chat-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
+
 management:
   endpoints:
     web:
@@ -106,7 +137,7 @@ management:
 
 springdoc:
   api-docs:
-    enabled: true   # 🔥 중요 (Gateway는 문서 생성 안 함)
+    enabled: true
 
   swagger-ui:
     persistAuthorization: true
@@ -117,3 +148,5 @@ springdoc:
         url: /board-service/v3/api-docs
       - name: comment-service
         url: /comment-service/v3/api-docs
+      - name: chat-service
+        url: /chat-service/v3/api-docs

@@ -1,7 +1,7 @@
 package backend.service.comment.service;
 
-import backend.service.comment.dto.request.CommentCreateRequestDto;
-import backend.service.comment.dto.response.CommentResponseDto;
+import backend.service.comment.dto.request.CreateRequestDto;
+import backend.service.comment.dto.response.CreateResponse;
 import backend.service.comment.dto.response.DeletedResponse;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentCountService commentCountService;
 
     @Transactional
-    public CommentResponseDto create(CommentCreateRequestDto requestDto) {
+    public CreateResponse create(CreateRequestDto requestDto) {
         CommentEntity parent = findParent(requestDto);
         CommentPath parentCommentPath = parent == null ? CommentPath.create("") : parent.getCommentPath();
 
@@ -40,10 +40,10 @@ public class CommentServiceImpl implements CommentService {
                         requestDto.getUserId(),
                         requestDto.getBoardId(), requestDto.getNickName()));
 
-        return CommentResponseDto.from(comment, 0L);
+        return CreateResponse.from(comment, 0L);
     }
 
-    private CommentEntity findParent(CommentCreateRequestDto requestDto) {
+    private CommentEntity findParent(CreateRequestDto requestDto) {
         String parentPath = requestDto.getParentPath();
         if (parentPath == null) {
             return null;
@@ -53,9 +53,9 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow();
     }
 
-    public CommentResponseDto get(Long commentId) {
+    public CreateResponse get(Long commentId) {
         return commentRepository.findById(commentId)
-                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(commentId)))
+                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(commentId)))
                 .orElse(null);
     }
 
@@ -85,7 +85,7 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    public List<CommentResponseDto> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
+    public List<CreateResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
         Pageable pageable = PageRequest.of(0, pageSize.intValue());
 
         List<CommentEntity> comments = lastPath == null ?
@@ -93,21 +93,21 @@ public class CommentServiceImpl implements CommentService {
                 commentRepository.findByBoardIdAndCommentPathPathGreaterThanOrderByCommentPathPathAsc(boardId, lastPath, pageable);
 
         return comments.stream()
-                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
     @Override
-    public List<CommentResponseDto> getBoardWhoCreateWithBoardId(Long boardId) {
+    public List<CreateResponse> getBoardWhoCreateWithBoardId(Long boardId) {
         return commentRepository.findAllByBoardId(boardId).stream()
-                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
     @Override
-    public List<CommentResponseDto> getBoardWhoCreateWithUserId(Long userId) {
+    public List<CreateResponse> getBoardWhoCreateWithUserId(Long userId) {
         return commentRepository.findAllByUserId(userId).stream()
-                .map(entity -> CommentResponseDto.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
