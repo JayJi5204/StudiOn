@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: server/eureka/Dockerfile
-    container_name: eureka-server
+    container_name: server-eureka
     ports:
       - "8761:8761"
     healthcheck:
@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: server/config/Dockerfile
-    container_name: config-server
+    container_name: server-config
     ports:
       - "8888:8888"
     environment:
@@ -42,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: server/gateway/Dockerfile
-    container_name: gateway-server
+    container_name: server-gateway
     ports:
       - "8000:8000"
     environment:
@@ -62,12 +62,13 @@ services:
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --character-set-client-handshake=FALSE
     ports:
       - "3306:3306"
     volumes:
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -109,7 +110,7 @@ services:
     build:
       context: .
       dockerfile: service/user/Dockerfile
-    container_name: user-service
+    container_name: service-user
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
@@ -131,7 +132,7 @@ services:
     build:
       context: .
       dockerfile: service/board/Dockerfile
-    container_name: board-service
+    container_name: service-board
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
@@ -153,7 +154,7 @@ services:
     build:
       context: .
       dockerfile: service/comment/Dockerfile
-    container_name: comment-service
+    container_name: service-comment
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
@@ -175,7 +176,7 @@ services:
     build:
       context: .
       dockerfile: service/room/Dockerfile
-    container_name: room-service
+    container_name: service-room
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
@@ -197,7 +198,7 @@ services:
     build:
       context: .
       dockerfile: service/chat/Dockerfile
-    container_name: chat-service
+    container_name: service-chat
     environment:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888

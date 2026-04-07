@@ -129,6 +129,28 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
 
+            # 5. ROOM-SERVICE
+            - id: room-service-public
+              uri: lb://ROOM-SERVICE
+              predicates:
+                - Path=/room-service/health-check,
+                  /room-service/v3/api-docs,
+                  /room-service/v3/api-docs/**,
+                  /room-service/swagger-ui/**,
+                  /room-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/room-service/(?<segment>.*),/$\{segment}
+
+            - id: room-service-secure
+              uri: lb://ROOM-SERVICE
+              predicates:
+                - Path=/room-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/room-service/(?<segment>.*),/$\{segment}
+
 management:
   endpoints:
     web:
@@ -150,3 +172,5 @@ springdoc:
         url: /comment-service/v3/api-docs
       - name: chat-service
         url: /chat-service/v3/api-docs
+      - name: room-service
+        url: /room-service/v3/api-docs

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -42,9 +40,36 @@ public class RoomEntity {
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
-    @CreatedDate
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+    public static RoomEntity create(Long roomId, String roomName, Long userId, boolean isPrivate, String password, String inviteCode) {
+
+        if (isPrivate && (password == null || password.isBlank())) {
+            throw new RuntimeException("비공개 방은 비밀번호가 필요합니다.");
+        }
+
+        RoomEntity roomEntity = new RoomEntity();
+        roomEntity.roomId = roomId;
+        roomEntity.roomName = roomName;
+        roomEntity.hostId = userId;
+        roomEntity.maxPeople = 4;
+        roomEntity.currentPeople = 1;
+        roomEntity.isPrivate = isPrivate;
+        roomEntity.password = isPrivate ? password : null;  // isPrivate가 false면 null
+        roomEntity.inviteCode = inviteCode;
+        roomEntity.createdAt = LocalDateTime.now();
+        return roomEntity;
+    }
+    public void enter() {
+        this.currentPeople++;
+    }
+
+    public void leave() {
+        this.currentPeople--;
+    }
+
+    public boolean checkPassword(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
+
 }

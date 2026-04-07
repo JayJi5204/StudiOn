@@ -11,7 +11,7 @@ public class LoginResponse {
     private String email;
     private String nickName;
     private UserRole role;
-    private Boolean isLogin;
+    private Boolean isLoggedIn;
 
 
     public static LoginResponse from(UserEntity entity) {
@@ -20,7 +20,7 @@ public class LoginResponse {
         response.email = entity.getEmail();
         response.nickName = entity.getNickName();
         response.role = entity.getRole();
-        response.isLogin = true;
+        response.isLoggedIn = true;
 
         return response;
 
