@@ -16,6 +16,7 @@ public class GetMyInfoResponse {
     private String userId;
     private String phoneNumber;
     private UserRole role;
+    private String bio;
     private List<BoardDto> boards;
     private List<CommentDto> comments;
 
@@ -28,6 +29,7 @@ public class GetMyInfoResponse {
         dto.userId = String.valueOf(entity.getUserId());
         dto.phoneNumber = entity.getPhoneNumber();
         dto.role = entity.getRole();
+        dto.bio = entity.getBio();
         dto.boards = responseBoards;
         dto.comments = responseComments;
         return dto;

@@ -43,6 +43,11 @@ public class RoomServiceImpl implements RoomService {
         );
 
         roomRepository.save(room);
+
+        // 방 생성자를 Redis에 추가
+        stringRedisTemplate.opsForSet().add("room:participants:" + room.getRoomId(), String.valueOf(userId));
+        stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(room.getRoomId()));
+
         return CreateResponse.from(room);
     }
 

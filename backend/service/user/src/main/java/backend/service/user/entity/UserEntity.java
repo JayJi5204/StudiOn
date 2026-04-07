@@ -42,6 +42,8 @@ public class UserEntity {
 
     private Boolean isLoggedIn;
 
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
@@ -63,15 +65,17 @@ public class UserEntity {
         entity.phoneNumber = phoneNumber;
         entity.isLoggedIn = false;
         entity.studyTime = 0L;
+        entity.bio = "";
 
         return entity;
     }
 
-    public void update(String nickName, String password, String email,String phoneNumber) {
+    public void update(String nickName, String password, String email,String phoneNumber,String bio) {
         this.nickName = nickName;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.bio=bio;
 
     }
 

@@ -14,4 +14,6 @@ public class UpdateRequest {
     private String password;
 
     private String phoneNumber;
+
+    private String bio;
 }

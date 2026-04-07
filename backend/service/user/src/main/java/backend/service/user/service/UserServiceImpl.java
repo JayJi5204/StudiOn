@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("유저 없음");
         }
 
-        entity.update(dto.getNickName(), dto.getPassword(), dto.getEmail(), dto.getPhoneNumber());
+        entity.update(dto.getNickName(), dto.getPassword(), dto.getEmail(), dto.getPhoneNumber(),dto.getBio());
 
         userRepository.save(entity);
 
