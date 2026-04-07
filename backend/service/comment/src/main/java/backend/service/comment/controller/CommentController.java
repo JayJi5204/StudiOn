@@ -1,7 +1,7 @@
 package backend.service.comment.controller;
 
-import backend.service.comment.dto.request.CommentCreateRequestDto;
-import backend.service.comment.dto.response.CommentResponseDto;
+import backend.service.comment.dto.request.CreateRequestDto;
+import backend.service.comment.dto.response.CreateResponse;
 import backend.service.comment.dto.response.DeletedResponse;
 import backend.service.comment.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,8 +52,8 @@ public class CommentController {
                     """
     )
     @PostMapping("/create")
-    public CommentResponseDto create(@RequestBody CommentCreateRequestDto commentCreateRequestDto) {
-        return commentService.create(commentCreateRequestDto);
+    public CreateResponse create(@RequestBody CreateRequestDto createRequestDto) {
+        return commentService.create(createRequestDto);
     }
 
     @Operation(
@@ -69,7 +69,7 @@ public class CommentController {
                     """
     )
     @GetMapping("/infinite-scroll")
-    public List<CommentResponseDto> readAllInfiniteScroll(
+    public List<CreateResponse> readAllInfiniteScroll(
             @Parameter(description = "게시글 ID", example = "295926545373777920") @RequestParam("boardId") Long boardId,
             @Parameter(description = "마지막으로 조회된 댓글의 commentPath (첫 조회 시 null)") @RequestParam(value = "lastPath", required = false) String lastPath,
             @Parameter(description = "가져올 댓글 개수", example = "10") @RequestParam("pageSize") Long pageSize) {
@@ -86,7 +86,7 @@ public class CommentController {
                     """
     )
     @GetMapping("/getCommentWithBoardId/{boardId}")
-    public List<CommentResponseDto> getBoardWhoCreateWithBoardId(
+    public List<CreateResponse> getBoardWhoCreateWithBoardId(
             @Parameter(description = "게시글 ID", example = "295926545373777920") @PathVariable("boardId") Long boardId) {
         return commentService.getBoardWhoCreateWithBoardId(boardId);
     }
@@ -96,7 +96,7 @@ public class CommentController {
             description = "특정 사용자가 작성한 모든 댓글을 조회합니다."
     )
     @GetMapping("/users/{userId}")
-    public List<CommentResponseDto> getBoardWhoCreateWithUserId(
+    public List<CreateResponse> getBoardWhoCreateWithUserId(
             @Parameter(description = "사용자 ID", example = "279296958190669820") @PathVariable("userId") Long userId) {
         return commentService.getBoardWhoCreateWithUserId(userId);
     }

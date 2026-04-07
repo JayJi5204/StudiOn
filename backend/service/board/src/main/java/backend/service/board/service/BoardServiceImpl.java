@@ -45,14 +45,14 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public GetResponseWithComment getBoard(Long boardId) {
+    public GetWithCommentResponse getBoard(Long boardId) {
         BoardEntity entity = boardRepository.findById(boardId).orElseThrow();
         List<CommentDto> responseComments = commentClient.getComments(boardId);
 
         Long viewCount = boardCountService.incrementViewCount(boardId);
         Long likeCount = boardCountService.getLikeCount(boardId);
 
-        return GetResponseWithComment.from(entity, responseComments, viewCount, likeCount);
+        return GetWithCommentResponse.from(entity, responseComments, viewCount, likeCount);
     }
 
     @Override

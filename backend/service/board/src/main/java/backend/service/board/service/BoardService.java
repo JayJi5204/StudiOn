@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BoardService {
     CreateResponse create(CreateRequest dto, HttpServletRequest request);
-    GetResponseWithComment getBoard(Long boardId);
+    GetWithCommentResponse getBoard(Long boardId);
     Page<PageResponse> getPage(Category category, int page, int size);
     List<GetBoardResponse> getBoardWhoCreate(Long userId);
     UpdateResponse update(Long boardId, UpdateRequest dto, HttpServletRequest request);
