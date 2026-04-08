@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { IPost } from "../../types/posts.type"
+import type { IBoard } from "../../types/boards.type"
 import LikesButton from "../button/LikesButton"
 import ViewButton from "../button/ViewButton"
 import {
@@ -7,28 +7,30 @@ import {
     Bookmark,
     Share2,
     Eye,
-    MessageCircle,
  } from "lucide-react"
 import { postService } from "../../services/posts.service"
+import useUserInfoStore from "../../store/userInfoStore"
  
 interface PostsSectionProps{
-    posts:IPost[];
-    setPosts: React.Dispatch<React.SetStateAction<IPost[]>>;
+    boards:IBoard[];
+    setBoards: React.Dispatch<React.SetStateAction<IBoard[]>>;
 }
 
 const PostSection = ({
-    posts,
-    setPosts
-}:PostsSectionProps) => {
+    boards,
+    setBoards,
+}:PostsSectionProps
+) => {
+    const userInfo = useUserInfoStore((state) => state.userInfo);
     const [isLike,setIsLike] = useState(false);
     const [isView,setIsView] = useState(false);
     
     const handleLikeClick = (postId:number) => {
-        setPosts(prevPosts => 
-            prevPosts.map(post => 
-                (isLike && post.id === postId) 
-                    ? { ...post, likes: post.likes - 1 } 
-                    : { ...post, likes: post.likes + 1 }
+        setBoards(prevBoards => 
+            prevBoards.map(post => 
+                (isLike && post.boardId === postId) 
+                    ? { ...post, likeCount: post.likeCount - 1 } 
+                    : { ...post, likeCount: post.likeCount + 1 }
             )
         );
     }
@@ -36,10 +38,10 @@ const PostSection = ({
     const handleViewClick = async (postId:number) => {
         try {
             await postService.updateViewCount(postId)
-            setPosts(prevPosts => 
-                prevPosts.map(post => 
-                    (!isView && post.id === postId) 
-                        ? { ...post, views: post.views + 1 }
+            setBoards(prevBoards =>
+                prevBoards.map(post => 
+                    (!isView && post.boardId === postId) 
+                        ? { ...post, views: post.viewCount + 1 }
                         : post
                 )
             );
@@ -52,16 +54,16 @@ const PostSection = ({
 
     return (
         <>
-            {posts.map((post) => (
-                <div key={post.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
+            {boards.map((post) => (
+                <div key={post.boardId} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
                     <div className="space-y-4">
                         {/* Post Header */}
                         <div className="flex items-start justify-between">
                             <div className="flex items-center space-x-3">
-                                <div className="text-3xl">{post.authorAvatar}</div>
+                                <div className="text-3xl">{userInfo.profileAvatar}</div>
                                     <div>
                                         <div className="flex items-center space-x-2">
-                                            <span className="font-semibold text-gray-900">{post.author}</span>
+                                            <span className="font-semibold text-gray-900">{userInfo.nickName}</span>
                                             <span className="px-2 py-1 bg-indigo-100 text-indigo-600 text-xs rounded-full">
                                                 {post.category}
                                             </span>
@@ -105,25 +107,21 @@ const PostSection = ({
                                 <div className="flex items-center space-x-4 text-sm text-gray-500">
                                     <div className="flex items-center space-x-1">
                                         <Eye size={16} />
-                                        <span>{post.views}</span>
+                                        <span>{post.viewCount}</span>
                                     </div>
                                     <LikesButton
-                                        likes={post.likes}
+                                        likeCount={post.likeCount}
                                         handleLikeCount={()=>{
-                                            handleLikeClick(post.id);
+                                            handleLikeClick(post.boardId);
                                             setIsLike(!isLike);
                                         }}
                                     />
-                                    <div className="flex items-center space-x-1">
-                                        <MessageCircle size={16} />
-                                        <span>{post.comments.length}</span>
-                                    </div>
                                 </div>
 
                                 <ViewButton
-                                    postId={post.id}
+                                    boardId={post.boardId}
                                     handleViewClick={() => {
-                                        handleViewClick(post.id);
+                                        handleViewClick(post.boardId);
                                         setIsView(true);
                                     }}
                                 />

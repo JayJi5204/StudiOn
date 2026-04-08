@@ -1,13 +1,13 @@
 import { Formik, Form} from 'formik';
+import { useNavigate } from 'react-router';
+import { signinSchema, signinInitialValues} from '../../schemas/authSchema'; 
+import { authService } from '../../services/auth.service';
+import useUserInfoStore from '../../store/userInfoStore';
 import SigninEmailField from './SigninEmailField.formik.component'; 
 import SigninPasswordField from './SigninPassworField.formik.component'; 
 import SigninRememberMe from './SigninRememberMeField.formik.component';
 import SigninSubmitButton from '../button/SubmitButton';
 import GoogleLoginButton from '../button/GoogleLoginButton';
-import { signinSchema, signinInitialValues} from '../../schemas/authSchema'; 
-import { useNavigate } from 'react-router';
-import { authService } from '../../services/auth.service';
-import useUserInfoStore from '../../store/userInfoStore';
 
 const SigninForm = () => {
     const navigate = useNavigate();
@@ -20,7 +20,6 @@ const SigninForm = () => {
             password:string
         }) => {
         const {email,password} = formValue;
-
         try {
             const userData = await authService.login(email,password);
             setUserInfo(userData);

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { MoreVertical,ThumbsUp, Send } from "lucide-react";
 import EditButton from "../button/EditButton";
-import type { IComment } from "../../types/posts.type";
+import type { IComment } from "../../types/boards.type";
+import useUserInfoStore from "../../store/userInfoStore";
 
 interface CommentItemProps {
     userId:number;
@@ -19,6 +20,7 @@ const CommentItem = (
         handleUpdateComment,
         handleDeleteComment,
     }:CommentItemProps) => {
+    const userInfo = useUserInfoStore((state) => state.userInfo);
     const [showMoreMenu, setShowMoreMenu] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(comment.content);
@@ -27,21 +29,20 @@ const CommentItem = (
         setShowMoreMenu(!showMoreMenu);
         setIsEditing(!isEditing);
     }
-    
     return (
         <div className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
             <div className="flex items-start space-x-3">
-                <div className="text-2xl flex-shrink-0">{comment.authorAvatar}</div>
+                <div className="text-2xl flex-shrink-0">{userInfo.profileAvatar}</div>
                     <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
                         <div>
-                            <span className="font-semibold text-gray-900">{comment.author}</span>
+                            <span className="font-semibold text-gray-900">{userInfo.nickName}</span>
                             <span className="text-sm text-gray-500 ml-2">{comment.createdAt}</span>
                         </div>
                         <div>
                             <div className="relative">
                                 
-                            {(userId == comment.id || userRole==='admin') && (
+                            {(userId == comment.commentId || userRole==='admin') && (
 
                                 <button 
                                     className="text-gray-400 hover:text-gray-600"
@@ -86,7 +87,7 @@ const CommentItem = (
                             <div className="flex items-center space-x-4">
                                 <button className="flex items-center space-x-1 text-sm text-gray-500 hover:text-indigo-600 transition-colors">
                                     <ThumbsUp size={14} />
-                                    <span>{comment.likes}</span>
+                                    <span>{comment.likeCount}</span>
                                 </button>
                                 <button className="text-sm text-gray-500 hover:text-indigo-600 transition-colors">
                                     답글

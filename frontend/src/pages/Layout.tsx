@@ -16,7 +16,7 @@ const Layout = () => {
 
   const handleLogout = async () => {
           try {
-              const userData = await authService.logout(userInfo.id)
+              const userData = await authService.logout();
               setUserInfo(userData);
               navigate('/');
           } catch (error) {
@@ -42,18 +42,18 @@ const Layout = () => {
   const LoginContent = () => {
     return (
       <div className="flex space-x-4">
-        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.nickname}님</div>
+        <div className="relative inline-block hover:bg-red-50 mt-6 mb-6">{userInfo.nickName}님</div>
         
         <button
           onClick={() => { 
-              const profilePage = userInfo.isLoggedin ? `${profilePageUrl}/${userInfo.id}`: redirectUrl
+              const profilePage = userInfo.isLoggedIn ? `${profilePageUrl}/${userInfo.userId}`: redirectUrl
               navigate(profilePage)
           }}
           className="rounded-xl hover:bg-red-50 transition-colors font-medium cursor-pointer"
         >
             <div className='aspect-auto w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mt-4 mb-4 shadow-lg ring-4 ring-indigo-300/50'>
                 <img 
-                    src={userInfo.avatar} 
+                    src={userInfo.profileAvatar} 
                     alt='avatar' 
                     className='w-full h-full object-cover rounded-full'
                 />
@@ -71,7 +71,8 @@ const Layout = () => {
   };
 
   const renderLogInOutContent = () => {
-    return userInfo.isLoggedin ? <LoginContent/> : <LogoutContent/>;
+    console.log(userInfo.isLoggedIn)
+    return userInfo.isLoggedIn ? <LoginContent/> : <LogoutContent/>;
   }
 
   return (

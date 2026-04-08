@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router";
 
 interface ViewButtonProps {
-    postId:number,
+    boardId:number,
     handleViewClick: () => void;
 }
 
 const ViewButton = ({
-    postId, 
+    boardId, 
     handleViewClick
 }:ViewButtonProps) => {
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
@@ -18,7 +18,7 @@ const ViewButton = ({
             onClick={(e)=>{
                 e.preventDefault();
                 handleViewClick();
-                navigate(`${communityPageUrl}/${postId}`);
+                navigate(`${communityPageUrl}/${boardId}`);
             }}
         >
             자세히 보기 →

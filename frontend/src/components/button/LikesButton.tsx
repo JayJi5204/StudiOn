@@ -1,11 +1,11 @@
 import { ThumbsUp } from "lucide-react"
 
 interface LikesButtonProps {
-    likes: number;
+    likeCount: number;
     handleLikeCount: () => void; // 부모가 넘겨줄 함수 타입
 }
 
-const LikesButton = ({ likes, handleLikeCount }: LikesButtonProps) => {
+const LikesButton = ({ likeCount, handleLikeCount }: LikesButtonProps) => {
     
     return (
         <button
@@ -17,7 +17,7 @@ const LikesButton = ({ likes, handleLikeCount }: LikesButtonProps) => {
             }}
         >
             <ThumbsUp size={12} className="mr-1" />
-            {likes}
+            {likeCount}
         </button>
     );
 };

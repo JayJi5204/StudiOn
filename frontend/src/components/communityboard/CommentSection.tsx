@@ -1,67 +1,68 @@
 import { useState } from 'react';
 import { dateFormatter } from '../../utils/date';
-import type { IComment } from '../../types/posts.type';
-import type { IUser } from '../../types/user.type';
+import type { IComment } from '../../types/boards.type';
 import { commentService } from '../../services/comment.service';
 import CommentItem from './CommentItem';
+import { useComments } from '../../hooks/useComments';
+import useUserInfoStore from '../../store/userInfoStore';
 
 interface CommentSectionProps {
-    postId:number;
-    userInfo:IUser;
-    initialComments:IComment[];
+    boardId: number;
 };
 
 const CommentSection = ({
-    postId,
-    userInfo,
-    initialComments, 
+    boardId,
 }: CommentSectionProps) => {
 
-    const [comments,setComments] = useState<IComment[]>(initialComments);
+    const { comments, setComments } = useComments({ boardId });
     const [commentText, setCommentText] = useState('');
+    const userInfo = useUserInfoStore((state) => state.userInfo);
 
-    const handleDeleteComment = async (postId:number,commentId:number) => {
+    const handleDeleteComment = async (
+        boardId: number,
+        commentId: number
+    ) => {
         try {
-            await commentService.deleteComment(postId,commentId);
-            setComments(prev => 
-                prev.filter(comment => comment.id !== commentId)
-        );
+            await commentService.deleteComment(boardId, commentId);
+            setComments(prev =>
+                prev.filter(comment => comment.commentId !== commentId)
+            );
         } catch (error) {
-            console.log('댓글 삭제 실패',error);
+            console.log('댓글 삭제 실패', error);
             alert('댓글 삭제에 실패했습니다.');
         }
-    }
-    const handleUpdateComment = async (editComment:IComment) => {
+    };
+
+    const handleUpdateComment = async (
+        editComment: IComment
+    ) => {
         try {
-            //API 호출
-            await commentService.updateComment(editComment.id,editComment);
-            //로컬 상태 반영
-            setComments(prev => 
-                prev.map(c => c.id === editComment.id ? editComment : c)
+            await commentService.updateComment(editComment.commentId, editComment);
+            setComments(prev =>
+                prev.map(comment => comment.commentId === editComment.commentId ? editComment : comment)
             );
             alert('댓글이 수정되었습니다.');
-        } catch (error){
-            console.log('댓글 수정 실패',error);
+        } catch (error) {
+            console.log('댓글 수정 실패', error);
             alert('댓글 수정에 실패했습니다.');
         }
-    }
-    const handleCommentSubmit = async (newComment:IComment) => {
+    };
+
+    const handleCommentSubmit = async (newComment: IComment) => {
         if (newComment.content.trim() === '') {
-            return 
+            return;
         }
 
         try {
-            const res = await commentService.createComment(postId,newComment);
-    
-            console.log('댓글 생성 완료',res);
+            const res = await commentService.createComment(boardId, newComment);
+            console.log('댓글 생성 완료', res);
             setComments(prev => [...prev, newComment]);
             alert('댓글이 작성되었습니다!');
             setCommentText('');
         } catch (error) {
-            console.log('댓글 생성 실패',error);
+            console.log('댓글 생성 실패', error);
             alert('댓글 작성에 실패했습니다.');
         };
-        
     };
 
     return (
@@ -73,43 +74,44 @@ const CommentSection = ({
             {/* Comment Input */}
             <div className="mb-8">
                 <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="댓글을 입력하세요..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                  rows={3}
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="댓글을 입력하세요..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                    rows={3}
                 />
                 <div className="flex justify-end mt-2">
-                  <button
-                    onClick={()=>{handleCommentSubmit(
-                        {
-                            id: comments.length + 1,
-                            author: userInfo.nickname,
-                            authorId: userInfo.id,
-                            authorAvatar: userInfo.avatar,
-                            content: commentText.trim(),
-                            createdAt: dateFormatter(),
-                            updatedAt: dateFormatter(),
-                            likes: 0
-                        }
-                    )}}
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                  >
-                    댓글 작성
-                  </button>
+                    <button
+                        onClick={() => {
+                            handleCommentSubmit(
+                                {
+                                    commentId: comments.length + 1,
+                                    userId: userInfo.userId,
+                                    boardId: boardId,
+                                    content: commentText.trim(),
+                                    createdAt: dateFormatter(),
+                                    modifiedAt: dateFormatter(),
+                                    likeCount: 0
+                                }
+                            );
+                        }}
+                        className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                    >
+                        댓글 작성
+                    </button>
                 </div>
-              </div>
-            
+            </div>
+
             {/* Comments List */}
             <div className="space-y-6">
                 {comments.length > 0 && comments.map((comment) => (
                     <CommentItem
-                        key={comment.id}
-                        userId={userInfo.id}
+                        key={comment.commentId}
+                        userId={userInfo.userId}
                         userRole={userInfo.role}
                         comment={comment}
                         handleUpdateComment={handleUpdateComment}
-                        handleDeleteComment={() => {handleDeleteComment(postId,comment.id)}}
+                        handleDeleteComment={() => { handleDeleteComment(boardId, comment.commentId); }}
                     />
                 ))}
             </div>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { IComment } from "../types/posts.type";
+import type { IComment } from "../types/boards.type";
 
 const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD
 

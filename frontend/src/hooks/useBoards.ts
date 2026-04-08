@@ -1,49 +1,48 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/posts.service';
-import type { IPost } from '../types/posts.type';
+import type { IBoard } from '../types/boards.type';
 
 interface UsePostsReturn {
-  posts: IPost[];
+  boards: IBoard[];
   isLoading: boolean;
-  setPosts: React.Dispatch<React.SetStateAction<IPost[]>>;
+  setBoards: React.Dispatch<React.SetStateAction<IBoard[]>>;
 }
 
 interface PostQueryParams {
   page: number;
-  limit: number;
+  size: number;
 }
 
-export const usePosts = (
-  params: PostQueryParams,  
-  isLoggedin: boolean,
+export const useBoards = (
+  params: PostQueryParams,
+  isLoggedIn: boolean,
 ): UsePostsReturn => {
 
-  const [posts, setPosts] = useState<IPost[]>([]);
+  const [boards, setBoards] = useState<IBoard[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoggedin) {
+    if (!isLoggedIn) {
       alert('게시글은 로그인 후 이용 가능합니다.');
       navigate('/');
       return
     }
 
-    const loadPosts = async () => {
+    const loadBoards = async () => {
       try {
         setIsLoading(true);
-        const data = await postService.getPosts(params);
-        setPosts(data);
+        const boardsData = await postService.getPosts(params);
+        setBoards(boardsData);
       } catch (error) {
         console.error('❌ 게시글 로드 실패:', error);
-      } finally {
         setIsLoading(false);
       }
     };
-    loadPosts();
+    loadBoards();
     
-  }, [params.page,params.limit]); // 실제 요청에 필요한 값만!
-  return { posts, setPosts, isLoading };
+  }, [params.page,params.size]); // 실제 요청에 필요한 값만!
+  return { boards, setBoards, isLoading };
 };
 

@@ -3,24 +3,32 @@ import { Link} from 'react-router';
 import { 
     Search, 
     Plus, 
-    MessageCircle, 
+    // MessageCircle, 
     ThumbsUp, 
     TrendingUp,
     Filter, 
     ChevronDown 
 } from 'lucide-react';
 import useUserInfoStore from '../store/userInfoStore';
-import { usePosts } from '../hooks/usePosts';
+import { useBoards } from '../hooks/useBoards';
 import PostSection from '../components/communityboard/PostSection';
 
 const CommunityBoard= () => {
-    const isLoggedin = useUserInfoStore((state) => state.userInfo.isLoggedin);
-    const { posts,setPosts } = usePosts(
-            { page: 1, limit: 10 },
-            Boolean(isLoggedin)
-        );
-    
-    console.log(posts)
+    const isLoggedIn = useUserInfoStore((state) => state.userInfo.isLoggedIn);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const size = 10;
+    const { boards,setBoards } = useBoards(
+            { page: currentPage, size: size },
+            Boolean(isLoggedIn)
+    );
+    const totalPages = Math.ceil(boards.length / size);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    const handleCategoryChange = (category:string) => {
+        setSelectedCategory(category);
+        setCurrentPage(1);
+    }
     
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -32,29 +40,27 @@ const CommunityBoard= () => {
     const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
     const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
     
-    const filteredPosts = posts.filter(post => {
-        const matchesCategory = selectedCategory === '전체' || post.category === selectedCategory;
-        const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    const filteredBoards = boards.filter(board => {
+        const matchesCategory = selectedCategory === '전체' || board.category === selectedCategory;
+        const matchesSearch = board.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              board.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              board.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
                               
         return matchesCategory && matchesSearch;
     });
     
-    const sortedPosts = [...filteredPosts].sort((a, b) => {
+    const sortedBoards = [...filteredBoards].sort((a, b) => {
         switch(sortBy) {
             case 'popular':
-                return b.likes - a.likes;
+                return b.likeCount - a.likeCount;
             case 'views':
-                return b.views - a.views;
-            case 'comments':
-                return b.comments.length - a.comments.length;
+                return b.viewCount - a.viewCount;
             default:
                 return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         }
     });
 
-    const popularPosts = sortedPosts.slice(0,3);
+    const popularBoards = sortedBoards.slice(0,3);
 
     const getSortLabel = () => {
         switch(sortBy) {
@@ -103,25 +109,25 @@ const CommunityBoard= () => {
 
                     {/* Categories */}
                     <div className="flex flex-wrap gap-2">
-                    {categories.map((category) => (
-                        <button
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                                selectedCategory === category
-                                ? 'bg-indigo-600 text-white shadow-md'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                        >
-                            {category}
-                        </button>
-                    ))}
+                        {categories.map((category) => (
+                            <button
+                                key={category}
+                                onClick={() => handleCategoryChange(category)}
+                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                                    selectedCategory === category
+                                    ? 'bg-indigo-600 text-white shadow-md'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                }`}
+                            >
+                                {category}
+                            </button>
+                        ))}
                     </div>
 
                     {/* Sort Options */}
                     <div className="flex justify-between items-center">
                         <p className="text-sm text-gray-600">
-                            총 <span className="font-semibold text-indigo-600">{filteredPosts.length}</span>개의 게시글
+                            총 <span className="font-semibold text-indigo-600">{filteredBoards.length}</span>개의 게시글
                         </p>
                     <div className="relative">
                         <button
@@ -163,25 +169,44 @@ const CommunityBoard= () => {
                 {/* Posts List */}
                 <div className="space-y-4">
                     <PostSection
-                        posts={sortedPosts}
-                        setPosts={setPosts}
+                        boards={sortedBoards}
+                        setBoards={setBoards}
                     ></PostSection>
                 </div>
 
-                    {/* Pagination */}
-                    <div className="flex justify-center space-x-2 pt-6">
-                        {[1, 2, 3, 4, 5].map((page) => (
-                            <button
-                                key={page}
-                                className={`w-10 h-10 rounded-lg transition-colors ${
-                                    page === 1
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-white text-gray-600 hover:bg-gray-100'
-                                }`}
-                            >
+                {/* Pagination UI */}
+                <div className="flex justify-center space-x-2 pt-6">
+                    {/* 이전 페이지 버튼 */}
+                    <button 
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-2 bg-white border rounded-lg disabled:opacity-50"
+                    >
+                        이전
+                    </button>
+
+                    {pageNumbers.map((page) => (
+                        <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)} // 클릭 시 페이지 변경
+                            className={`w-10 h-10 rounded-lg transition-colors ${
+                                currentPage === page
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-white text-gray-600 hover:bg-gray-100'
+                            }`}
+                        >
                             {page}
                         </button>
                     ))}
+
+                    {/* 다음 페이지 버튼 */}
+                    <button 
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-2 bg-white border rounded-lg disabled:opacity-50"
+                    >
+                        다음
+                    </button>
                 </div>
             </div>
 
@@ -194,25 +219,25 @@ const CommunityBoard= () => {
                             인기 게시글
                         </h3>
                         <div className="space-y-4">
-                            {popularPosts.map((post, index) => (
-                            <div key={post.id} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                            {popularBoards.map((board, index) => (
+                            <div key={board.boardId} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                                 <div className="flex items-start space-x-2">
                                 <span className="flex-shrink-0 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                                     {index + 1}
                                 </span>
                                 <div className="flex-1 min-w-0">
                                     <h4 className="text-sm font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer line-clamp-2">
-                                    {post.title}
+                                    {board.title}
                                     </h4>
                                     <div className="flex items-center space-x-2 mt-2 text-xs text-gray-500">
                                     <span className="flex items-center">
                                         <ThumbsUp size={12} className="mr-1" />
-                                        {post.likes}
+                                        {board.likeCount}
                                     </span>
-                                    <span className="flex items-center">
+                                    {/* <span className="flex items-center">
                                         <MessageCircle size={12} className="mr-1" />
                                         {post.comments.length}
-                                    </span>
+                                    </span> */}
                                     </div>
                                 </div>
                                 </div>
@@ -227,7 +252,7 @@ const CommunityBoard= () => {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600">전체 게시글</span>
-                                <span className="text-lg font-bold text-indigo-600">{posts.length > 0 && posts.length}</span>
+                                <span className="text-lg font-bold text-indigo-600">{boards.length > 0 && boards.length}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600">활성 회원</span>

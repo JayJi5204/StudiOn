@@ -15,7 +15,7 @@ export const signinSchema = Yup.object().shape({
 });
 
 export const signupSchema = Yup.object().shape({
-  nickname: Yup.string()
+  nickName: Yup.string()
     .min(2, '사용자명은 2자 이상이어야 합니다.')
     .required('사용자명을 입력하세요.'),
   email: Yup.string()
@@ -51,7 +51,7 @@ export const signinInitialValues = {
 };
 
 export const signupInitialValues = {
-  nickname: '',
+  nickName: '',
   password: '',
   confirmPassword: '',
   email:'',

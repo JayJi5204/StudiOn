@@ -1,19 +1,22 @@
 import axios from "axios";
 import type { IUser } from "../types/user.type";
-
-
+import authHeader from "./auth-header";
 const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 
 export const authService = {
     creatUser: async (
-        nickname:string,
+        nickName:string,
         email:string,
-        password:string
+        password:string,
+        adminPassword:string,
+        phoneNumber:string
     ):Promise<Partial<IUser>> => {
-        const response = await axios.post(`${BASE_API_URL}`, {
-            nickname,
+        const response = await axios.post(`${BASE_API_URL}/create`, {
+            nickName,
             email,
             password,
+            adminPassword,
+            phoneNumber,
         });
         return response.data;
     },
@@ -23,6 +26,7 @@ export const authService = {
         const response = await axios.get(`${BASE_API_URL}`);
         return response.data;
     },
+
     //추후 수정
     getUserById: async (id:number) => {
         const response = await axios.get(`${BASE_API_URL}/${id}`);
@@ -33,7 +37,7 @@ export const authService = {
         email:string,
         password:string
     ):Promise<IUser> => {
-        const response = await axios.post(`${BASE_API_URL}/auth`, {
+        const response = await axios.post(`${BASE_API_URL}/login`, {
             email,
             password
         });
@@ -41,10 +45,17 @@ export const authService = {
         return response.data;
     },
 
-    logout: async(
-        id:number
-    ):Promise<IUser> => {
-        const response = await axios.post(`${BASE_API_URL}/auth/${id}`);
+    logout: async (): Promise<IUser> => {
+
+        
+        const response = await axios.post(
+            `${BASE_API_URL}/logout`,
+            {},
+            {
+                withCredentials: true,
+                headers: authHeader()
+            }
+        );
         return response.data;
     },
     

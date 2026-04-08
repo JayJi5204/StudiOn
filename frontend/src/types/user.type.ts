@@ -1,19 +1,14 @@
 export interface IUser {
-    id: number;
-    nickname: string;
-    password: string;
-    phoneNumber:string;
-    studyTime:Number;
+    userId: number;
+    nickName: string;
     email: string;
-    bio: string;
-    location: string;
+    password: string;
+    phoneNumber: string;
+    profileAvatar: string;
     role: string;
-    avatar: string;
+    studyTime: Number;
+    bio: string;
     createdAt: string;
-    updatedAt: string;
-    isLoggedin:boolean;
-    isDeleted:boolean;
-    Refresh:string;
-    accessToken:string;
+    isLoggedIn: boolean;
+    isDeleted: boolean;
 }
-
