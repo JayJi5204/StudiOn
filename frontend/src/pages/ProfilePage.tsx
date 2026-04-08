@@ -1,16 +1,16 @@
 import React,{ useRef, useState} from 'react';
 import { useNavigate } from 'react-router';
 import { authService } from '../services/auth.service';
-import { usePosts } from '../hooks/usePosts';
+import { useBoards } from '../hooks/useBoards';
 import useUserInfoStore from '../store/userInfoStore';
-import MyPostsContent from '../components/profile/MyPostsContent';
+import MyBoardsContent from '../components/profile/MyBoardsContent';
 import { TabButton } from '../components/button/TabButton';
 import { QuickActionButton } from '../components/button/QuickActionButton';
 import {
     User,
     Mail,
     Calendar,
-    MapPin,
+    // MapPin,
     Edit2,
     Settings,
     Bell,
@@ -62,9 +62,9 @@ const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState<string>('overview');
     const [editForm,setEditForm] = useState<IUser>(userInfo);
-    const { posts } = usePosts(
-            { page: 1, limit: 10 },
-            Boolean(userInfo.isLoggedin)
+    const { boards } = useBoards(
+            { page: 1, size: 10 },
+            Boolean(userInfo.isLoggedIn)
         );
     
     // 통계 정보
@@ -72,7 +72,7 @@ const ProfilePage = () => {
         studiesJoined: 12,
         studiesCompleted: 8,
         totalPosts: 45,
-        totalLikes: 234
+        totalLikeCount: 234
     };
 
     // 업적 목록
@@ -121,7 +121,7 @@ const ProfilePage = () => {
     const DEFAULT_AVATAR = "😊";
     const handleReset = (e: React.MouseEvent): void => {
         e.stopPropagation(); // 부모 요소로의 이벤트 전파 방지
-        setUserInfo({ ...userInfo, avatar: DEFAULT_AVATAR});
+        setUserInfo({ ...userInfo, profileAvatar: DEFAULT_AVATAR});
         
         // input에 남아있는 파일 경로도 비워줘야 다시 같은 파일을 올릴 수 있음
         if (fileInputRef.current) {
@@ -146,7 +146,7 @@ const ProfilePage = () => {
             reader.onload = (e) => {
                     const result = e.target?.result as string;
                     console.log(result)
-                    setUserInfo({ ...userInfo, avatar: result.toString()});
+                    setUserInfo({ ...userInfo, profileAvatar: result.toString()});
                 };
             reader.readAsDataURL(file);
         }
@@ -165,7 +165,7 @@ const ProfilePage = () => {
 
     const handleLogout = async () => {
         try {
-            const userData = await authService.logout(userInfo.id)
+            const userData = await authService.logout();
             setUserInfo(userData);
             navigate('/');
         } catch (error) {
@@ -177,13 +177,13 @@ const ProfilePage = () => {
     // 입력 필드 변경 핸들러
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setEditForm(prev => ({ ...prev, [name]: value ,['updatedAt']:dateFormatter()}));
+        setEditForm(prev => ({ ...prev, [name]: value ,['modifiedAt']:dateFormatter()}));
         console.log(editForm)
     };
 
     // 저장 핸들러
     const handleSave = async () => {
-        const updatedUser = await authService.updateUser(editForm.id,editForm)
+        const updatedUser = await authService.updateUser(editForm.userId,editForm)
         setUserInfo(editForm || updatedUser);
         setIsEditing(false);
     };
@@ -282,9 +282,9 @@ const ProfilePage = () => {
             case 'studies':
                 return <StudiesContent />;
             case 'posts':
-                return <MyPostsContent
-                            myPosts={posts}  // 위에서 선언한 posts 변수
-                            userId={userInfo.id}  // 현재 컨텍스트의 userId 변수
+                return <MyBoardsContent
+                            userId={userInfo.userId}  // 현재 컨텍스트의 userId 변수
+                            myBoards={boards}  // 위에서 선언한 boards 변수
                         />
             case 'achievements':
                 return <AchievementsContent />;
@@ -297,7 +297,7 @@ const ProfilePage = () => {
         <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 <h1 className='text-3xl font-extrabold text-gray-900 mb-8 sm:mb-10 text-center lg:text-left'>
-                    {userInfo.nickname} 님의 프로필
+                    {userInfo.nickName} 님의 프로필
                 </h1>
                 <div className='grid lg:grid-cols-3 gap-8'>
                     {/* Left Sidebar - Profile Card */}
@@ -309,7 +309,7 @@ const ProfilePage = () => {
                                 <div className='relative inline-block'>
                                     <div className='w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-6xl mb-4 shadow-lg ring-4 ring-indigo-300/50'>
                                         <img 
-                                            src={userInfo.avatar} 
+                                            src={userInfo.profileAvatar} 
                                             alt='avatar' 
                                             className='aspect-auto w-full h-full rounded-full object-cover'
                                         />
@@ -328,7 +328,7 @@ const ProfilePage = () => {
                                         <Camera className='w-5 h-5 text-gray-600' />
                                     </button>
 
-                                    {userInfo.avatar !== DEFAULT_AVATAR && (
+                                    {userInfo.profileAvatar !== DEFAULT_AVATAR && (
                                         <button 
                                             type="button"
                                             onClick={handleReset}
@@ -342,7 +342,7 @@ const ProfilePage = () => {
 
                                 {!isEditing ? (
                                     <>
-                                        <h2 className='text-2xl font-bold text-gray-900 mt-2 mb-1'>{userInfo.nickname}</h2>
+                                        <h2 className='text-2xl font-bold text-gray-900 mt-2 mb-1'>{userInfo.nickName}</h2>
                                         <p className='text-gray-600 mb-4 px-2 italic text-sm'>{userInfo.bio}</p>
                                         {/* User Information */}
                                         <div className='space-y-4 border-t border-gray-200 pt-6 pb-6'>
@@ -350,10 +350,10 @@ const ProfilePage = () => {
                                                 <Mail className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <span className='text-sm font-medium'>{userInfo.email}</span>
                                             </div>
-                                            <div className='flex items-center text-gray-700'>
+                                            {/* <div className='flex items-center text-gray-700'>
                                                 <MapPin className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <span className='text-sm font-medium'>{userInfo.location}</span>
-                                            </div>
+                                            </div> */}
                                             <div className='flex items-center text-gray-700'>
                                                 <Calendar className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <span className='text-sm font-medium'>가입일: {userInfo.createdAt}</span>
@@ -366,7 +366,7 @@ const ProfilePage = () => {
                                                 <UserMinus className='w-5 h-5 mr-3 text-indigo-500' />
                                                 <button 
                                                     className='text-sm font-medium'
-                                                    onClick={()=>{handleDeleteUser(userInfo.id)}}
+                                                    onClick={()=>{handleDeleteUser(userInfo.userId)}}
                                                 >
                                                     회원 탈퇴
                                                 </button>
@@ -378,8 +378,8 @@ const ProfilePage = () => {
                                     <div className="space-y-4 mb-4">
                                         <input
                                             type="text"
-                                            name='nickname'
-                                            value={editForm.nickname}
+                                            name='nickName'
+                                            value={editForm.nickName}
                                             onChange={handleInputChange}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-100 text-lg font-medium"
                                             placeholder="사용자명"
@@ -441,7 +441,7 @@ const ProfilePage = () => {
                                 <StatItem value={stats.studiesJoined} label='참여 스터디' color='text-indigo-600' />
                                 <StatItem value={stats.studiesCompleted} label='완료 스터디' color='text-green-600' />
                                 <StatItem value={stats.totalPosts} label='작성 글' color='text-purple-600' />
-                                <StatItem value={stats.totalLikes} label='받은 좋아요' color='text-pink-600' />
+                                <StatItem value={stats.totalLikeCount} label='받은 좋아요' color='text-pink-600' />
                             </div>
 
                             {/* Quick Actions */}

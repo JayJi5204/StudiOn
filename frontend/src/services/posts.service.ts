@@ -1,14 +1,15 @@
 import axios from 'axios';
-import type { IPosts, IPost } from '../types/posts.type';
+import type { IBoard } from '../types/boards.type';
+import authHeader from './auth-header';
 
 const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD;
 
 export const postService = {
   createPost: async (
     authorId: string | number,
-    postData: Partial<IPost>
-  ): Promise<IPost> => {
-    const response = await axios.post<IPost>(`${API_URL}/post`,{
+    postData: Partial<IBoard>
+  ): Promise<IBoard> => {
+    const response = await axios.post<IBoard>(`${API_URL}/post`,{
       ...postData,
       authorId:authorId,
     }
@@ -17,32 +18,32 @@ export const postService = {
   },
   getPosts: async (
       params:{
-        page?: string | number; 
-        limit?: string | number
+        page?: string | number;
+        size?: string | number;
       }
-    ): Promise<IPost[]> => {
-
-      const response = await axios.get<IPosts>(`${API_URL}/posts`,{
-          params // axios가 자동으로 ?userId=1&page=1... 형태로 변환
+    ): Promise<IBoard[]> => {
+      const response = await axios.get<IBoard[]>(`${API_URL}`,{
+          params:params, // axios가 자동으로 ?userId=1&page=1... 형태로 변환
+          headers: authHeader(),
       });
     
-    return response.data.posts;
+    return response.data;
   },
 
   getPostById: async ( 
     id: string | number 
-  ): Promise<IPost> => {
+  ): Promise<IBoard> => {
     
-    const response = await axios.get<IPost>(`${API_URL}/post/${id}`);
+    const response = await axios.get<IBoard>(`${API_URL}/post/${id}`);
 
     return response.data
   },
 
   updatePost: async (
     id: string | number,
-    postData:Partial<IPost>
-  ):Promise<IPost> => {
-    const response = await axios.patch<IPost>(`${API_URL}/post/${id}`,postData);
+    postData:Partial<IBoard>
+  ):Promise<IBoard> => {
+    const response = await axios.patch<IBoard>(`${API_URL}/post/${id}`,postData);
     return response.data;
   },
   

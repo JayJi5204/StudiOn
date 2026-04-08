@@ -3,5 +3,8 @@ services:
     build: .
     container_name: frontend
     ports:
-      - "3000:80"
+      - "8167:80"
+    volumes:
+      - .:/app
+      - /app/node_modules
     restart: always

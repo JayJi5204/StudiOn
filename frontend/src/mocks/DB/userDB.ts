@@ -1,22 +1,17 @@
-
 export let USER_DB = {
     users:[
         {
-            id: 0,
-            nickname: 'testSupervisor',
+            userId: 0,
+            nickName: 'testSupervisor',
             password: 'asd1357852@',
-            email: 'test@example.com',
             phoneNumber:'010-2531-9402',
-            bio: '테스트 관리자입니다.',
-            location: '서울',
+            email: 'test@example.com',
+            profileAvatar: '👤',
             role: 'admin',
-            avatar: '👤',
+            bio: '테스트 관리자입니다.',
             createdAt: '2024-10-18',
-            updatedAt: '2024-10-18',
-            isLoggedin: false,
-            isDeleted: false,
-            Refresh: '',
-            accessToken:''
+            isLoggedIn: false,
+            isDeleted: false
         }
     ]
 };

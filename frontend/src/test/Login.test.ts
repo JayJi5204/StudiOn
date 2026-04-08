@@ -15,7 +15,7 @@ test('signin Test with user', async () => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            nickname: 'testuser',
+            nickName: 'testuser',
             password: 'password123@',
         }),
     });

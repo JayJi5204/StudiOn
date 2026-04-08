@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate,useParams } from 'react-router';
-import { usePost } from '../hooks/usePost';
-import { usePosts} from '../hooks/usePosts';
+import { usePost } from '../hooks/useBoard';
+import { useBoards} from '../hooks/useBoards';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
 import CommentSection from '../components/communityboard/CommentSection';
@@ -23,10 +23,10 @@ const PostDetailPage = () => {
   const userInfo = useUserInfoStore((state) => state.userInfo);
   const navigate = useNavigate();
   const { id } = useParams();
-  const { post,isLoading } = usePost(String(id));
-  const { setPosts } = usePosts(
-            { page: 1, limit: 10 },
-            Boolean(userInfo.isLoggedin)
+  const { board,isLoading } = usePost(String(id));
+  const { setBoards } = useBoards(
+            { page: 1,size: 10 },
+            Boolean(userInfo.isLoggedIn)
         );
   
   const [isLiked, setIsLiked] = useState(false);
@@ -37,12 +37,12 @@ const PostDetailPage = () => {
     const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE;
     navigate(`${updatePostPageUrl}/post/${id}`, { 
         state: { 
-                id: post.id || '',
-                title: post.title || '',
-                content: post.content || '',
-                category: post.category || '',
-                updatedAt: dateFormatter() || '',
-                tags: post.tags || []
+                id: board.boardId || '',
+                title: board.title || '',
+                content: board.content || '',
+                category: board.category || '',
+                modifiedAt: dateFormatter() || '',
+                tags: board.tags || []
         }
     });
   };
@@ -51,7 +51,7 @@ const PostDetailPage = () => {
         //삭제할 포스트를 제외하고 목록을 새로 고침
         try {
           await postService.deletePost(deleteId);
-          setPosts(prevPosts => prevPosts.filter(post => post.id !== deleteId));
+          setBoards(prevBoards => prevBoards.filter(board => board.boardId !== deleteId));
           alert("삭제되었습니다.");
           navigate(-1);
         }
@@ -88,7 +88,7 @@ const PostDetailPage = () => {
     );
   }
 
-  if (!post) {
+  if (!board) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
@@ -125,10 +125,10 @@ const PostDetailPage = () => {
               <div className="border-b border-gray-200 pb-6 mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-3 py-1 bg-indigo-100 text-indigo-600 text-sm rounded-full font-medium">
-                    {post.category}
+                    {board.category}
                   </span>
                   <div className="relative">
-                    {(userInfo.role==='admin' || userInfo.id === post.authorId) && (
+                    {(userInfo.role==='admin' || userInfo.userId === board.userId) && (
                         <button
                             onClick={() => setShowMoreMenu(!showMoreMenu)}
                             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -148,7 +148,7 @@ const PostDetailPage = () => {
                         </button>
                         <button 
                           className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
-                          onClick={() => {handleDelete(post.id)}}  
+                          onClick={() => {handleDelete(board.boardId)}}  
                         >
                           <Trash2 size={16} />
                           <span>삭제</span>
@@ -163,17 +163,17 @@ const PostDetailPage = () => {
                 </div>
 
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                  {post.title}
+                  {board.title}
                 </h1>
 
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div className="flex items-center space-x-3">
-                    <div className="text-3xl">{post.authorAvatar}</div>
+                    <div className="text-3xl">{userInfo.profileAvatar}</div>
                     <div>
-                      <p className="font-semibold text-gray-900">{post.author}</p>
+                      <p className="font-semibold text-gray-900">{userInfo.nickName}</p>
                       <div className="flex items-center text-sm text-gray-500">
                         <Clock size={14} className="mr-1" />
-                        {post.createdAt}
+                        {board.createdAt}
                       </div>
                     </div>
                   </div>
@@ -181,11 +181,11 @@ const PostDetailPage = () => {
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <Eye size={16} />
-                      <span>{post.views}</span>
+                      <span>{board.viewCount}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <ThumbsUp size={16} />
-                      <span>{post.likes}</span>
+                      <span>{board.likeCount}</span>
                     </div>
                   
                     {/* <div className="flex items-center space-x-1">
@@ -200,13 +200,13 @@ const PostDetailPage = () => {
               {/* Post Content */}
               <div className="prose max-w-none mb-8">
                 <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {post.content}
+                  {board.content}
                 </div>
               </div>
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {post.tags.map((tag, index) => (
+                {board.tags.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-gray-200 cursor-pointer transition-colors"
@@ -228,7 +228,7 @@ const PostDetailPage = () => {
                     }`}
                   >
                     <ThumbsUp size={18} />
-                    <span className="font-medium">{isLiked ? post.likes + 1 : post.likes}</span>
+                    <span className="font-medium">{isLiked ? board.likeCount + 1 : board.likeCount}</span>
                   </button>
                   <button
                     onClick={handleBookmark}
@@ -251,9 +251,7 @@ const PostDetailPage = () => {
               </div>
             </article>
             <CommentSection
-              postId={post.id}
-              initialComments={post.comments}
-              userInfo={userInfo}
+              boardId={board.boardId}
             />
           </div>
 

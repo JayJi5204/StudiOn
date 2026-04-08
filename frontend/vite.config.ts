@@ -14,12 +14,16 @@ export default defineConfig(({ mode }) => {
       },
       host: env.VITE_SERVER_HOST || "localhost",
       port: Number(env.VITE_SERVER_PORT) || 8167,
-
       proxy: {
-        "/api": {
+        "/api/users": {
           target: "http://localhost:8000",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, "/user-service/api"),
+          rewrite: (path) => path.replace(/^\/api/, "/user-service/api/users"), // ^를 붙여 시작 부분임을 명시하는 것이 더 안전합니다.
+        },
+        "/api/boards": {
+          target: "http://localhost:8000",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, "/board-service/api/boards"), // ^를 붙여 시작 부분임을 명시하는 것이 더 안전합니다.
         },
       },
     },

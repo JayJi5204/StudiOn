@@ -3,22 +3,19 @@ import { persist } from 'zustand/middleware';
 import type { IUser } from '../types/user.type';
 
 const initialUserInfo = {
-    id:0,
-    nickname:'',
+    userId:0,
+    nickName:'',
     password:'',
     phoneNumber:'',
     studyTime:0,
     email:'',
     bio:'',
-    location:'',
     role:'',
-    avatar:'',
+    profileAvatar:'',
     createdAt: '',
-    updatedAt: '',
-    isLoggedin:false,
+    modifiedAt: '',
+    isLoggedIn:false,
     isDeleted:false,
-    Refresh:'',
-    accessToken:''
 };
 
 type UserInfoState = {

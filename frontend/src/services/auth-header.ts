@@ -8,16 +8,15 @@ HTTP 요청은 인증 헤더가 필요하다.
 3. 그렇지 않다면 빈 객체를 리턴한다.  
 
 */
-export default function authHeader() {
-    // const userStr = localStorage.getItem("user");
-    const userStr = sessionStorage.getItem("user");
-    let user = null;
-    if (userStr) {
-        user = JSON.parse(userStr);
-    }
 
-    if (user && user.accessToken) {
-        return {Authorization: 'Bearer' + user.accessToken}; // for Spring Boot back-end
+import Cookies from "js-cookie";
+
+export default function authHeader() {
+
+    const token = Cookies.get('accessToken');
+    console.log(token)
+    if (token) {
+        return {Authorization: 'Bearer' + {token}}; // for Spring Boot back-end
         // return { 'x-access-token': user.accessToken }; 
     }
     else{

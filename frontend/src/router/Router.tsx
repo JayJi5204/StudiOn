@@ -136,7 +136,7 @@ const Router = createBrowserRouter([
         ),
       },
       {
-        path:"myposts/:id",
+        path:"myBoards/:id",
         element: (
           <Suspense fallback={<Loading />}>
             <PostDetailsPage/> 
