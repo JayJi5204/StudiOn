@@ -33,7 +33,11 @@ public class UserController {
         return userService.create(dto);
     }
 
-    @Operation(summary = "로그인", description = "email과 비밀번호를 이용하여 로그인을 합니다.")
+    @Operation(summary = "로그인", description = """
+                    email과 비밀번호를 받아 로그인을 합니다.
+                    
+                    accessToken과 refreshToken은 쿠키에 담겨있습니다.
+                    """)
     @SecurityRequirements
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest dto, HttpServletResponse response) {
