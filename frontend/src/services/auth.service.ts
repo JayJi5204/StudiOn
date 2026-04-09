@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { IUser } from "../types/user.type";
-import authHeader from "./auth-header";
+// import authHeader from "./auth-header";
 const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 
 export const authService = {
@@ -47,13 +47,11 @@ export const authService = {
 
     logout: async (): Promise<IUser> => {
 
-        
         const response = await axios.post(
             `${BASE_API_URL}/logout`,
             {},
             {
                 withCredentials: true,
-                headers: authHeader()
             }
         );
         return response.data;
@@ -63,7 +61,7 @@ export const authService = {
         id:number,
         userInfo:IUser
     ):Promise<Partial<IUser>> => {
-        const response = await axios.patch(`${BASE_API_URL}/${id}`,userInfo)
+        const response = await axios.patch(`${BASE_API_URL}/${id}`,userInfo);
         return response.data;
     },
 
