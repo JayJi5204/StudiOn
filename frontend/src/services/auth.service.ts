@@ -1,6 +1,5 @@
 import axios from "axios";
 import type { IUser } from "../types/user.type";
-import authHeader from "./auth-header";
 const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 
 export const authService = {
@@ -53,7 +52,6 @@ export const authService = {
             {},
             {
                 withCredentials: true,
-                headers: authHeader()
             }
         );
         return response.data;
