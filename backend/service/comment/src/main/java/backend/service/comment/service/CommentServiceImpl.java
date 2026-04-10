@@ -26,9 +26,12 @@ public class CommentServiceImpl implements CommentService {
     private final CommentCountService commentCountService;
 
     @Transactional
-    public CreateResponse create(CreateRequestDto requestDto) {
+    public CreateResponse create(CreateRequestDto requestDto,HttpServletRequest request) {
         CommentEntity parent = findParent(requestDto);
         CommentPath parentCommentPath = parent == null ? CommentPath.create("") : parent.getCommentPath();
+
+        Long userId=SecurityUtil.getCurrentUserId(request);
+        String nickName=SecurityUtil.getNickname(request);
 
         CommentEntity comment = commentRepository.save(
                 CommentEntity.create(
@@ -37,8 +40,7 @@ public class CommentServiceImpl implements CommentService {
                         parentCommentPath.createChildCommentPath(
                                 commentRepository.findDescendantsTopPath(
                                         requestDto.getBoardId(), parentCommentPath.getPath()).orElse(null)),
-                        requestDto.getUserId(),
-                        requestDto.getBoardId(), requestDto.getNickName()));
+                        requestDto.getBoardId(), userId,nickName));
 
         return CreateResponse.from(comment, 0L);
     }

@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class CreateRequest {
-    private String nickName;
     private String title;
     private String content;
     private Category category;

@@ -10,4 +10,9 @@ public class SecurityUtil {
         if (userId == null) throw new RuntimeException("인증 정보 없음");
         return Long.valueOf(userId);
     }
+    public static String getNickname(HttpServletRequest request) {
+        String nickname = request.getHeader("X-User-Nickname");
+        if (nickname == null) throw new RuntimeException("인증 정보 없음");
+        return nickname;
+    }
 }

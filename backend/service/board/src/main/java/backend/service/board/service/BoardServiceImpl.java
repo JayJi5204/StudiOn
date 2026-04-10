@@ -38,8 +38,9 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateResponse create(CreateRequest dto, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
+        String nickName=SecurityUtil.getNickname(request);
         BoardEntity boardEntity = boardRepository.save(
-                BoardEntity.create(snowflake.nextId(), userId, dto.getNickName(), dto.getTitle(), dto.getContent(), dto.getCategory(), dto.getTags())
+                BoardEntity.create(snowflake.nextId(), userId, nickName, dto.getTitle(), dto.getContent(), dto.getCategory(), dto.getTags())
         );
         return CreateResponse.from(boardEntity);
     }
