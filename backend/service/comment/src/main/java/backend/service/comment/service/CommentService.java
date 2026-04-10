@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    CreateResponse create(CreateRequestDto createRequestDto);
+    CreateResponse create(CreateRequestDto createRequestDto, HttpServletRequest request);
 
     DeletedResponse delete(Long commentId);
 

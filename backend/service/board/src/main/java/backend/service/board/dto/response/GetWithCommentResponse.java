@@ -19,7 +19,7 @@ public class GetWithCommentResponse {
     private Long viewCount;
     private Long  likeCount;
     private List<String> tags;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentDto> comment;
 
@@ -33,7 +33,7 @@ public class GetWithCommentResponse {
         dto.viewCount = viewCount;
         dto.likeCount = likeCount;
         dto.tags = entity.getTags();
-        dto.createAt = entity.getCreateAt();
+        dto.createdAt = entity.getCreatedAt();
         dto.modifiedAt = entity.getModifiedAt();
         dto.comment = responseComments;
         return dto;

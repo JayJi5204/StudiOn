@@ -31,7 +31,7 @@ public class BoardEntity {
     @Convert(converter = StringListConverter.class)
     private List<String> tags;
     @CreatedDate
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
@@ -45,8 +45,8 @@ public class BoardEntity {
         boardEntity.category = category;
         boardEntity.viewCount = 0L;
         boardEntity.likeCount = 0L;
-        boardEntity.createAt = LocalDateTime.now();
-        boardEntity.modifiedAt = boardEntity.createAt;
+        boardEntity.createdAt = LocalDateTime.now();
+        boardEntity.modifiedAt = boardEntity.createdAt;
         boardEntity.tags = tags != null ? tags : new ArrayList<>();
         return boardEntity;
     }

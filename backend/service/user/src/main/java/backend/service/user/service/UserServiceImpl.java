@@ -101,8 +101,8 @@ public class UserServiceImpl implements UserService {
 
         String userId = String.valueOf(entity.getUserId());
 
-        String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString());
-        String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString());
+        String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString(),entity.getNickName());
+        String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString(),entity.getNickName());
 
         redisTemplate.opsForValue().set(userId, refreshToken, 7, TimeUnit.DAYS);
 
@@ -133,6 +133,7 @@ public class UserServiceImpl implements UserService {
         String userId = jwtUtil.getUserId(refreshToken);
         String email = jwtUtil.getEmail(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
+        String nickName = jwtUtil.getNickName(refreshToken);
 
         // Redis에 저장된 refreshToken과 비교
         String savedToken = redisTemplate.opsForValue().get(userId);
@@ -141,8 +142,8 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("유효하지 않은 refreshToken입니다.");
         }
 
-        String newAccessToken = jwtUtil.createAccessToken(userId, email, role);
-        String newRefreshToken = jwtUtil.createRefreshToken(userId, email, role);
+        String newAccessToken = jwtUtil.createAccessToken(userId, email, role,nickName);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId, email, role,nickName);
 
         redisTemplate.opsForValue().set(userId, newRefreshToken, 7, TimeUnit.DAYS);
 
