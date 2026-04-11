@@ -19,9 +19,4 @@ public class BoardApplication {
         SpringApplication.run(BoardApplication.class);
     }
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 }

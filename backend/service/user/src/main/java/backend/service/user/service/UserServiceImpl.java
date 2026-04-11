@@ -8,8 +8,8 @@ import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
 import backend.service.user.entity.UserEntity;
-import backend.service.user.feignClient.BoardClient;
-import backend.service.user.feignClient.CommentClient;
+import backend.service.user.feign.BoardClient;
+import backend.service.user.feign.CommentClient;
 import backend.service.user.util.JwtUtil;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.util.CookieUtil;
@@ -106,8 +106,8 @@ public class UserServiceImpl implements UserService {
 
         redisTemplate.opsForValue().set(userId, refreshToken, 7, TimeUnit.DAYS);
 
-        ResponseCookie accessCookie = cookieUtil.createCookie("accessToken", accessToken, 1800);
-        ResponseCookie refreshCookie = cookieUtil.createCookie("refreshToken", refreshToken, 7 * 24 * 60 * 60);
+        ResponseCookie accessCookie = cookieUtil.createAccessTokenCookie(accessToken);
+        ResponseCookie refreshCookie = cookieUtil.createRefreshTokenCookie(refreshToken);
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());

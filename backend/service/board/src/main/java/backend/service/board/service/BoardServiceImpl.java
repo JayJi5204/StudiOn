@@ -1,14 +1,14 @@
 package backend.service.board.service;
 
 import backend.common.id.Snowflake;
-import backend.common.event.board.BoardDeleteEvent;
+import backend.common.dto.board.BoardDeleteEvent;
 import backend.service.board.dto.otherDto.CommentDto;
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.*;
 import backend.service.board.entity.BoardEntity;
 import backend.service.board.enumType.Category;
-import backend.service.board.feignClient.CommentClient;
+import backend.service.board.feign.CommentClient;
 import backend.service.board.kafka.KafkaProducer;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.util.SecurityUtil;

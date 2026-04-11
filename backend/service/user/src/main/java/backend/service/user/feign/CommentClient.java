@@ -1,6 +1,6 @@
-package backend.service.board.feignClient;
+package backend.service.user.feign;
 
-import backend.service.board.dto.otherDto.CommentDto;
+import backend.service.user.dto.otherDto.CommentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +10,7 @@ import java.util.List;
 @FeignClient(name = "comment-service")
 public interface CommentClient {
 
-    @GetMapping("/api/comments/getCommentWithBoardId/{boardId}")
-    List<CommentDto> getComments(@PathVariable Long boardId);
+    @GetMapping("/api/comments/users/{userId}")
+    List<CommentDto> getComments(@PathVariable Long userId);
 
 }

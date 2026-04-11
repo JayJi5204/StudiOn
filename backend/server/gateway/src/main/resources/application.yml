@@ -151,6 +151,36 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/room-service/(?<segment>.*),/$\{segment}
 
+            # 6. GROUPCHAT-SERVICE WebSocket
+            - id: groupChat-service-websocket
+              uri: lb:ws://GROUPCHAT-SERVICE
+              predicates:
+                - Path=/groupChat-service/ws/**
+              filters:
+                - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
+
+            # 6. GROUPCHAT-SERVICE HTTP
+            - id: groupChat-service-public
+              uri: lb://GROUPCHAT-SERVICE
+              predicates:
+                - Path=/groupChat-service/health-check,
+                  /groupChat-service/ws/**,
+                  /groupChat-service/v3/api-docs/**,
+                  /groupChat-service/swagger-ui/**,
+                  /groupChat-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
+
+            - id: groupChat-service-secure
+              uri: lb://GROUPCHAT-SERVICE
+              predicates:
+                - Path=/groupChat-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
+
 management:
   endpoints:
     web:
@@ -174,3 +204,5 @@ springdoc:
         url: /chat-service/v3/api-docs
       - name: room-service
         url: /room-service/v3/api-docs
+      - name: groupChat-service
+        url: /groupChat-service/v3/api-docs

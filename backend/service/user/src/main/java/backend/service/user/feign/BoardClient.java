@@ -1,4 +1,4 @@
-package backend.service.user.feignClient;
+package backend.service.user.feign;
 
 import backend.service.user.dto.otherDto.BoardDto;
 import org.springframework.cloud.openfeign.FeignClient;
