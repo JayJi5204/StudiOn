@@ -1,4 +1,4 @@
-package backend.service.chat.controller;
+package backend.service.groupChat.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@Tag(name = "Room HealthCheck",description = "Chat 통신 테스트")
+@Tag(name = "GroupChat HealthCheck",description = "GroupChat 통신 테스트")
 @RestController
 @RequiredArgsConstructor
 public class HealthCheckController {
@@ -19,7 +19,7 @@ public class HealthCheckController {
     @SecurityRequirements
     @GetMapping("/health-check")
     public String status() {
-        return "Chat 통신 테스트 통과";
+        return "GroupChat 통신 테스트 통과";
 
     }
 }

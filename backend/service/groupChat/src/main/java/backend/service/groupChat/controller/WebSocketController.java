@@ -1,8 +1,8 @@
-package backend.service.chat.controller;
+package backend.service.groupChat.controller;
 
-import backend.service.chat.dto.request.CreateRequest;
-import backend.service.chat.service.ChatRoomManager;
-import backend.service.chat.service.ChatService;
+import backend.service.groupChat.dto.request.CreateRequest;
+import backend.service.groupChat.service.GroupChatRoomManager;
+import backend.service.groupChat.service.GroupChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,23 +30,39 @@ import org.springframework.stereotype.Controller;
  * payload: { "roomId": "1:2" }
  */
 
-
+/**
+ * WebSocket 그룹 채팅 API (STOMP 프로토콜)
+ *
+ * 연결: ws://localhost:8000/groupChat-service/ws/group-chat
+ * CONNECT 헤더: userId, nickName 필수
+ *
+ * [메시지 전송]
+ * endpoint: /pub/group-chat/message
+ * payload: { "roomId": 123456789, "message": "안녕하세요" }
+ *
+ * [채팅방 입장]
+ * endpoint: /pub/group-chat/enter
+ * payload: { "roomId": 123456789 }
+ * 구독: /sub/group-chat/{roomId}
+ *
+ * [채팅방 퇴장]
+ * endpoint: /pub/group-chat/leave
+ * payload: { "roomId": 123456789 }
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class WebSocketController {
 
-    private final ChatService chatService;
-    private final ChatRoomManager chatRoomManager;
+    private final GroupChatService groupChatService;
+    private final GroupChatRoomManager groupChatRoomManager;
 
-    // 메시지 전송 (STOMP)
-    @MessageMapping("/chat/message")
+    @MessageMapping("/group-chat/message")
     public void sendMessage(@Payload CreateRequest request, SimpMessageHeaderAccessor headerAccessor) {
-        // STOMP 헤더에서 userId, nickName 꺼내기
         String userId = (String) headerAccessor.getSessionAttributes().get("userId");
         String nickName = (String) headerAccessor.getSessionAttributes().get("nickName");
 
-        chatService.sendMessage(
+        groupChatService.sendMessage(
                 request.getRoomId(),
                 request.getMessage(),
                 Long.valueOf(userId),
@@ -54,21 +70,16 @@ public class WebSocketController {
         );
     }
 
-    // 채팅방 입장
-    @MessageMapping("/chat/enter")
+    @MessageMapping("/group-chat/enter")
     public void enter(@Payload CreateRequest request, SimpMessageHeaderAccessor headerAccessor) {
         String userId = (String) headerAccessor.getSessionAttributes().get("userId");
-
-        // Redis 채널 구독
-        chatRoomManager.subscribe(request.getRoomId());
-
+        groupChatRoomManager.subscribe(String.valueOf(request.getRoomId()));
         log.info("채팅방 입장 roomId={}, userId={}", request.getRoomId(), userId);
     }
 
-    // 채팅방 퇴장
-    @MessageMapping("/chat/leave")
+    @MessageMapping("/group-chat/leave")
     public void leave(@Payload CreateRequest request) {
-        chatRoomManager.unsubscribe(request.getRoomId());
+        groupChatRoomManager.unsubscribe(String.valueOf(request.getRoomId()));
         log.info("채팅방 퇴장 roomId={}", request.getRoomId());
     }
 }

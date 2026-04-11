@@ -1,4 +1,4 @@
-package backend.service.chat.kafka;
+package backend.service.groupChat.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

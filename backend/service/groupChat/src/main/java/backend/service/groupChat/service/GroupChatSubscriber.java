@@ -1,6 +1,6 @@
-package backend.service.chat.service;
+package backend.service.groupChat.service;
 
-import backend.service.chat.dto.response.CreateResponse;
+import backend.service.groupChat.dto.response.CreateResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ChatSubscriber implements MessageListener {
+public class GroupChatSubscriber implements MessageListener {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
@@ -27,7 +27,7 @@ public class ChatSubscriber implements MessageListener {
             CreateResponse chatMessage = objectMapper.readValue(body, CreateResponse.class);
             log.info("Redis 수신 body={}", body);  // 추가
             // WebSocket으로 구독자들에게 전달
-            messagingTemplate.convertAndSend("/sub/chat/" + chatMessage.getRoomId(), chatMessage);
+            messagingTemplate.convertAndSend("/sub/group-chat/" + chatMessage.getRoomId(), chatMessage);
 
             log.info("메시지 전달 roomId={}", chatMessage.getRoomId());
         } catch (Exception e) {

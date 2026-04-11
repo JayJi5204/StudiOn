@@ -1,4 +1,4 @@
-package backend.service.board.feignClient;
+package backend.service.board.feign;
 
 import backend.service.board.dto.otherDto.CommentDto;
 import org.springframework.cloud.openfeign.FeignClient;

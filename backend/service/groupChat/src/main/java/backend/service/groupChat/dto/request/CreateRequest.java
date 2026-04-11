@@ -1,9 +1,9 @@
-package backend.service.chat.dto.request;
+package backend.service.groupChat.dto.request;
 
 import lombok.Data;
 
 @Data
 public class CreateRequest {
-    private String roomId;
+    private Long roomId;
     private String message;
 }

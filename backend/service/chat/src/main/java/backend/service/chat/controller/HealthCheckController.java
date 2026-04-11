@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@Tag(name = "Room HealthCheck",description = "Chat 통신 테스트")
+@Tag(name = "Chat HealthCheck",description = "Chat 통신 테스트")
 @RestController
 @RequiredArgsConstructor
 public class HealthCheckController {

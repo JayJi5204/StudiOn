@@ -1,4 +1,4 @@
-package backend.service.chat.config;
+package backend.service.groupChat.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

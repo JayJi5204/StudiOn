@@ -14,10 +14,4 @@ public class ChatApplication {
         SpringApplication.run(ChatApplication.class);
     }
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
 }

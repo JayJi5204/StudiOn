@@ -1,4 +1,4 @@
-package backend.service.chat.entity;
+package backend.service.groupChat.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,22 +7,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+
 @Entity
-@Table(name = "chats")
+@Table(name = "group_chats")
 @Getter
 @NoArgsConstructor
-public class ChatEntity {
+public class GroupChatEntity {
 
     @Id
     private Long messageId;
-    private String roomId;
+    private Long roomId;
     private Long userId;
     private String nickName;
     private String message;
     private String sendAt;
 
-    public static ChatEntity create(Long messageId, String roomId, Long userId, String nickName, String message) {
-        ChatEntity entity = new ChatEntity();
+    public static GroupChatEntity create(Long messageId, Long roomId, Long userId, String nickName, String message) {
+        GroupChatEntity entity = new GroupChatEntity();
         entity.messageId = messageId;
         entity.roomId = roomId;
         entity.userId = userId;
@@ -30,9 +32,5 @@ public class ChatEntity {
         entity.message = message;
         entity.sendAt = LocalDateTime.now().toString();
         return entity;
-    }
-
-    public static String createRoomId(Long userId1, Long userId2) {
-        return Math.min(userId1, userId2) + ":" + Math.max(userId1, userId2);
     }
 }
