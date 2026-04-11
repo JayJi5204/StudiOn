@@ -108,6 +108,7 @@ public class BoardServiceImpl implements BoardService {
         BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow();
 
         Long userId = SecurityUtil.getCurrentUserId(request);
+
         if (!boardEntity.getUserId().equals(userId)) {
             throw new RuntimeException("삭제 권한 없음");
         }

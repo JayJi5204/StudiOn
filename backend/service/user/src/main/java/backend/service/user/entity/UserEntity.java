@@ -36,7 +36,7 @@ public class UserEntity {
 
     private Long studyTime;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     private Boolean isDeleted;
 
@@ -54,7 +54,7 @@ public class UserEntity {
         entity.nickName = nickName;
         entity.password = password;
         entity.email = email;
-        entity.createAt = LocalDateTime.now();
+        entity.createdAt = LocalDateTime.now();
         entity.isDeleted = false;
 
         if (adminPassword == null) {
