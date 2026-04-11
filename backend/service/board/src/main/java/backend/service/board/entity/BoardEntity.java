@@ -3,6 +3,7 @@ package backend.service.board.entity;
 import backend.service.board.converter.StringListConverter;
 import backend.service.board.enumType.Category;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;

@@ -12,7 +12,7 @@ public class CreateResponse {
     private String userId;
     private String email;
     private String nickName;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private Boolean isDeleted;
     private UserRole role;
     private String phoneNumber;
@@ -23,7 +23,7 @@ public class CreateResponse {
         dto.userId=String.valueOf(entity.getUserId());
         dto.nickName = entity.getNickName();
         dto.email = entity.getEmail();
-        dto.createAt = entity.getCreateAt();
+        dto.createdAt = entity.getCreatedAt();
         dto.isDeleted = entity.getIsDeleted();
         dto.role = entity.getRole();
         dto.phoneNumber = entity.getPhoneNumber();
