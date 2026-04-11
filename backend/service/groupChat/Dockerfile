@@ -11,17 +11,17 @@ RUN chmod +x gradlew
 
 # 모듈 build.gradle 복사
 COPY common/build.gradle common/
-COPY service/chat/build.gradle service/chat/
+COPY service/groupChat/build.gradle service/groupChat/
 
 # 의존성 캐싱
-RUN ./gradlew :service:chat:dependencies --no-daemon
+RUN ./gradlew :service:groupChat:dependencies --no-daemon
 
 # 소스 복사
 COPY common/src common/src
-COPY service/chat/src service/chat/src
+COPY service/groupChat/src service/groupChat/src
 
 # 빌드 수행
-RUN ./gradlew :service:chat:clean :service:chat:build -x test --no-daemon
+RUN ./gradlew :service:groupChat:clean :service:groupChat:build -x test --no-daemon
 
 # 2. 실행 스테이지
 FROM eclipse-temurin:21-jre-jammy
@@ -31,7 +31,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 # 실행 가능한 jar 파일만 복사
-COPY --from=builder /app/service/chat/build/libs/*.jar app.jar
+COPY --from=builder /app/service/groupChat/build/libs/*.jar app.jar
 
 EXPOSE 8081
 

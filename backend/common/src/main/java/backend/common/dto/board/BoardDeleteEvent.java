@@ -1,4 +1,4 @@
-package backend.common.event.board;
+package backend.common.dto.board;
 
 import java.time.LocalDateTime;
 

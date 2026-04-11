@@ -1,4 +1,4 @@
-package backend.service.chat.config;
+package backend.service.groupChat.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

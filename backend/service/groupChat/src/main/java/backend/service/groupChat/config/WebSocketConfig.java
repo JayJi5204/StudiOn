@@ -1,4 +1,4 @@
-package backend.service.chat.config;
+package backend.service.groupChat.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/chat")
+        registry.addEndpoint("/ws/group-chat")
                 .setAllowedOriginPatterns("*");
     }
     @Override

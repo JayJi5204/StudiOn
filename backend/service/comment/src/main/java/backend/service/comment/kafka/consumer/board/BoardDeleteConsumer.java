@@ -1,6 +1,6 @@
 package backend.service.comment.kafka.consumer.board;
 
-import backend.common.event.board.BoardDeleteEvent;
+import backend.common.dto.board.BoardDeleteEvent;
 import backend.service.comment.repository.CommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

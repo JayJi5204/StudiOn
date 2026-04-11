@@ -23,6 +23,9 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
 
+    // Feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     // Config Server
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
