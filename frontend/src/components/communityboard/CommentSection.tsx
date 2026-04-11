@@ -7,7 +7,7 @@ import { useComments } from '../../hooks/useComments';
 import useUserInfoStore from '../../store/userInfoStore';
 
 interface CommentSectionProps {
-    boardId: number;
+    boardId: string;
 };
 
 const CommentSection = ({
@@ -19,7 +19,7 @@ const CommentSection = ({
     const userInfo = useUserInfoStore((state) => state.userInfo);
 
     const handleDeleteComment = async (
-        boardId: number,
+        boardId: string,
         commentId: number
     ) => {
         try {
@@ -104,14 +104,14 @@ const CommentSection = ({
 
             {/* Comments List */}
             <div className="space-y-6">
-                {comments.length > 0 && comments.map((comment) => (
+                {comments.map((comment) => (
                     <CommentItem
                         key={comment.commentId}
                         userId={userInfo.userId}
                         userRole={userInfo.role}
                         comment={comment}
                         handleUpdateComment={handleUpdateComment}
-                        handleDeleteComment={() => { handleDeleteComment(boardId, comment.commentId); }}
+                        handleDeleteComment={() => { handleDeleteComment(String(boardId), comment.commentId); }}
                     />
                 ))}
             </div>

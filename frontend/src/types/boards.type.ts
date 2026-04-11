@@ -1,35 +1,24 @@
-export interface IBoards {
-  boards: IBoard[];
-}
-
 export interface IBoard {
   boardId: number;
+  userId: number;
   title: string;
   content: string;
-  userId: number;
-  // profileAvatar: string;
   category: string;
-  createdAt: string;
-  modifiedAt: string;
   viewCount: number;
   likeCount: number;
-  // comments: IComment[];
   tags: string[];
-}
-
-export interface IComments {
-  comments:IComment[];
+  modifiedAt: string;
+  createdAt: string;
 }
 
 export interface IComment {
   commentId: number;
-  // author: string;
   userId: number;
-  // profileAvatar: string;
-  boardId: number;
+  boardId: string;
   content: string;
   createdAt: string;
   modifiedAt: string;
-  // likes: number;
   likeCount:number;
 }
+
+

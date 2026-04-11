@@ -1,63 +1,88 @@
 import axios from 'axios';
 import type { IBoard } from '../types/boards.type';
-import authHeader from './auth-header';
+import type { IGetBoardDetail } from '../types/Response/board.type';
+import type { IPage,IGetPageResponse } from '../types/Response/board.type';
 
-const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD;
+const API_URL = import.meta.env.VITE_REACT_API_URL_BOARD;
 
 export const postService = {
   createPost: async (
-    authorId: string | number,
     postData: Partial<IBoard>
   ): Promise<IBoard> => {
-    const response = await axios.post<IBoard>(`${API_URL}/post`,{
-      ...postData,
-      authorId:authorId,
-    }
-  );
+    const response = await axios.post<IBoard>(`http://localhost:8000/board-service/api/boards/create`,{
+        title: postData.title,
+        content: postData.content,
+        category: postData.category,
+        tags: postData.tags
+      },
+      {
+        withCredentials:true
+      }
+    );
     return response.data;
   },
+
   getPosts: async (
-      params:{
-        page?: string | number;
-        size?: string | number;
+    page: number,
+    size: number,
+    category?: string
+  ): Promise<IPage<IGetPageResponse>> => {
+    const response = await axios.get<IPage<IGetPageResponse>>(
+      `http://localhost:8000/board-service/api/boards`,
+      {
+        params: { page, size, category },
+        withCredentials: true,             
       }
-    ): Promise<IBoard[]> => {
-      const response = await axios.get<IBoard[]>(`${API_URL}`,{
-          params:params, // axios가 자동으로 ?userId=1&page=1... 형태로 변환
-          headers: authHeader(),
-      });
-    
+    );
+    console.log(response.data);
     return response.data;
   },
 
   getPostById: async ( 
-    id: string | number 
-  ): Promise<IBoard> => {
+    boardId: string 
+  ): Promise<IGetBoardDetail> => {
     
-    const response = await axios.get<IBoard>(`${API_URL}/post/${id}`);
+    const response = await axios.get<IGetBoardDetail>(`http://localhost:8000/board-service/api/boards/get/${boardId}`,{
+      withCredentials:true
+    });
 
     return response.data
   },
 
   updatePost: async (
-    id: string | number,
+    boardId: string | number,
     postData:Partial<IBoard>
   ):Promise<IBoard> => {
-    const response = await axios.patch<IBoard>(`${API_URL}/post/${id}`,postData);
+    const response = await axios.put<IBoard>(`${API_URL}/update/${boardId}`,postData);
     return response.data;
   },
   
   deletePost: async (
-    id: string | number
+    boardId: string
   ): Promise<void> => {
-    const response = await axios.delete(`${API_URL}/post/${id}`);
+    const response = await axios.delete(`${API_URL}/delete/${boardId}`);
     return response.data;
   },
 
-  updateViewCount: async (
-    id: string | number
+  addLike: async (
+    boardId: string
   ) => {
-    const response = await axios.patch(`${API_URL}/post/${id}/views`);
+    const response = await axios.post(`http://localhost:8000/board-service/api/boards/like/${boardId}`,{
+      boardId
+      },{
+      withCredentials:true
+    });
+    console.log(response.data);
+    return response.data;
+  },
+
+  subLike: async (
+    boardId: string
+  ) => {
+    const response = await axios.delete(`http://localhost:8000/board-service/api/boards/like/${boardId}`,{
+      withCredentials:true
+    });
+    console.log(response.data);
     return response.data;
   }
 };

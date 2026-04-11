@@ -1,33 +1,31 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { postService } from "../services/posts.service";
-import type { IBoard } from '../types/boards.type';
+import type { IGetBoardDetail } from "../types/Response/board.type";
 
-interface UsePostReturn{
-    board:IBoard;
-    setBoard: React.Dispatch<React.SetStateAction<IBoard>>;
-    isLoading:boolean;
+interface UsePostReturn {
+    board: IGetBoardDetail | null;
+    setBoard: React.Dispatch<React.SetStateAction<IGetBoardDetail | null>>;
+    isLoading: boolean;
 }
 
 export const usePost = (
-    id: string | number
+    id: string
 ): UsePostReturn => {
-    const [board,setBoard] = useState<IBoard>({} as IBoard);
-    const [isLoading,setIsLoading] = useState<boolean>(false);
+    const [board, setBoard] = useState<IGetBoardDetail | null>(null);  // ✅ null로 초기화
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const loadBoard = async () => {
-          try {
-            const data = await postService.getPostById(id);
-            
-            setBoard(data);
-            setIsLoading(true);
-
-          } catch (error){
-              console.log(error)
-          }
+            try {
+                const data = await postService.getPostById(String(id));
+                setBoard(data);
+                setIsLoading(true);
+            } catch (error) {
+                console.log(error);
+            }
         }
         loadBoard();
-      },[id]);
+    }, [id]);
 
-    return {board,setBoard,isLoading};
+    return { board, setBoard, isLoading };
 }

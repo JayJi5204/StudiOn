@@ -23,9 +23,10 @@ const WritePostPage = () => {
     const [isPreview, setIsPreview] = useState(false);
 
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
-    const categories = ['자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활'];
-    
+    const categories = ['전체', '자유토론', '스터디 후기', '질문답변', '정보공유', '취미생활','COMMUNITY','NOTICE'];
+
     const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+
         if (e.key === 'Enter' && tagInput.trim() !== '') {
             e.preventDefault();
             if (tags.length < 5 && !tags.includes(tagInput.trim())) {
@@ -44,9 +45,8 @@ const WritePostPage = () => {
             alert('제목, 내용, 카테고리를 모두 입력해주세요.');
             return;
         }
-
+        
         try {
-
             if (isEditMode) {
                 //게시글 수정 로직 추가
                 const res = await postService.updatePost(
@@ -66,7 +66,6 @@ const WritePostPage = () => {
                 
                 // 게시글 저장 로직 추가
                 const res = await postService.createPost(
-                    userInfo.userId,
                     {
                         title,
                         content,
@@ -103,7 +102,8 @@ const WritePostPage = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl font-bold text-gray-900">글쓰기</h1>
-                        <button 
+                        <button
+                            type="button"
                             onClick={handleCancel}
                             className="text-gray-500 hover:text-gray-700 transition-colors"
                         >
@@ -122,6 +122,7 @@ const WritePostPage = () => {
                         </label>
                         <div className="relative">
                             <button
+                                type="button"
                                 onClick={() => setShowCategoryMenu(!showCategoryMenu)}
                                 className={`w-full md:w-64 flex items-center justify-between px-4 py-3 border rounded-lg transition-all ${
                                     selectedCategory 
@@ -138,6 +139,7 @@ const WritePostPage = () => {
                                 <div className="absolute top-full left-0 mt-2 w-full md:w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                                     {categories.map((category) => (
                                         <button
+                                            type="button"
                                             key={category}
                                             onClick={() => {
                                                 setSelectedCategory(category);
@@ -195,6 +197,7 @@ const WritePostPage = () => {
                         )}
                         <div className="flex justify-between items-center mt-2">
                             <button
+                                type="button"
                                 onClick={() => setIsPreview(!isPreview)}
                                 className="flex items-center space-x-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
                             >
@@ -229,6 +232,7 @@ const WritePostPage = () => {
                                         >
                                             #{tag}
                                             <button
+                                                type="button"
                                                 onClick={() => handleRemoveTag(tag)}
                                                 className="ml-2 hover:text-indigo-800"
                                             >
@@ -252,6 +256,7 @@ const WritePostPage = () => {
                         </div>
                         <div className="flex space-x-3 w-full sm:w-auto">
                             <button
+                                type="button"
                                 onClick={handleCancel}
                                 className="flex-1 sm:flex-none px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                             >
