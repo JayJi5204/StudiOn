@@ -25,18 +25,18 @@ public class CommentEntity {
     private String nickName;
     private Long likeCount;
     private Boolean isDelete;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
-    public static CommentEntity create(Long commentId, String content, CommentPath commentPath, Long userId, Long boardId,String nickName) {
+    public static CommentEntity create(Long commentId, String content, CommentPath commentPath, Long boardId,Long UserId,String nickName) {
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.commentId = commentId;
         commentEntity.content = content;
         commentEntity.commentPath=commentPath;
-        commentEntity.userId = userId;
         commentEntity.boardId = boardId;
+        commentEntity.userId = UserId;
         commentEntity.nickName = nickName;
         commentEntity.likeCount = 0L;
-        commentEntity.createAt = LocalDateTime.now();
+        commentEntity.createdAt = LocalDateTime.now();
         commentEntity.isDelete = false;
         return commentEntity;
     }

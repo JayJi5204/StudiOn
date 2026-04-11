@@ -19,7 +19,7 @@ public class GetBoardResponse {
     private Long  likeCount;
     private List<String> tags;
     private LocalDateTime modifiedAt;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 
     public static GetBoardResponse from(BoardEntity entity, Long viewCount, Long likeCount) {
         GetBoardResponse dto = new GetBoardResponse();
@@ -31,7 +31,7 @@ public class GetBoardResponse {
         dto.viewCount = viewCount;
         dto.likeCount = likeCount;
         dto.tags = entity.getTags();
-        dto.createAt = entity.getCreateAt();
+        dto.createdAt = entity.getCreatedAt();
         dto.modifiedAt = entity.getModifiedAt();
         return dto;
     }

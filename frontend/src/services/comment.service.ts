@@ -16,6 +16,7 @@ export const commentService = {
         );
         return response.data;
     },
+    
     getComments: async (postId: string | number) => {
         const response = await axios.get(`/post/${postId}/comments`);
         return response.data;

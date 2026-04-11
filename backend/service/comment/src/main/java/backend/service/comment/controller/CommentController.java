@@ -52,8 +52,8 @@ public class CommentController {
                     """
     )
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequestDto createRequestDto) {
-        return commentService.create(createRequestDto);
+    public CreateResponse create(@RequestBody CreateRequestDto createRequestDto, HttpServletRequest request) {
+        return commentService.create(createRequestDto, request);
     }
 
     @Operation(

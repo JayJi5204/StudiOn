@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+
 @Component
 @Log4j2
 public class AuthorizationHeaderFilter
@@ -20,6 +21,7 @@ public class AuthorizationHeaderFilter
     private static final String HEADER_USER_ID = "X-User-ID";
     private static final String HEADER_USER_EMAIL = "X-User-Email";
     private static final String HEADER_USER_ROLE = "X-User-Role";
+    private static final String HEADER_USER_NICKNAME = "X-User-NickName";
 
     public AuthorizationHeaderFilter(JwtValidator jwtValidator) {
         super(Config.class);
@@ -59,6 +61,7 @@ public class AuthorizationHeaderFilter
             String userId = claims.getSubject();
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
+            String nickName = claims.get("nickName", String.class);
 
             // 3. Request Mutate
             ServerHttpRequest modifiedRequest = request.mutate()
@@ -66,11 +69,13 @@ public class AuthorizationHeaderFilter
                         httpHeaders.remove(HEADER_USER_ID);
                         httpHeaders.remove(HEADER_USER_EMAIL);
                         httpHeaders.remove(HEADER_USER_ROLE);
+                        httpHeaders.remove(HEADER_USER_NICKNAME);
                         httpHeaders.remove(HttpHeaders.AUTHORIZATION);
                     })
                     .header(HEADER_USER_ID, userId)
                     .header(HEADER_USER_EMAIL, email)
                     .header(HEADER_USER_ROLE, role)
+                    .header(HEADER_USER_NICKNAME, nickName)
                     .build();
 
             log.info("Gateway: Authenticated User={}, Role={}", userId, role);

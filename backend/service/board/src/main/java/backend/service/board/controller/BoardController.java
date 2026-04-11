@@ -46,14 +46,14 @@ public class BoardController {
             @Parameter(description = "게시글 카테고리 (미입력 시 전체 조회)", example = "COMMUNITY")
             @RequestParam(required = false)
             Category category,
-            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+            @Parameter(description = "페이지 번호 (1부터 시작)", example = "1")
             @RequestParam(defaultValue = "0")
             int page,
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam(defaultValue = "10")
             int size
     ) {
-        return boardService.getPage(category, page, size);
+        return boardService.getPage(category, page-1, size);
     }
 
     @Operation(summary = "사용자별 작성 게시글 조회", description = "특정 사용자가 작성한 모든 게시글을 리스트로 반환합니다.")

@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class CookieUtil {
 
     public ResponseCookie createAccessTokenCookie(String token) {
-        return createCookie("accessToken", token, 1800);
+        return createCookie("accessToken", token, 7 * 24 * 60 * 60);
     }
 
     public ResponseCookie createRefreshTokenCookie(String token) {

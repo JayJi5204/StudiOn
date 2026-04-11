@@ -5,7 +5,6 @@ import {
     Target,
 } from 'lucide-react';
 import ViewButton from '../button/ViewButton';
-import { postService } from '../../services/posts.service';
 
 interface MyBoardsContentProps {
     userId: number;
@@ -23,7 +22,6 @@ const MyBoardsContent = ({
 
     const handleViewClick = async (postId: number) => {
         try {
-            await postService.updateViewCount(postId);
             setLocalBoards(prevBoards =>
                 prevBoards.map(post =>
                     (!isView && post.boardId === postId)
@@ -55,7 +53,7 @@ const MyBoardsContent = ({
                         </div>
 
                         <ViewButton
-                            boardId={myBoard.boardId}
+                            boardId={String(myBoard.boardId)}
                             handleViewClick={() => {
                                 handleViewClick(myBoard.boardId);
                                 setIsView(true);

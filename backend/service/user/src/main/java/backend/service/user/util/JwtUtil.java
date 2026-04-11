@@ -55,6 +55,14 @@ public class JwtUtil {
                 .getPayload()
                 .get("role", String.class);
     }
+    public String getNickName(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("nickName", String.class);
+    }
 
     public boolean isExpired(String token) {
         return Jwts.parser()
@@ -66,22 +74,24 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public String createAccessToken(String userId, String email, String role) {
+    public String createAccessToken(String userId, String email, String role,String nickName) {
         return Jwts.builder()
                 .subject(userId)
                 .claim("email", email)
                 .claim("role", role)
+                .claim("nickName",nickName)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(secretKey)
                 .compact();
     }
 
-    public String createRefreshToken(String userId, String email, String role) {
+    public String createRefreshToken(String userId, String email, String role,String nickName) {
         return Jwts.builder()
                 .subject(userId)
                 .claim("email", email)
                 .claim("role", role)
+                .claim("nickName",nickName)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(secretKey)

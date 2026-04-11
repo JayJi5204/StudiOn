@@ -1,9 +1,9 @@
 import React,{ useRef, useState} from 'react';
 import { useNavigate } from 'react-router';
 import { authService } from '../services/auth.service';
-import { useBoards } from '../hooks/useBoards';
+// import { useBoards } from '../hooks/useBoards';
 import useUserInfoStore from '../store/userInfoStore';
-import MyBoardsContent from '../components/profile/MyBoardsContent';
+// import MyBoardsContent from '../components/profile/MyBoardsContent';
 import { TabButton } from '../components/button/TabButton';
 import { QuickActionButton } from '../components/button/QuickActionButton';
 import {
@@ -62,10 +62,10 @@ const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState<string>('overview');
     const [editForm,setEditForm] = useState<IUser>(userInfo);
-    const { boards } = useBoards(
-            { page: 1, size: 10 },
-            Boolean(userInfo.isLoggedIn)
-        );
+    // const { boards } = useBoards(
+    //         { page: 1, size: 10 },
+    //         Boolean(userInfo.isLoggedIn)
+    //     );
     
     // 통계 정보
     const stats = {
@@ -281,11 +281,11 @@ const ProfilePage = () => {
                 return <OverviewContent />;
             case 'studies':
                 return <StudiesContent />;
-            case 'posts':
-                return <MyBoardsContent
-                            userId={userInfo.userId}  // 현재 컨텍스트의 userId 변수
-                            myBoards={boards}  // 위에서 선언한 boards 변수
-                        />
+            // case 'posts':
+            //     return <MyBoardsContent
+            //                 userId={userInfo.userId}  // 현재 컨텍스트의 userId 변수
+            //                 myBoards={boards}  // 위에서 선언한 boards 변수
+            //             />
             case 'achievements':
                 return <AchievementsContent />;
             default:
