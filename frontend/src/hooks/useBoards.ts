@@ -1,25 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/posts.service';
-import type { IBoard } from '../types/boards.type';
-
-interface UsePostsReturn {
-  boards: IBoard[];
-  isLoading: boolean;
-  setBoards: React.Dispatch<React.SetStateAction<IBoard[]>>;
-}
+import type { IGetPageResponse } from '../types/Response/board.type';
 
 interface PostQueryParams {
   page: number;
   size: number;
+  category?: string;
 }
 
 export const useBoards = (
   params: PostQueryParams,
   isLoggedIn: boolean,
-): UsePostsReturn => {
+) => {
 
-  const [boards, setBoards] = useState<IBoard[]>([]);
+  const [boards, setBoards] = useState<IGetPageResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -31,10 +26,12 @@ export const useBoards = (
     }
 
     const loadBoards = async () => {
+
       try {
+        const boardsData = await postService.getPosts(params.page, params.size);
+        console.log(boardsData);
+        setBoards(boardsData.content);
         setIsLoading(true);
-        const boardsData = await postService.getPosts(params);
-        setBoards(boardsData);
       } catch (error) {
         console.error('❌ 게시글 로드 실패:', error);
         setIsLoading(false);

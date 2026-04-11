@@ -3,7 +3,7 @@ import { commentService } from "../services/comment.service";
 import type { IComment } from "../types/boards.type";
 
 interface useCommentProps {
-    boardId: number;
+    boardId: string;
 }
 
 interface useCommentReturn {

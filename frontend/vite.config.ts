@@ -18,12 +18,12 @@ export default defineConfig(({ mode }) => {
         "/api/users": {
           target: "http://localhost:8000",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, "/user-service/api/users"), // ^를 붙여 시작 부분임을 명시하는 것이 더 안전합니다.
+          rewrite: (path) => path.replace(/^\/api/, "/user-service/api/users"),
         },
         "/api/boards": {
           target: "http://localhost:8000",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, "/board-service/api/boards"), // ^를 붙여 시작 부분임을 명시하는 것이 더 안전합니다.
+          changeOrigin: true,                                
+          rewrite: (path) => path.replace(/^\/api\/boards/, "/board-service/api/boards"),
         },
       },
     },

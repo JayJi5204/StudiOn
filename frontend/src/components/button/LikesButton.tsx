@@ -2,10 +2,12 @@ import { ThumbsUp } from "lucide-react"
 
 interface LikesButtonProps {
     likeCount: number;
-    handleLikeCount: () => void; // 부모가 넘겨줄 함수 타입
+    handleLikeCount: () => void;
 }
 
-const LikesButton = ({ likeCount, handleLikeCount }: LikesButtonProps) => {
+const LikesButton = ({ 
+    likeCount, 
+    handleLikeCount }: LikesButtonProps) => {
     
     return (
         <button

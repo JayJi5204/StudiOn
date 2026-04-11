@@ -4,7 +4,7 @@ import { usePost } from '../hooks/useBoard';
 import { useBoards} from '../hooks/useBoards';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
-import CommentSection from '../components/communityboard/CommentSection';
+// import CommentSection from '../components/communityboard/CommentSection';
 import { dateFormatter } from '../utils/date';
 import { 
   ArrowLeft, 
@@ -24,6 +24,7 @@ const PostDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { board,isLoading } = usePost(String(id));
+  console.log("PostDetailPage:",board);
   const { setBoards } = useBoards(
             { page: 1,size: 10 },
             Boolean(userInfo.isLoggedIn)
@@ -37,29 +38,29 @@ const PostDetailPage = () => {
     const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE;
     navigate(`${updatePostPageUrl}/post/${id}`, { 
         state: { 
-                id: board.boardId || '',
-                title: board.title || '',
-                content: board.content || '',
-                category: board.category || '',
+                id: board?.boardId || '',
+                title: board?.title || '',
+                content: board?.content || '',
+                category: board?.category || '',
                 modifiedAt: dateFormatter() || '',
-                tags: board.tags || []
+                tags: board?.tags || []
         }
     });
   };
 
-  const handleDelete = async (deleteId:number) => {
-        //삭제할 포스트를 제외하고 목록을 새로 고침
-        try {
-          await postService.deletePost(deleteId);
-          setBoards(prevBoards => prevBoards.filter(board => board.boardId !== deleteId));
-          alert("삭제되었습니다.");
-          navigate(-1);
-        }
-        catch{
-          alert("삭제에 실패했습니다.");
-          navigate("/");
-        }
-    };
+  const handleDelete = async (deletedId:string) => {
+      //삭제할 포스트를 제외하고 목록을 새로 고침
+      try {
+        await postService.deletePost(deletedId);
+        setBoards(prevBoards => prevBoards.filter(board => String(board.boardId) !== deletedId));
+        alert("삭제되었습니다.");
+        navigate(-1);
+      }
+      catch{
+        alert("삭제에 실패했습니다.");
+        navigate("/");
+      }
+  };
 
   const handleBack = () => {
     navigate(-1);
@@ -128,7 +129,7 @@ const PostDetailPage = () => {
                     {board.category}
                   </span>
                   <div className="relative">
-                    {(userInfo.role==='admin' || userInfo.userId === board.userId) && (
+                    {(userInfo.role==='admin') && (
                         <button
                             onClick={() => setShowMoreMenu(!showMoreMenu)}
                             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -148,7 +149,7 @@ const PostDetailPage = () => {
                         </button>
                         <button 
                           className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
-                          onClick={() => {handleDelete(board.boardId)}}  
+                          onClick={() => {handleDelete(String(board.boardId))}}  
                         >
                           <Trash2 size={16} />
                           <span>삭제</span>
@@ -206,7 +207,7 @@ const PostDetailPage = () => {
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {board.tags.map((tag, index) => (
+                {Array.isArray(board.tags) && board.tags.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-gray-200 cursor-pointer transition-colors"
@@ -250,11 +251,10 @@ const PostDetailPage = () => {
                 </button>
               </div>
             </article>
-            <CommentSection
-              boardId={board.boardId}
-            />
+            {/* <CommentSection
+              boardId={String(board.boardId)}
+            /> */}
           </div>
-
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-md p-6 sticky top-6">

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { IBoard } from "../../types/boards.type"
+import type { IGetPageResponse } from "../../types/Response/board.type"
 import LikesButton from "../button/LikesButton"
 import ViewButton from "../button/ViewButton"
 import {
@@ -8,12 +8,12 @@ import {
     Share2,
     Eye,
  } from "lucide-react"
-import { postService } from "../../services/posts.service"
 import useUserInfoStore from "../../store/userInfoStore"
- 
-interface PostsSectionProps{
-    boards:IBoard[];
-    setBoards: React.Dispatch<React.SetStateAction<IBoard[]>>;
+import { postService } from "../../services/posts.service"
+
+interface PostsSectionProps {
+    boards: IGetPageResponse[];
+    setBoards: React.Dispatch<React.SetStateAction<IGetPageResponse[]>>;
 }
 
 const PostSection = ({
@@ -22,27 +22,51 @@ const PostSection = ({
 }:PostsSectionProps
 ) => {
     const userInfo = useUserInfoStore((state) => state.userInfo);
-    const [isLike,setIsLike] = useState(false);
+
     const [isView,setIsView] = useState(false);
-    
-    const handleLikeClick = (postId:number) => {
-        setBoards(prevBoards => 
-            prevBoards.map(post => 
-                (isLike && post.boardId === postId) 
-                    ? { ...post, likeCount: post.likeCount - 1 } 
-                    : { ...post, likeCount: post.likeCount + 1 }
-            )
-        );
+    const [likedBoards, setLikedBoards] = useState<Set<string>>(new Set());
+
+    const handleLikeClick = async (boardId:string) => {
+
+        try{
+            const isLiked = likedBoards.has(boardId);
+            
+            setLikedBoards(prev => {
+                const next = new Set(prev);
+                isLiked ? next.delete(boardId) : next.add(boardId);
+                return next;
+            });
+            
+            setBoards(prevBoards => 
+                prevBoards.map(board => 
+                    (String(board.boardId) === boardId) 
+                        ? {...board, likeCount: isLiked ? board.likeCount - 1 : board.likeCount + 1}
+                        : board
+                )
+            );
+            
+            if (!isLiked) {
+                const response = await postService.addLike(boardId);
+                console.log(boardId,"게시판 좋아요 증가:",response);
+            } else {
+                const response = await postService.subLike(boardId);
+                console.log(boardId,"게시판 좋아요 감소:",response);
+            }
+
+            
+        } catch (error) {
+            console.log("좋아요 에러")
+            alert("좋아요 에러")
+        }
     }
 
-    const handleViewClick = async (postId:number) => {
+    const handleViewClick = async (boardId:number) => {
         try {
-            await postService.updateViewCount(postId)
             setBoards(prevBoards =>
-                prevBoards.map(post => 
-                    (!isView && post.boardId === postId) 
-                        ? { ...post, views: post.viewCount + 1 }
-                        : post
+                prevBoards.map(board => 
+                    (!isView && board.boardId === boardId) 
+                        ? { ...board, views: board.viewCount + 1 }
+                        : board
                 )
             );
             
@@ -112,14 +136,13 @@ const PostSection = ({
                                     <LikesButton
                                         likeCount={post.likeCount}
                                         handleLikeCount={()=>{
-                                            handleLikeClick(post.boardId);
-                                            setIsLike(!isLike);
+                                            handleLikeClick(String(post.boardId));
                                         }}
                                     />
                                 </div>
 
                                 <ViewButton
-                                    boardId={post.boardId}
+                                    boardId={String(post.boardId)}
                                     handleViewClick={() => {
                                         handleViewClick(post.boardId);
                                         setIsView(true);

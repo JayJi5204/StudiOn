@@ -44,9 +44,7 @@ export const authService = {
         return response.data;
     },
 
-    logout: async (): Promise<IUser> => {
-
-        
+    logout: async (): Promise<IUser> => {        
         const response = await axios.post(
             `${BASE_API_URL}/logout`,
             {},

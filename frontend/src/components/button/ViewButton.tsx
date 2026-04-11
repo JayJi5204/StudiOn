@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 
 interface ViewButtonProps {
-    boardId:number,
+    boardId:string,
     handleViewClick: () => void;
 }
 
