@@ -28,8 +28,8 @@ public class CommentServiceImpl implements CommentService {
     private final CommentCountService commentCountService;
 
     @Transactional
-    public CreateResponse create(CreateRequest requestDto, HttpServletRequest request) {
-        CommentEntity parent = findParent(requestDto);
+    public CreateResponse create(CreateRequest dto, HttpServletRequest request) {
+        CommentEntity parent = findParent(dto);
         CommentPath parentCommentPath = parent == null ? CommentPath.create("") : parent.getCommentPath();
 
         Long userId=SecurityUtil.getCurrentUserId(request);
@@ -38,11 +38,11 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity comment = commentRepository.save(
                 CommentEntity.create(
                         snowflake.nextId(),
-                        requestDto.getContent(),
+                        dto.getContent(),
                         parentCommentPath.createChildCommentPath(
                                 commentRepository.findDescendantsTopPath(
-                                        requestDto.getBoardId(), parentCommentPath.getPath()).orElse(null)),
-                        requestDto.getBoardId(), userId,nickName));
+                                        Long.parseLong(dto.getBoardId()), parentCommentPath.getPath()).orElse(null)),
+                        Long.parseLong(dto.getBoardId()), userId,nickName));
 
         return CreateResponse.from(comment, 0L);
     }
