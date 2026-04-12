@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CreateRequest {
-    private Long boardId;
+    private String boardId;
     private String content;
     private String parentPath;
 }
