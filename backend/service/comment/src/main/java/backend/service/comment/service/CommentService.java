@@ -4,6 +4,7 @@ import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.CreateResponse;
 import backend.service.comment.dto.response.DeletedResponse;
+import backend.service.comment.dto.response.GetResponse;
 import backend.service.comment.dto.response.UpdateResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,11 +18,11 @@ public interface CommentService {
 
     UpdateResponse update(Long commentId, UpdateRequest dto, HttpServletRequest request);
 
-    List<CreateResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
+    List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
 
-    List<CreateResponse> getBoardWhoCreateWithBoardId(Long boardId);
+    List<GetResponse> getCommentWithBoardId(Long boardId);
 
-    List<CreateResponse> getBoardWhoCreateWithUserId(Long userId);
+    List<GetResponse> getCommentWithUserId(Long userId);
 
     Long like(Long commentId, HttpServletRequest request);
 

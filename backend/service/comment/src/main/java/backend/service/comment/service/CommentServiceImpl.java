@@ -4,6 +4,7 @@ import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.CreateResponse;
 import backend.service.comment.dto.response.DeletedResponse;
+import backend.service.comment.dto.response.GetResponse;
 import backend.service.comment.dto.response.UpdateResponse;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static java.util.function.Predicate.not;
+
+
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -103,7 +106,7 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    public List<CreateResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
+    public List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
         Pageable pageable = PageRequest.of(0, pageSize.intValue());
 
         List<CommentEntity> comments = lastPath == null ?
@@ -111,21 +114,21 @@ public class CommentServiceImpl implements CommentService {
                 commentRepository.findByBoardIdAndCommentPathPathGreaterThanOrderByCommentPathPathAsc(boardId, lastPath, pageable);
 
         return comments.stream()
-                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
     @Override
-    public List<CreateResponse> getBoardWhoCreateWithBoardId(Long boardId) {
+    public List<GetResponse> getCommentWithBoardId(Long boardId) {
         return commentRepository.findAllByBoardId(boardId).stream()
-                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
     @Override
-    public List<CreateResponse> getBoardWhoCreateWithUserId(Long userId) {
+    public List<GetResponse> getCommentWithUserId(Long userId) {
         return commentRepository.findAllByUserId(userId).stream()
-                .map(entity -> CreateResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
                 .toList();
     }
 
