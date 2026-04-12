@@ -1,8 +1,10 @@
 package backend.service.comment.controller;
 
-import backend.service.comment.dto.request.CreateRequestDto;
+import backend.service.comment.dto.request.CreateRequest;
+import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.CreateResponse;
 import backend.service.comment.dto.response.DeletedResponse;
+import backend.service.comment.dto.response.UpdateResponse;
 import backend.service.comment.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -52,8 +54,8 @@ public class CommentController {
                     """
     )
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequestDto createRequestDto, HttpServletRequest request) {
-        return commentService.create(createRequestDto, request);
+    public CreateResponse create(@RequestBody CreateRequest createRequest, HttpServletRequest request) {
+        return commentService.create(createRequest, request);
     }
 
     @Operation(
@@ -77,7 +79,8 @@ public class CommentController {
     }
 
     @Operation(
-            summary = "게시글별 댓글 목록 조회",
+            summary = "특정 게시글 댓글" +
+                    " 조회",
             description = """
                     특정 게시글에 달린 모든 댓글을 조회합니다.
                     
@@ -92,13 +95,22 @@ public class CommentController {
     }
 
     @Operation(
-            summary = "사용자별 댓글 목록 조회",
+            summary = "특정 사용자 작성한 댓글 조회",
             description = "특정 사용자가 작성한 모든 댓글을 조회합니다."
     )
     @GetMapping("/users/{userId}")
     public List<CreateResponse> getBoardWhoCreateWithUserId(
             @Parameter(description = "사용자 ID", example = "279296958190669820") @PathVariable("userId") Long userId) {
         return commentService.getBoardWhoCreateWithUserId(userId);
+    }
+    @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
+    @PutMapping("/update/{commentId}")
+    public UpdateResponse update(
+            @Parameter(description = "수정할 댓글 ID", example = "279305241031393280")
+            @PathVariable Long commentId,
+            @RequestBody UpdateRequest dto,
+            HttpServletRequest request) {
+        return commentService.update(commentId, dto, request);
     }
 
     @Operation(

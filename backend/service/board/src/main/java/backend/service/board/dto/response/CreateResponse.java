@@ -12,6 +12,7 @@ public class CreateResponse {
 
     private String boardId;
     private String nickName;
+    private String userId;
     private List<String> tags;
     private String title;
     private String content;
@@ -25,6 +26,7 @@ public class CreateResponse {
         CreateResponse dto = new CreateResponse();
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
+        dto.userId = String.valueOf(entity.getUserId());
         dto.title = entity.getTitle();
         dto.content = entity.getContent();
         dto.category = entity.getCategory();

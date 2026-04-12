@@ -14,6 +14,7 @@ public class GetWithCommentResponse {
     private String boardId;
     private String nickName;
     private String title;
+    private String userId;
     private String content;
     private Category category;
     private Long viewCount;
@@ -27,6 +28,7 @@ public class GetWithCommentResponse {
         GetWithCommentResponse dto = new GetWithCommentResponse();
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
+        dto.userId=String.valueOf(entity.getUserId());
         dto.title = entity.getTitle();
         dto.content = entity.getContent();
         dto.category = entity.getCategory();

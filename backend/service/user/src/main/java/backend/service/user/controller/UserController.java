@@ -45,13 +45,13 @@ public class UserController {
     }
 
     @Operation(summary = "전체 사용자 조회", description = "등록된 모든 사용자 목록을 가져옵니다.")
-    @GetMapping("/get")
+    @GetMapping("/all-users")
     public List<CreateResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @Operation(summary = "내 정보 조회", description = "사용자의 정보를 조회합니다.")
-    @GetMapping("/myInfo")
+    @GetMapping("/my-info")
     public GetMyInfoResponse getMyInfo(HttpServletRequest request) {
         return userService.getMyInfo(request);
     }

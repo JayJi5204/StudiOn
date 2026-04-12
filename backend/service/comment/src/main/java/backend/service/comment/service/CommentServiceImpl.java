@@ -1,8 +1,10 @@
 package backend.service.comment.service;
 
-import backend.service.comment.dto.request.CreateRequestDto;
+import backend.service.comment.dto.request.CreateRequest;
+import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.CreateResponse;
 import backend.service.comment.dto.response.DeletedResponse;
+import backend.service.comment.dto.response.UpdateResponse;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
@@ -26,7 +28,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentCountService commentCountService;
 
     @Transactional
-    public CreateResponse create(CreateRequestDto requestDto,HttpServletRequest request) {
+    public CreateResponse create(CreateRequest requestDto, HttpServletRequest request) {
         CommentEntity parent = findParent(requestDto);
         CommentPath parentCommentPath = parent == null ? CommentPath.create("") : parent.getCommentPath();
 
@@ -45,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
         return CreateResponse.from(comment, 0L);
     }
 
-    private CommentEntity findParent(CreateRequestDto requestDto) {
+    private CommentEntity findParent(CreateRequest requestDto) {
         String parentPath = requestDto.getParentPath();
         if (parentPath == null) {
             return null;
@@ -71,6 +73,20 @@ public class CommentServiceImpl implements CommentService {
             }
         });
         return DeletedResponse.from();
+    }
+
+    @Transactional
+    public UpdateResponse update(Long commentId, UpdateRequest dto, HttpServletRequest request) {
+        CommentEntity entity = commentRepository.findById(commentId).orElseThrow();
+
+        Long userId = SecurityUtil.getCurrentUserId(request);
+        if (!entity.getUserId().equals(userId)) {
+            throw new RuntimeException("수정 권한 없음");
+        }
+
+        entity.update(dto.getContent());
+
+        return UpdateResponse.from(entity);
     }
 
     private boolean hasChildren(CommentEntity commentEntity) {
