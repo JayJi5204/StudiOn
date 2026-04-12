@@ -56,7 +56,7 @@ public class BoardController {
         return boardService.getPage(category, page-1, size);
     }
 
-    @Operation(summary = "사용자별 작성 게시글 조회", description = "특정 사용자가 작성한 모든 게시글을 리스트로 반환합니다.")
+    @Operation(summary = "특정 사용자 작성 게시글 조회", description = "특정 사용자가 작성한 모든 게시글을 리스트로 반환합니다.")
     @GetMapping("/users/{userId}")
     public List<GetBoardResponse> getBoardWhoCreate(
             @Parameter(description = "작성자 ID", example = "279296958190669824")

@@ -26,6 +26,7 @@ public class CommentEntity {
     private Long likeCount;
     private Boolean isDelete;
     private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
     public static CommentEntity create(Long commentId, String content, CommentPath commentPath, Long boardId,Long UserId,String nickName) {
         CommentEntity commentEntity = new CommentEntity();
@@ -37,10 +38,14 @@ public class CommentEntity {
         commentEntity.nickName = nickName;
         commentEntity.likeCount = 0L;
         commentEntity.createdAt = LocalDateTime.now();
+        commentEntity.modifiedAt = LocalDateTime.now();
         commentEntity.isDelete = false;
         return commentEntity;
     }
-
+    public void update(String content) {
+        this.content = content;
+        this.modifiedAt = LocalDateTime.now();
+    }
 
     public boolean isRoot() {
         return commentPath.isRoot();

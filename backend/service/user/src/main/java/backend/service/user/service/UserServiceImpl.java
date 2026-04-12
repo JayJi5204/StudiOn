@@ -147,8 +147,8 @@ public class UserServiceImpl implements UserService {
 
         redisTemplate.opsForValue().set(userId, newRefreshToken, 7, TimeUnit.DAYS);
 
-        ResponseCookie accessCookie = cookieUtil.createCookie("accessToken", newAccessToken, 1800);
-        ResponseCookie refreshCookie = cookieUtil.createCookie("refreshToken", newRefreshToken, 7 * 24 * 60 * 60);
+        ResponseCookie accessCookie =  cookieUtil.createAccessTokenCookie(newAccessToken);
+        ResponseCookie refreshCookie =  cookieUtil.createRefreshTokenCookie(newRefreshToken);
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());

@@ -3,9 +3,8 @@ package backend.service.comment.dto.request;
 import lombok.Data;
 
 @Data
-public class CreateRequestDto {
+public class CreateRequest {
     private Long boardId;
     private String content;
     private String parentPath;
-
 }

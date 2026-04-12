@@ -12,6 +12,7 @@ public class UpdateResponse {
 
     private String boardId;
     private String nickName;
+    private String userId;
     private String title;
     private String content;
     private Category category;
@@ -25,6 +26,7 @@ public class UpdateResponse {
         UpdateResponse dto = new UpdateResponse();
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
+        dto.userId=String.valueOf(entity.getUserId());
         dto.title = entity.getTitle();
         dto.content = entity.getContent();
         dto.category = entity.getCategory();
