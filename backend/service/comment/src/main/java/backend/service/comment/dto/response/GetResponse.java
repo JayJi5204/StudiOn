@@ -15,7 +15,7 @@ public class GetResponse {
     private String userId;
     private String nickName;
     private Long likeCount;
-    private Boolean isDelete;
+    private Boolean isDeleted;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -28,7 +28,7 @@ public class GetResponse {
         dto.userId = String.valueOf(entity.getUserId());
         dto.nickName = entity.getNickName();
         dto.likeCount = likeCount;
-        dto.isDelete = entity.getIsDelete();
+        dto.isDeleted = entity.getIsDeleted();
         dto.createdAt = entity.getCreatedAt();
         dto.modifiedAt = entity.getModifiedAt();
         return dto;

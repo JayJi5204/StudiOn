@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
             return null;
         }
         return commentRepository.findByPath(parentPath)
-                .filter(not(CommentEntity::getIsDelete))
+                .filter(not(CommentEntity::getIsDeleted))
                 .orElseThrow();
     }
 
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     public DeletedResponse delete(Long commentId) {
-        commentRepository.findById(commentId).filter(not(CommentEntity::getIsDelete)).ifPresent(commentEntity -> {
+        commentRepository.findById(commentId).filter(not(CommentEntity::getIsDeleted)).ifPresent(commentEntity -> {
             if (hasChildren(commentEntity)) {
                 commentEntity.delete();
             } else {
@@ -100,7 +100,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(commentEntity);
         if (!commentEntity.isRoot()) {
             commentRepository.findByPath(commentEntity.getCommentPath().getParentPath())
-                    .filter(CommentEntity::getIsDelete)
+                    .filter(CommentEntity::getIsDeleted)
                     .filter(not(this::hasChildren))
                     .ifPresent(this::delete);
         }
