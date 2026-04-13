@@ -2,10 +2,7 @@ package backend.service.comment.service;
 
 import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
-import backend.service.comment.dto.response.CreateResponse;
-import backend.service.comment.dto.response.DeletedResponse;
-import backend.service.comment.dto.response.GetResponse;
-import backend.service.comment.dto.response.UpdateResponse;
+import backend.service.comment.dto.response.*;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
 import backend.service.comment.repository.CommentRepository;
@@ -106,7 +103,8 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    public List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize) {
+    public List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize, HttpServletRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId(request);
         Pageable pageable = PageRequest.of(0, pageSize.intValue());
 
         List<CommentEntity> comments = lastPath == null ?
@@ -114,32 +112,34 @@ public class CommentServiceImpl implements CommentService {
                 commentRepository.findByBoardIdAndCommentPathPathGreaterThanOrderByCommentPathPathAsc(boardId, lastPath, pageable);
 
         return comments.stream()
-                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId()), commentCountService.isLiked(entity.getCommentId(), userId)))
                 .toList();
     }
 
     @Override
-    public List<GetResponse> getCommentWithBoardId(Long boardId) {
+    public List<GetResponse> getCommentWithBoardId(Long boardId, HttpServletRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId(request);
         return commentRepository.findAllByBoardId(boardId).stream()
-                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId()), commentCountService.isLiked(entity.getCommentId(), userId)))
                 .toList();
     }
 
     @Override
-    public List<GetResponse> getCommentWithUserId(Long userId) {
+    public List<GetResponse> getCommentWithUserId(Long userId, HttpServletRequest request) {
+        Long currentUserId = SecurityUtil.getCurrentUserId(request);
         return commentRepository.findAllByUserId(userId).stream()
-                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId())))
+                .map(entity -> GetResponse.from(entity, commentCountService.getLikeCount(entity.getCommentId()), commentCountService.isLiked(entity.getCommentId(), currentUserId)))
                 .toList();
     }
 
     @Override
-    public Long like(Long commentId, HttpServletRequest request) {
+    public LikeResponse like(Long commentId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return commentCountService.like(commentId, userId);
     }
 
     @Override
-    public Long unlike(Long commentId, HttpServletRequest request) {
+    public LikeResponse unlike(Long commentId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return commentCountService.unlike(commentId, userId);
     }

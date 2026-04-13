@@ -16,10 +16,11 @@ public class GetResponse {
     private String nickName;
     private Long likeCount;
     private Boolean isDeleted;
+    private Boolean isLiked;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static GetResponse from(CommentEntity entity, Long likeCount) {
+    public static GetResponse from(CommentEntity entity, Long likeCount,Boolean isLiked) {
         GetResponse dto = new GetResponse();
         dto.commentId = String.valueOf(entity.getCommentId());
         dto.content = entity.getContent();
@@ -28,6 +29,7 @@ public class GetResponse {
         dto.userId = String.valueOf(entity.getUserId());
         dto.nickName = entity.getNickName();
         dto.likeCount = likeCount;
+        dto.isLiked=isLiked;
         dto.isDeleted = entity.getIsDeleted();
         dto.createdAt = entity.getCreatedAt();
         dto.modifiedAt = entity.getModifiedAt();

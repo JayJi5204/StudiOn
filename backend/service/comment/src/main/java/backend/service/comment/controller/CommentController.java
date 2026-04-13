@@ -2,10 +2,7 @@ package backend.service.comment.controller;
 
 import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
-import backend.service.comment.dto.response.CreateResponse;
-import backend.service.comment.dto.response.DeletedResponse;
-import backend.service.comment.dto.response.GetResponse;
-import backend.service.comment.dto.response.UpdateResponse;
+import backend.service.comment.dto.response.*;
 import backend.service.comment.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,18 +31,14 @@ public class CommentController {
                     
                     [최상위 댓글 예시]
                     {
-                        "boardId": 295926545373777920,
-                        "userId": 295921111410794496,
-                        "nickName": "홍길동",
+                        "boardId": "295926545373777920",
                         "content": "댓글 내용",
                         "parentPath": null
                     }
                     
-                    [대댓글 예시] (parentPath에 부모 댓글의 commentPath 입력)
+                    [대댓글 예시]
                     {
-                        "boardId": 295926545373777920,
-                        "userId": 295921111410794496,
-                        "nickName": "홍길동",
+                        "boardId": "295926545373777920",
                         "content": "대댓글 내용",
                         "parentPath": "00000"
                     }
@@ -68,31 +61,30 @@ public class CommentController {
                     - 이후 조회: 마지막으로 받은 댓글의 commentPath를 lastPath로 설정
                     
                     댓글은 commentPath 기준 오름차순 정렬로 반환됩니다.
-                    (최상위 댓글 → 해당 댓글의 대댓글 순서로 반환)
                     """
     )
     @GetMapping("/infinite-scroll")
     public List<GetResponse> readAllInfiniteScroll(
             @Parameter(description = "게시글 ID", example = "295926545373777920") @RequestParam("boardId") Long boardId,
             @Parameter(description = "마지막으로 조회된 댓글의 commentPath (첫 조회 시 null)") @RequestParam(value = "lastPath", required = false) String lastPath,
-            @Parameter(description = "가져올 댓글 개수", example = "10") @RequestParam("pageSize") Long pageSize) {
-        return commentService.getAllInfiniteScroll(boardId, lastPath, pageSize);
+            @Parameter(description = "가져올 댓글 개수", example = "10") @RequestParam("pageSize") Long pageSize,
+            HttpServletRequest request) {
+        return commentService.getAllInfiniteScroll(boardId, lastPath, pageSize, request);
     }
 
     @Operation(
-            summary = "특정 게시글 댓글" +
-                    " 조회",
+            summary = "특정 게시글 댓글 조회",
             description = """
                     특정 게시글에 달린 모든 댓글을 조회합니다.
                     
                     댓글은 commentPath 기준 오름차순 정렬로 반환됩니다.
-                    (최상위 댓글 → 해당 댓글의 대댓글 순서로 반환)
                     """
     )
     @GetMapping("/getCommentWithBoardId/{boardId}")
     public List<GetResponse> getCommentWithBoardId(
-            @Parameter(description = "게시글 ID", example = "295926545373777920") @PathVariable("boardId") Long boardId) {
-        return commentService.getCommentWithBoardId(boardId);
+            @Parameter(description = "게시글 ID", example = "295926545373777920") @PathVariable("boardId") Long boardId,
+            HttpServletRequest request) {
+        return commentService.getCommentWithBoardId(boardId, request);
     }
 
     @Operation(
@@ -101,9 +93,11 @@ public class CommentController {
     )
     @GetMapping("/users/{userId}")
     public List<GetResponse> getCommentWithUserId(
-            @Parameter(description = "사용자 ID", example = "279296958190669820") @PathVariable("userId") Long userId) {
-        return commentService.getCommentWithUserId(userId);
+            @Parameter(description = "사용자 ID", example = "279296958190669820") @PathVariable("userId") Long userId,
+            HttpServletRequest request) {
+        return commentService.getCommentWithUserId(userId, request);
     }
+
     @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
     @PutMapping("/update/{commentId}")
     public UpdateResponse update(
@@ -120,7 +114,7 @@ public class CommentController {
                     댓글을 삭제합니다.
                     
                     - 대댓글이 없는 경우: DB에서 완전 삭제
-                    - 대댓글이 있는 경우: 내용만 삭제 처리 (isDelete: true)
+                    - 대댓글이 있는 경우: 내용만 삭제 처리 (isDeleted: true)
                     """
     )
     @DeleteMapping("/delete/{commentId}")
@@ -135,11 +129,11 @@ public class CommentController {
                     댓글에 좋아요를 추가합니다.
                     
                     - 같은 댓글에 중복 좋아요 불가
-                    - 응답: 현재 좋아요 수 반환
+                    - 응답: 현재 좋아요 수 및 좋아요 상태 반환
                     """
     )
     @PostMapping("/like/{commentId}")
-    public Long like(
+    public LikeResponse like(
             @Parameter(description = "좋아요할 댓글 ID", example = "279305241031393280") @PathVariable Long commentId,
             HttpServletRequest request) {
         return commentService.like(commentId, request);
@@ -151,11 +145,11 @@ public class CommentController {
                     댓글 좋아요를 취소합니다.
                     
                     - 좋아요를 누르지 않은 댓글은 취소 불가
-                    - 응답: 현재 좋아요 수 반환
+                    - 응답: 현재 좋아요 수 및 좋아요 상태 반환
                     """
     )
     @DeleteMapping("/like/{commentId}")
-    public Long unlike(
+    public LikeResponse unlike(
             @Parameter(description = "좋아요 취소할 댓글 ID", example = "279305241031393280") @PathVariable Long commentId,
             HttpServletRequest request) {
         return commentService.unlike(commentId, request);

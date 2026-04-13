@@ -58,4 +58,5 @@ public class CommentEntity {
     public void syncLikeCount(Long likeCount) {
         this.likeCount = likeCount;
     }
+
 }
