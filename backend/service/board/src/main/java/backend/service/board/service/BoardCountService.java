@@ -1,5 +1,6 @@
 package backend.service.board.service;
 
+import backend.service.board.dto.response.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,7 +31,7 @@ public class BoardCountService {
         return count != null ? count : 0L;
     }
 
-    public Long like(Long boardId, Long userId) {
+    public LikeResponse like(Long boardId, Long userId) {
         String setKey = LIKE_SET_KEY + boardId;
 
         Boolean isLiked = stringRedisTemplate.opsForSet()
@@ -41,10 +42,12 @@ public class BoardCountService {
         }
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + boardId);
+        Long likeCount = redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + boardId);
+
+        return LikeResponse.from(likeCount,true);
     }
 
-    public Long unlike(Long boardId, Long userId) {
+    public LikeResponse unlike(Long boardId, Long userId) {
         String setKey = LIKE_SET_KEY + boardId;
 
         Boolean isLiked = stringRedisTemplate.opsForSet()
@@ -55,6 +58,14 @@ public class BoardCountService {
         }
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + boardId);
+        Long likeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + boardId);
+
+        return LikeResponse.from(likeCount,false);
+    }
+
+    public boolean isLiked(Long boardId, Long userId) {
+        Boolean isLiked = stringRedisTemplate.opsForSet()
+                .isMember(LIKE_SET_KEY + boardId, String.valueOf(userId));
+        return Boolean.TRUE.equals(isLiked);
     }
 }

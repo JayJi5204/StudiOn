@@ -2,10 +2,7 @@ package backend.service.comment.service;
 
 import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
-import backend.service.comment.dto.response.CreateResponse;
-import backend.service.comment.dto.response.DeletedResponse;
-import backend.service.comment.dto.response.GetResponse;
-import backend.service.comment.dto.response.UpdateResponse;
+import backend.service.comment.dto.response.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -18,14 +15,13 @@ public interface CommentService {
 
     UpdateResponse update(Long commentId, UpdateRequest dto, HttpServletRequest request);
 
-    List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
+    List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize, HttpServletRequest request);
 
-    List<GetResponse> getCommentWithBoardId(Long boardId);
+    List<GetResponse> getCommentWithBoardId(Long boardId, HttpServletRequest request);
 
-    List<GetResponse> getCommentWithUserId(Long userId);
+    List<GetResponse> getCommentWithUserId(Long userId,HttpServletRequest request);
 
-    Long like(Long commentId, HttpServletRequest request);
+    LikeResponse like(Long commentId, HttpServletRequest request);
 
-    Long unlike(Long commentId, HttpServletRequest request);
-
-    }
+    LikeResponse unlike(Long commentId, HttpServletRequest request);
+}

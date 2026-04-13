@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface BoardService {
     CreateResponse create(CreateRequest dto, HttpServletRequest request);
-    GetWithCommentResponse getBoard(Long boardId);
+    GetWithCommentResponse getBoard(Long boardId,HttpServletRequest request);
     Page<PageResponse> getPage(Category category, int page, int size);
     List<GetBoardResponse> getBoardWhoCreate(Long userId);
     UpdateResponse update(Long boardId, UpdateRequest dto, HttpServletRequest request);
     DeletedResponse delete(Long boardId, HttpServletRequest request);
-    Long like(Long boardId, HttpServletRequest request);
-    Long unlike(Long boardId, HttpServletRequest request);
+    LikeResponse like(Long boardId, HttpServletRequest request);
+    LikeResponse unlike(Long boardId, HttpServletRequest request);
 }

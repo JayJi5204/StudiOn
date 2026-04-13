@@ -9,14 +9,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"backend.service.board", "backend.common"})
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableScheduling
 public class BoardApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(BoardApplication.class);
     }
-
 }

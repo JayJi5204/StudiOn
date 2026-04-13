@@ -33,8 +33,8 @@ public class BoardController {
     @GetMapping("/get/{boardId}")
     public GetWithCommentResponse getBoard(
             @Parameter(description = "조회할 게시글 ID", example = "290374683355869184")
-            @PathVariable Long boardId) {
-        return boardService.getBoard(boardId);
+            @PathVariable Long boardId,HttpServletRequest request) {
+        return boardService.getBoard(boardId,request);
     }
 
     @Operation(
@@ -81,7 +81,7 @@ public class BoardController {
 
     @Operation(summary = "좋아요", description = "게시글에 좋아요를 추가합니다.")
     @PostMapping("/like/{boardId}")
-    public Long like(
+    public LikeResponse like(
             @Parameter(description = "좋아요할 게시글 ID", example = "279296958190669824")
             @PathVariable Long boardId, HttpServletRequest request) {
         return boardService.like(boardId,request);
@@ -89,7 +89,7 @@ public class BoardController {
 
     @Operation(summary = "좋아요 취소", description = "게시글에 좋아요를 취소합니다.")
     @DeleteMapping("/like/{boardId}")
-    public Long unlike(
+    public LikeResponse unlike(
             @Parameter(description = "좋아요 취소할 게시글 ID", example = "279296958190669824")
             @PathVariable Long boardId,HttpServletRequest request) {
         return boardService.unlike(boardId,request);

@@ -1,5 +1,6 @@
 package backend.service.comment.service;
 
+import backend.service.comment.dto.response.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -20,7 +21,7 @@ public class CommentCountService {
         return count != null ? count : 0L;
     }
 
-    public Long like(Long commentId, Long userId) {
+    public LikeResponse like(Long commentId, Long userId) {
         String setKey = LIKE_SET_KEY + commentId;
 
         Boolean isAlreadyLiked = stringRedisTemplate.opsForSet()
@@ -31,10 +32,11 @@ public class CommentCountService {
         }
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + commentId);
+        Long likeCount = redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + commentId);
+        return LikeResponse.from(likeCount, true);
     }
 
-    public Long unlike(Long commentId, Long userId) {
+    public LikeResponse unlike(Long commentId, Long userId) {
         String setKey = LIKE_SET_KEY + commentId;
 
         Boolean isLiked = stringRedisTemplate.opsForSet()
@@ -45,6 +47,13 @@ public class CommentCountService {
         }
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + commentId);
+        Long likeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + commentId);
+        return LikeResponse.from(likeCount, false);
+    }
+
+    public boolean isLiked(Long commentId, Long userId) {
+        Boolean isLiked = stringRedisTemplate.opsForSet()
+                .isMember(LIKE_SET_KEY + commentId, String.valueOf(userId));
+        return Boolean.TRUE.equals(isLiked);
     }
 }
