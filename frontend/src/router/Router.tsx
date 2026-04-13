@@ -16,7 +16,6 @@ const GoogleCallback = lazy(() => import("../components/OAuth/GoogleCallback.tsx
 const layoutPageUrl = import.meta.env.VITE_REACT_APP_URL;
 const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
 const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
-const updatePostPageUrl = `${import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE}/post/:id`;
 const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
 const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP;
 const profilePageUrl = `${import.meta.env.VITE_REACT_APP_URL_PROFILE}/:id`;
@@ -68,32 +67,26 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: writePostPageUrl,
+    path: writePostPageUrl,  // /post/write
     Component: Layout,
     children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<Loading/>}>
-              <WritePostPage/>
-          </Suspense>
-        )
-      }
+        {
+            index: true,
+            element: (
+                <Suspense fallback={<Loading/>}>
+                    <WritePostPage/>
+                </Suspense>
+            )
+        },
+        {
+            path: ':boardId',
+            element: (
+                <Suspense fallback={<Loading/>}>
+                    <WritePostPage/>
+                </Suspense>
+            )
+        }
     ]
-  },
-  {
-    path: updatePostPageUrl,
-    Component: Layout,
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<Loading/>}>
-              <WritePostPage/>
-          </Suspense>
-        )
-      }
-    ]    
   },
   {
     path: signinPageUrl,

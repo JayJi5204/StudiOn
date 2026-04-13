@@ -152,9 +152,9 @@ const ProfilePage = () => {
         }
     }
 
-    const handleDeleteUser = async (id:number) => {
+    const handleDeleteUser = async (userId:string) => {
         try {
-            const userData = await authService.deleteUser(id);
+            const userData = await authService.deleteUser(userId);
             setUserInfo(userData);
             navigate('/')
         } catch (error) {

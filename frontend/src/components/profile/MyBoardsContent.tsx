@@ -7,7 +7,7 @@ import {
 import ViewButton from '../button/ViewButton';
 
 interface MyBoardsContentProps {
-    userId: number;
+    userId: string;
     myBoards: IBoard[];
 }
 
@@ -20,13 +20,13 @@ const MyBoardsContent = ({
     const [localBoards, setLocalBoards] = useState<IBoard[]>(_myBoards);
     const [isView, setIsView] = useState(false);
 
-    const handleViewClick = async (postId: number) => {
+    const handleViewClick = async (boardId: string) => {
         try {
             setLocalBoards(prevBoards =>
-                prevBoards.map(post =>
-                    (!isView && post.boardId === postId)
-                        ? { ...post, viewCount: post.viewCount + 1 }
-                        : post
+                prevBoards.map(board =>
+                    (!isView && board.boardId === boardId)
+                        ? { ...board, viewCount: board.viewCount + 1 }
+                        : board
                 )
             );
         } catch (error) {

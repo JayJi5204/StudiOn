@@ -56,7 +56,7 @@ export const authService = {
     },
     
     updateUser: async (
-        id:number,
+        id:string,
         userInfo:IUser
     ):Promise<Partial<IUser>> => {
         const response = await axios.patch(`${BASE_API_URL}/${id}`,userInfo)
@@ -64,7 +64,7 @@ export const authService = {
     },
 
     deleteUser: async (
-        id:number,
+        id:string,
     ) => {
         const response = await axios.delete(`${BASE_API_URL}/${id}`);
         return response.data;

@@ -1,22 +1,21 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useNavigate,useParams } from 'react-router';
 import { usePost } from '../hooks/useBoard';
 import { useBoards} from '../hooks/useBoards';
 import { postService } from '../services/posts.service';
 import useUserInfoStore from '../store/userInfoStore';
-// import CommentSection from '../components/communityboard/CommentSection';
+import CommentSection from '../components/communityboard/CommentSection';
 import { dateFormatter } from '../utils/date';
-import { 
-  ArrowLeft, 
-  Eye, 
-  ThumbsUp, 
-  Clock, 
-  Bookmark, 
-  Share2, 
-  MoreVertical, 
-  Edit, 
-  Trash2, 
-  Flag 
+import {
+  ArrowLeft,
+  ThumbsUp,
+  Clock,
+  Bookmark,
+  Share2,
+  MoreVertical,
+  Edit,
+  Trash2,
+  Flag
 } from 'lucide-react';
 
 const PostDetailPage = () => {
@@ -24,21 +23,29 @@ const PostDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { board,isLoading } = usePost(String(id));
-  console.log("PostDetailPage:",board);
   const { setBoards } = useBoards(
             { page: 1,size: 10 },
             Boolean(userInfo.isLoggedIn)
         );
   
   const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-      
+  
+  useEffect(() => {
+      if (board) {
+          setIsLiked(board.isLiked);
+          setLikeCount(board.likeCount);
+      }
+  }, [board]);
+
   const handleEdit = () => {
-    const updatePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE;
-    navigate(`${updatePostPageUrl}/post/${id}`, { 
-        state: { 
-                id: board?.boardId || '',
+    const updateBoardPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
+    navigate(`${updateBoardPageUrl}/${id}`, {
+        state: {
+                boardId: board?.boardId || '',
                 title: board?.title || '',
                 content: board?.content || '',
                 category: board?.category || '',
@@ -66,8 +73,23 @@ const PostDetailPage = () => {
     navigate(-1);
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
+  const handleLike = async () => {
+      if (!board) return;
+
+      try {
+          if (isLiked) {
+              await postService.unlikeBoard(board.boardId);
+              setLikeCount(prev => prev - 1);
+              setIsLiked(false);
+          } else {
+              await postService.likeBoard(board.boardId);
+              setLikeCount(prev => prev + 1);
+              setIsLiked(true);
+          }
+      } catch (error) {
+          console.error('좋아요 처리 실패:', error);
+          alert('좋아요 처리에 실패했습니다.');
+      }
   };
 
   const handleBookmark = () => {
@@ -129,7 +151,7 @@ const PostDetailPage = () => {
                     {board.category}
                   </span>
                   <div className="relative">
-                    {(userInfo.role==='admin') && (
+                    {(userInfo.role==='admin' || userInfo.userId === board.userId) && (
                         <button
                             onClick={() => setShowMoreMenu(!showMoreMenu)}
                             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -149,7 +171,7 @@ const PostDetailPage = () => {
                         </button>
                         <button 
                           className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center space-x-2 text-gray-700"
-                          onClick={() => {handleDelete(String(board.boardId))}}  
+                          onClick={() => {handleDelete(board.boardId)}}  
                         >
                           <Trash2 size={16} />
                           <span>삭제</span>
@@ -177,23 +199,6 @@ const PostDetailPage = () => {
                         {board.createdAt}
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <Eye size={16} />
-                      <span>{board.viewCount}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <ThumbsUp size={16} />
-                      <span>{board.likeCount}</span>
-                    </div>
-                  
-                    {/* <div className="flex items-center space-x-1">
-                      <MessageCircle size={16} />
-                      <span>{post.comments.length}</span>
-                    </div> */}
-                    
                   </div>
                 </div>
               </div>
@@ -229,7 +234,7 @@ const PostDetailPage = () => {
                     }`}
                   >
                     <ThumbsUp size={18} />
-                    <span className="font-medium">{isLiked ? board.likeCount + 1 : board.likeCount}</span>
+                    <span className="font-medium">{likeCount}</span>
                   </button>
                   <button
                     onClick={handleBookmark}
@@ -251,9 +256,9 @@ const PostDetailPage = () => {
                 </button>
               </div>
             </article>
-            {/* <CommentSection
-              boardId={String(board.boardId)}
-            /> */}
+            <CommentSection
+              board={board}
+            />
           </div>
           {/* Sidebar */}
           <div className="lg:col-span-1">

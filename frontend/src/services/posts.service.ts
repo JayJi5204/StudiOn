@@ -1,12 +1,13 @@
 import axios from 'axios';
 import type { IBoard } from '../types/boards.type';
-import type { IGetBoardDetail } from '../types/Response/board.type';
-import type { IPage,IGetPageResponse } from '../types/Response/board.type';
+import type { IBoardDetailResponse, IUpdateBoardResponse } from '../types/Response/board.type';
+import type { IPage,IPageResponse } from '../types/Response/board.type';
+import type { IUpdateBoardRequest } from '../types/Request/board.type';
 
 const API_URL = import.meta.env.VITE_REACT_API_URL_BOARD;
 
 export const postService = {
-  createPost: async (
+  createBoard: async (
     postData: Partial<IBoard>
   ): Promise<IBoard> => {
     const response = await axios.post<IBoard>(`http://localhost:8000/board-service/api/boards/create`,{
@@ -26,8 +27,8 @@ export const postService = {
     page: number,
     size: number,
     category?: string
-  ): Promise<IPage<IGetPageResponse>> => {
-    const response = await axios.get<IPage<IGetPageResponse>>(
+  ): Promise<IPage<IPageResponse>> => {
+    const response = await axios.get<IPage<IPageResponse>>(
       `http://localhost:8000/board-service/api/boards`,
       {
         params: { page, size, category },
@@ -40,20 +41,25 @@ export const postService = {
 
   getPostById: async ( 
     boardId: string 
-  ): Promise<IGetBoardDetail> => {
+  ): Promise<IBoardDetailResponse> => {
     
-    const response = await axios.get<IGetBoardDetail>(`http://localhost:8000/board-service/api/boards/get/${boardId}`,{
+    const response = await axios.get<IBoardDetailResponse>(`http://localhost:8000/board-service/api/boards/get/${boardId}`,{
       withCredentials:true
     });
 
     return response.data
   },
 
-  updatePost: async (
-    boardId: string | number,
-    postData:Partial<IBoard>
-  ):Promise<IBoard> => {
-    const response = await axios.put<IBoard>(`${API_URL}/update/${boardId}`,postData);
+  updateBoard: async (
+    boardId: string,
+    boardData:IUpdateBoardRequest
+  ):Promise<IUpdateBoardResponse> => {
+    const response = await axios.put<IUpdateBoardResponse>(`http://localhost:8000/board-service/api/boards/update/${boardId}`,
+      boardData,
+      {
+        withCredentials:true
+      }
+    );
     return response.data;
   },
   
@@ -64,7 +70,7 @@ export const postService = {
     return response.data;
   },
 
-  addLike: async (
+  likeBoard: async (
     boardId: string
   ) => {
     const response = await axios.post(`http://localhost:8000/board-service/api/boards/like/${boardId}`,{
@@ -72,17 +78,15 @@ export const postService = {
       },{
       withCredentials:true
     });
-    console.log(response.data);
     return response.data;
   },
 
-  subLike: async (
+  unlikeBoard: async (
     boardId: string
   ) => {
     const response = await axios.delete(`http://localhost:8000/board-service/api/boards/like/${boardId}`,{
       withCredentials:true
     });
-    console.log(response.data);
     return response.data;
   }
 };
