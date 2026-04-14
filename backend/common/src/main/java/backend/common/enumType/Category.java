@@ -1,4 +1,4 @@
-package backend.service.board.enumType;
+package backend.common.enumType;
 
 public enum Category {
     COMMUNITY,

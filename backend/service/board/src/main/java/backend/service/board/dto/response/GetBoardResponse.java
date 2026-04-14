@@ -1,7 +1,7 @@
 package backend.service.board.dto.response;
 
 import backend.service.board.entity.BoardEntity;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

@@ -7,7 +7,7 @@ import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.*;
 import backend.service.board.entity.BoardEntity;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import backend.service.board.feign.CommentClient;
 import backend.service.board.kafka.KafkaProducer;
 import backend.service.board.repository.BoardRepository;

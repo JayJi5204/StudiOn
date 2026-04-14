@@ -1,4 +1,4 @@
-package backend.service.user.enumType;
+package backend.common.enumType;
 
 public enum UserRole {
 
