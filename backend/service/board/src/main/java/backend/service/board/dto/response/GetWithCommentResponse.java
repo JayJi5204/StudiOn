@@ -19,12 +19,13 @@ public class GetWithCommentResponse {
     private Category category;
     private Long viewCount;
     private Long  likeCount;
+    private Boolean isLiked;
     private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentDto> comment;
 
-    public static GetWithCommentResponse from(BoardEntity entity, List<CommentDto> responseComments, Long viewCount, Long likeCount) {
+    public static GetWithCommentResponse from(BoardEntity entity, List<CommentDto> responseComments, Long viewCount, Long likeCount,Boolean isLiked) {
         GetWithCommentResponse dto = new GetWithCommentResponse();
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
@@ -34,6 +35,7 @@ public class GetWithCommentResponse {
         dto.category = entity.getCategory();
         dto.viewCount = viewCount;
         dto.likeCount = likeCount;
+        dto.isLiked = isLiked;
         dto.tags = entity.getTags();
         dto.createdAt = entity.getCreatedAt();
         dto.modifiedAt = entity.getModifiedAt();

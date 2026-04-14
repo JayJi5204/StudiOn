@@ -17,7 +17,8 @@ public class CommentDto {
     private String userId;
     private String nickName;
     private Long likeCount;
-    private Boolean isDelete;
+    private Boolean isDeleted;
+    private Boolean isLiked;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

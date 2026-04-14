@@ -24,7 +24,7 @@ public class CommentEntity {
     private Long boardId;
     private String nickName;
     private Long likeCount;
-    private Boolean isDelete;
+    private Boolean isDeleted;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -39,7 +39,7 @@ public class CommentEntity {
         commentEntity.likeCount = 0L;
         commentEntity.createdAt = LocalDateTime.now();
         commentEntity.modifiedAt = LocalDateTime.now();
-        commentEntity.isDelete = false;
+        commentEntity.isDeleted = false;
         return commentEntity;
     }
     public void update(String content) {
@@ -52,10 +52,11 @@ public class CommentEntity {
     }
 
     public void delete() {
-        isDelete = true;
+        isDeleted = true;
     }
 
     public void syncLikeCount(Long likeCount) {
         this.likeCount = likeCount;
     }
+
 }

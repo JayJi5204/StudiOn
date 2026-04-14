@@ -27,7 +27,7 @@ public class CreateResponse {
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
         dto.likeCount = likeCount;
-        dto.isDelete = entity.getIsDelete();
+        dto.isDelete = entity.getIsDeleted();
         dto.createdAt = entity.getCreatedAt();
         return dto;
     }

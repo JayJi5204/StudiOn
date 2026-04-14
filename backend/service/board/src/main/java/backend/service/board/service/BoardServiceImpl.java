@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -46,14 +47,16 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public GetWithCommentResponse getBoard(Long boardId) {
+    public GetWithCommentResponse getBoard(Long boardId, HttpServletRequest request) {
         BoardEntity entity = boardRepository.findById(boardId).orElseThrow();
         List<CommentDto> responseComments = commentClient.getComments(boardId);
 
         Long viewCount = boardCountService.incrementViewCount(boardId);
         Long likeCount = boardCountService.getLikeCount(boardId);
+        Long userId = SecurityUtil.getCurrentUserId(request);
+        boolean isLiked = boardCountService.isLiked(boardId, userId);
 
-        return GetWithCommentResponse.from(entity, responseComments, viewCount, likeCount);
+        return GetWithCommentResponse.from(entity, responseComments, viewCount, likeCount, isLiked);
     }
 
     @Override
@@ -122,13 +125,13 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Long like(Long boardId, HttpServletRequest request) {
+    public LikeResponse like(Long boardId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return boardCountService.like(boardId, userId);
     }
 
     @Override
-    public Long unlike(Long boardId, HttpServletRequest request) {
+    public LikeResponse unlike(Long boardId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return boardCountService.unlike(boardId, userId);
     }
