@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postService } from '../services/posts.service';
-import type { IGetPageResponse } from '../types/Response/board.type';
+import type { IPageResponse } from '../types/Response/board.type';
 
 interface PostQueryParams {
   page: number;
@@ -14,7 +14,7 @@ export const useBoards = (
   isLoggedIn: boolean,
 ) => {
 
-  const [boards, setBoards] = useState<IGetPageResponse[]>([]);
+  const [boards, setBoards] = useState<IPageResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 

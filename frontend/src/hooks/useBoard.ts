@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { postService } from "../services/posts.service";
-import type { IGetBoardDetail } from "../types/Response/board.type";
+import type { IBoardDetailResponse } from "../types/Response/board.type";
 
 interface UsePostReturn {
-    board: IGetBoardDetail | null;
-    setBoard: React.Dispatch<React.SetStateAction<IGetBoardDetail | null>>;
+    board: IBoardDetailResponse | null;
+    setBoard: React.Dispatch<React.SetStateAction<IBoardDetailResponse | null>>;
     isLoading: boolean;
 }
 
 export const usePost = (
     id: string
 ): UsePostReturn => {
-    const [board, setBoard] = useState<IGetBoardDetail | null>(null);  // ✅ null로 초기화
+    const [board, setBoard] = useState<IBoardDetailResponse | null>(null);  // ✅ null로 초기화
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { X,FileText, Save, Eye, ChevronDown } from 'lucide-react';
 import { postService } from '../services/posts.service';
 import { useLocation,useNavigate } from 'react-router';
-import useUserInfoStore from '../store/userInfoStore';
 import type { IBoard } from '../types/boards.type';
 
 const WritePostPage = () => {
@@ -10,8 +9,8 @@ const WritePostPage = () => {
     const location = useLocation();
 
     const editData = location.state as IBoard;
+    console.log(editData)
     const isEditMode = !!editData;
-    const {userInfo} = useUserInfoStore();
 
     const [title, setTitle] = useState(editData?.title || '');
     const [content, setContent] = useState(editData?.content || '');
@@ -48,24 +47,21 @@ const WritePostPage = () => {
         
         try {
             if (isEditMode) {
-                //게시글 수정 로직 추가
-                const res = await postService.updatePost(
+                const response = await postService.updateBoard(
                     editData.boardId,
                     {
-                        userId: userInfo.userId,
                         title,
                         content,
                         category: selectedCategory,
                         tags,
                     },
                 )
-                alert('게시글이 수정되었습니다!');
                 navigate(communityPageUrl);
-                console.log("수정 성공:", res);
+                console.log("수정 성공:", response);
             } else {
                 
                 // 게시글 저장 로직 추가
-                const res = await postService.createPost(
+                const res = await postService.createBoard(
                     {
                         title,
                         content,

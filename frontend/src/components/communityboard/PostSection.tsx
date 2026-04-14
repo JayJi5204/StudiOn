@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { IGetPageResponse } from "../../types/Response/board.type"
+import type { IPageResponse } from "../../types/Response/board.type"
 import LikesButton from "../button/LikesButton"
 import ViewButton from "../button/ViewButton"
 import {
@@ -12,8 +12,8 @@ import useUserInfoStore from "../../store/userInfoStore"
 import { postService } from "../../services/posts.service"
 
 interface PostsSectionProps {
-    boards: IGetPageResponse[];
-    setBoards: React.Dispatch<React.SetStateAction<IGetPageResponse[]>>;
+    boards: IPageResponse[];
+    setBoards: React.Dispatch<React.SetStateAction<IPageResponse[]>>;
 }
 
 const PostSection = ({
@@ -45,14 +45,8 @@ const PostSection = ({
                 )
             );
             
-            if (!isLiked) {
-                const response = await postService.addLike(boardId);
-                console.log(boardId,"게시판 좋아요 증가:",response);
-            } else {
-                const response = await postService.subLike(boardId);
-                console.log(boardId,"게시판 좋아요 감소:",response);
-            }
-
+            const response = isLiked ? await postService.unlikeBoard(boardId) : await postService.likeBoard(boardId);
+            console.log('게시글 좋아요 완료', response);
             
         } catch (error) {
             console.log("좋아요 에러")

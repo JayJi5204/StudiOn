@@ -4,11 +4,12 @@ import { authService } from "../services/auth.service";
 import useUserInfoStore from "../store/userInfoStore";
 import { LogOut,BookOpen } from "lucide-react";
 
-const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN 
-const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP
-const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE
-const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_BOARD
-const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN
+const home = "/";
+const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
+const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP;
+const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE;
+const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
+const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
 
 const Layout = () => {
   let navigate = useNavigate();
@@ -83,7 +84,7 @@ const Layout = () => {
             <div className="flex items-center space-x-4">
               <div className="text-2xl font-bold text-indigo-600 flex items-center">
                 <BookOpen className="mr-2" />
-                StudyTogether
+                <Link to={home}>StudyTogether</Link>
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">

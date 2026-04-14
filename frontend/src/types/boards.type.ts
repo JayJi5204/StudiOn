@@ -1,6 +1,6 @@
 export interface IBoard {
-  boardId: number;
-  userId: number;
+  boardId: string;
+  userId: string;
   title: string;
   content: string;
   category: string;
