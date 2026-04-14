@@ -1,6 +1,6 @@
 package backend.service.board.dto.request;
 
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import lombok.Data;
 
 import java.util.List;

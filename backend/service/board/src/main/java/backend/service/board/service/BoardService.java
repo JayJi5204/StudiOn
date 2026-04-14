@@ -3,7 +3,7 @@ package backend.service.board.service;
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.*;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 

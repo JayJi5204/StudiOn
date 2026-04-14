@@ -3,7 +3,7 @@ package backend.service.board.controller;
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.*;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import backend.service.board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -2,7 +2,7 @@ package backend.service.board.dto.response;
 
 import backend.service.board.dto.otherDto.CommentDto;
 import backend.service.board.entity.BoardEntity;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import lombok.Data;
 
 import java.time.LocalDateTime;
