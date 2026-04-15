@@ -18,9 +18,10 @@ public class PageResponse {
     private List<String> tags;
     private Long viewCount;
     private Long  likeCount;
+    private Long commentCount;
     private LocalDateTime createdAt;
 
-    public static PageResponse from(BoardEntity boardEntity, Long viewCount, Long likeCount) {
+    public static PageResponse from(BoardEntity boardEntity, Long viewCount, Long likeCount,Long commentCount) {
         PageResponse pageResponseDto = new PageResponse();
         pageResponseDto.boardId = String.valueOf(boardEntity.getBoardId());
         pageResponseDto.nickName = boardEntity.getNickName();
@@ -30,6 +31,7 @@ public class PageResponse {
         pageResponseDto.tags = boardEntity.getTags();
         pageResponseDto.viewCount = viewCount;
         pageResponseDto.likeCount = likeCount;
+        pageResponseDto.commentCount = commentCount;
         pageResponseDto.createdAt = boardEntity.getCreatedAt();
         return pageResponseDto;
     }

@@ -23,6 +23,7 @@ public class BoardEntity {
     private Long userId;
     private String nickName;
     private String title;
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
     private Long viewCount;
     private Long likeCount;

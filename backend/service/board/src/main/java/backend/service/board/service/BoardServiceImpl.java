@@ -73,7 +73,8 @@ public class BoardServiceImpl implements BoardService {
         return boards.map(board -> {
             Long viewCount = boardCountService.getViewCount(board.getBoardId());
             Long likeCount = boardCountService.getLikeCount(board.getBoardId());
-            return PageResponse.from(board, viewCount, likeCount);
+            Long commentCount = boardCountService.getCommentCount(board.getBoardId());
+            return PageResponse.from(board, viewCount, likeCount,commentCount);
         });
     }
 

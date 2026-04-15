@@ -16,6 +16,7 @@ public class BoardCountService {
     private static final String VIEW_COUNT_KEY = "board:view:";
     private static final String LIKE_COUNT_KEY = "board:like:";
     private static final String LIKE_SET_KEY = "board:like:set:";
+    private static final String COMMENT_COUNT_KEY = "board:comment:count:";
 
     public Long incrementViewCount(Long boardId) {
         return redisTemplate.opsForValue().increment(VIEW_COUNT_KEY + boardId);
@@ -67,5 +68,18 @@ public class BoardCountService {
         Boolean isLiked = stringRedisTemplate.opsForSet()
                 .isMember(LIKE_SET_KEY + boardId, String.valueOf(userId));
         return Boolean.TRUE.equals(isLiked);
+    }
+
+    public Long getCommentCount(Long boardId) {
+        String count = stringRedisTemplate.opsForValue().get(COMMENT_COUNT_KEY + boardId);
+        return count != null ? Long.parseLong(count) : 0L;
+    }
+
+    public void incrementCommentCount(Long boardId) {
+        stringRedisTemplate.opsForValue().increment(COMMENT_COUNT_KEY + boardId);
+    }
+
+    public void decrementCommentCount(Long boardId) {
+        stringRedisTemplate.opsForValue().decrement(COMMENT_COUNT_KEY + boardId);
     }
 }
