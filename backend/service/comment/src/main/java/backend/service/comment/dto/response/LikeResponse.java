@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class LikeResponse {
     private Long likeCount;
-    private boolean isLiked;
+    private Boolean isLiked;
 
-    public static LikeResponse from(Long likeCount, boolean isLiked) {
+    public static LikeResponse from(Long likeCount, Boolean isLiked) {
         LikeResponse response = new LikeResponse();
         response.likeCount = likeCount;
         response.isLiked = isLiked;
