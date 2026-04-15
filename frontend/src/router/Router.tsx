@@ -6,7 +6,7 @@ const Layout = lazy(() => import('../pages/Layout.tsx'))
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
 const CommunityBoardPage = lazy(() => import("../pages/CommunityBoardPage.tsx"));
-const PostDetailsPage = lazy(() => import("../pages/PostDetailPage.tsx"));
+const BoardDetailsPage = lazy(() => import("../pages/BoardDetailPage.tsx"));
 const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'));
 const SignInPage = lazy(() => import("../pages/SignInPage.tsx"));
 const SignUpPage = lazy(() => import("../pages/SignUpPage.tsx"));
@@ -60,7 +60,7 @@ const Router = createBrowserRouter([
         path:":id",
         element: (
           <Suspense fallback={<Loading />}>
-            <PostDetailsPage/> 
+            <BoardDetailsPage/> 
           </Suspense>
         ),
       }
@@ -132,7 +132,7 @@ const Router = createBrowserRouter([
         path:"myBoards/:id",
         element: (
           <Suspense fallback={<Loading />}>
-            <PostDetailsPage/> 
+            <BoardDetailsPage/> 
           </Suspense>
         ),
       }

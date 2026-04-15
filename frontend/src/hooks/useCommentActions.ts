@@ -27,6 +27,20 @@ export const useCommentActions = ({ boardId, setComments }: UseCommentActionsPro
             alert('댓글 수정에 실패했습니다.');
         }
     };
+    
+    const handleLikeComment = async (commentId: string,isLiked:boolean) => {
+        console.log("현재 버튼 상태:",isLiked)
+        try {
+            const response = isLiked
+                ? await commentService.unlikeComment(commentId)
+                : await commentService.likeComment(commentId);
+            setComments(prev =>
+                prev.map(c => c.commentId === commentId ? { ...c, likeCount: response.likeCount,isLiked: response.isLiked } : c)
+            );
+        } catch {
+            alert('댓글 좋아요에 실패했습니다.');
+        }
+    };
 
     const handleCommentSubmit = async (
         content: string,
@@ -49,6 +63,7 @@ export const useCommentActions = ({ boardId, setComments }: UseCommentActionsPro
                 commentPath: response.commentPath,
                 parentPath,
                 likeCount: response.likeCount,
+                isLiked: false,
                 isDeleted: response.isDeleted,
                 createdAt: response.createdAt,
                 modifiedAt: response.createdAt,
@@ -74,5 +89,5 @@ export const useCommentActions = ({ boardId, setComments }: UseCommentActionsPro
         }
     };
 
-    return { handleDeleteComment, handleUpdateComment, handleCommentSubmit };
+    return { handleDeleteComment, handleUpdateComment, handleCommentSubmit, handleLikeComment };
 };

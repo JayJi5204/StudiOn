@@ -130,7 +130,7 @@
 //   },
 // );
 
-// const testDeletePost = http.delete(
+// const testdeleteBoard = http.delete(
 //   `${API_URL_COMMUNITY_BOARD}/post/:id`,
 //   ({ params }) => {
 //     const { id } = params;
@@ -139,7 +139,7 @@
 //   },
 // );
 
-// const testGetPosts = http.get(`${API_URL_COMMUNITY_BOARD}/posts`, ({ request }) => {
+// const testgetBoards = http.get(`${API_URL_COMMUNITY_BOARD}/posts`, ({ request }) => {
 //   // 1. URL 객체를 생성하여 쿼리 스트링을 파싱
 
 //   console.log("실제 호출된 URL:", request.url);
@@ -315,9 +315,9 @@ export const handlers = [
 //   testLogOut,
 //   testProfile,
 //   testGetPostDetail,
-//   testGetPosts,
+//   testgetBoards,
 //   testCreatePost,
-//   testDeletePost,
+//   testdeleteBoard,
 //   testUpdatePost,
 //   testCreateComment,
 //   testUpdateComment,

@@ -12,11 +12,11 @@ interface CommentSectionProps {
 const CommentSection = ({ board }: CommentSectionProps) => {
     const userInfo = useUserInfoStore((state) => state.userInfo);
     const { comments, setComments, isLoading, observerRef } = useCommentList(board.boardId);
-    const { handleDeleteComment, handleUpdateComment, handleCommentSubmit } = useCommentActions({
+    const { handleDeleteComment, handleUpdateComment, handleCommentSubmit, handleLikeComment } = useCommentActions({
         boardId: board.boardId,
         setComments,
     });
-
+    
     return (
         <div className="bg-white rounded-xl shadow-md p-6 md:p-8 mt-6">
             <h2 className="text-xl font-bold text-gray-900 mb-6">
@@ -26,7 +26,7 @@ const CommentSection = ({ board }: CommentSectionProps) => {
             <CommentInput
                 onSubmit={(content) => handleCommentSubmit(content, null)}
             />
-
+            
             <div className="space-y-2">
                 {comments.map((comment) => (
                     <CommentItem
@@ -35,6 +35,7 @@ const CommentSection = ({ board }: CommentSectionProps) => {
                         userRole={userInfo.role}
                         comment={comment}
                         depth={getDepth(comment.commentPath)}
+                        handleLikeComent={() => {handleLikeComment(comment.commentId,comment.isLiked)}}
                         handleUpdateComment={handleUpdateComment}
                         handleDeleteComment={() => handleDeleteComment(comment.commentId)}
                         handleReplySubmit={(content) =>

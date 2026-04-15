@@ -3,7 +3,7 @@ import { Link} from 'react-router';
 import { 
     Search, 
     Plus, 
-    // MessageCircle, 
+    MessageCircle, 
     ThumbsUp, 
     TrendingUp,
     Filter, 
@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import useUserInfoStore from '../store/userInfoStore';
 import { useBoards } from '../hooks/useBoards';
-import PostSection from '../components/communityboard/PostSection';
+import BoardSection from '../components/communityboard/BoardSection';
 
 const CommunityBoard= () => {
     const isLoggedIn = useUserInfoStore((state) => state.userInfo.isLoggedIn);
@@ -167,10 +167,10 @@ const CommunityBoard= () => {
 
                     {/* Posts List */}
                     <div className="space-y-4">
-                        <PostSection
+                        <BoardSection
                             boards={sortedBoards}
                             setBoards={setBoards}
-                        ></PostSection>
+                        ></BoardSection>
                     </div>
 
                     {/* Pagination UI */}
@@ -226,17 +226,18 @@ const CommunityBoard= () => {
                                     </span>
                                     <div className="flex-1 min-w-0">
                                         <h4 className="text-sm font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer line-clamp-2">
-                                        {board.title}
+                                            {board.title}
                                         </h4>
                                         <div className="flex items-center space-x-2 mt-2 text-xs text-gray-500">
+                                        
                                         <span className="flex items-center">
                                             <ThumbsUp size={12} className="mr-1" />
                                             {board.likeCount}
                                         </span>
-                                        {/* <span className="flex items-center">
+                                        <span className="flex items-center">
                                             <MessageCircle size={12} className="mr-1" />
-                                            {post.comments.length}
-                                        </span> */}
+                                            {board.commentCount}
+                                        </span>
                                         </div>
                                     </div>
                                     </div>
