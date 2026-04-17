@@ -1,4 +1,4 @@
-package backend.common.dto.board;
+package backend.common.kafkaDto.board;
 
 import java.time.LocalDateTime;
 

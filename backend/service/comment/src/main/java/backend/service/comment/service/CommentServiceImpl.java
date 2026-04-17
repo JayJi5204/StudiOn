@@ -1,10 +1,13 @@
 package backend.service.comment.service;
 
+import backend.common.kafkaDto.comment.CommentCreatedEvent;
+import backend.common.kafkaDto.comment.CommentDeletedEvent;
 import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.*;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
+import backend.service.comment.kafka.KafkaProducer;
 import backend.service.comment.repository.CommentRepository;
 import backend.service.comment.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final Snowflake snowflake = new Snowflake();
     private final CommentCountService commentCountService;
+    private final KafkaProducer kafkaProducer;
 
     @Transactional
     public CreateResponse create(CreateRequest dto, HttpServletRequest request) {
@@ -43,6 +47,9 @@ public class CommentServiceImpl implements CommentService {
                                 commentRepository.findDescendantsTopPath(
                                         Long.parseLong(dto.getBoardId()), parentCommentPath.getPath()).orElse(null)),
                         Long.parseLong(dto.getBoardId()), userId,nickName));
+
+        kafkaProducer.send("comment.created", new CommentCreatedEvent(Long.parseLong(dto.getBoardId())));
+
 
         return CreateResponse.from(comment, 0L);
     }
@@ -71,6 +78,8 @@ public class CommentServiceImpl implements CommentService {
             } else {
                 delete(commentEntity);
             }
+
+            kafkaProducer.send("comment.deleted", new CommentDeletedEvent(commentEntity.getBoardId()));
         });
         return DeletedResponse.from();
     }

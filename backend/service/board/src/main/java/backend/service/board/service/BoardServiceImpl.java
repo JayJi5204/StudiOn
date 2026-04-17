@@ -1,7 +1,7 @@
 package backend.service.board.service;
 
 import backend.common.id.Snowflake;
-import backend.common.dto.board.BoardDeleteEvent;
+import backend.common.kafkaDto.board.BoardDeleteEvent;
 import backend.service.board.dto.otherDto.CommentDto;
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
