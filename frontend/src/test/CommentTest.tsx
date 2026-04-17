@@ -105,6 +105,33 @@ function CommentTest() {
     }
   };
 
+  const handleReadFresh = async () => {
+    if (!readBoardId) return alert("boardId를 입력하세요");
+    setLoading(true);
+    setLastPath("");
+    setComments([]);
+    try {
+      const res = await axios.get<GetResponse[]>(
+        "/api/comments/infinite-scroll",
+        {
+          params: {
+            boardId: readBoardId,
+            pageSize,
+          },
+          withCredentials: true,
+        },
+      );
+      setComments(res.data);
+      if (res.data.length > 0)
+        setLastPath(res.data[res.data.length - 1].commentPath);
+      addLog(`댓글 조회 성공 → ${res.data.length}개`);
+    } catch (e: any) {
+      addLog(`댓글 조회 실패 → ${e.response?.data?.message ?? e.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleReadByUser = async () => {
     if (!readUserId) return alert("userId를 입력하세요");
     setLoading(true);
@@ -281,11 +308,7 @@ function CommentTest() {
               className="border border-gray-300 rounded px-3 py-2 text-sm w-24"
             />
             <button
-              onClick={() => {
-                setLastPath("");
-                setComments([]);
-                handleRead();
-              }}
+              onClick={handleReadFresh}
               disabled={loading}
               className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
             >
