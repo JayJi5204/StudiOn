@@ -1,5 +1,7 @@
 package backend.service.chat.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.common.id.Snowflake;
 import backend.common.kafkaEvent.KafkaProducer;
 import backend.common.kafkaEvent.alarm.AlarmEvent;
@@ -31,24 +33,36 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional
     public void sendMessage(String roomId, String message, Long userId, String nickName) {
+
+        if (message == null || message.isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_MESSAGE);
+        }
+        if (message.length() > 300) {
+            throw new CustomException(ErrorCode.MESSAGE_TOO_LONG);
+        }
+
         ChatEntity entity = ChatEntity.create(snowflake.nextId(), roomId, userId, nickName, message);
         CreateResponse response = CreateResponse.from(entity);
 
         redisTemplate.convertAndSend(CHAT_TOPIC + roomId, response);
         kafkaProducer.send("chat.message", entity);
 
-        // 상대방에게 채팅 알림
         try {
             String[] ids = roomId.split(":");
+            if (ids.length != 2) throw new CustomException(ErrorCode.INVALID_ROOM_ID);
+
             Long user1 = Long.parseLong(ids[0]);
             Long user2 = Long.parseLong(ids[1]);
             Long receiverId = userId.equals(user1) ? user2 : user1;
+
             kafkaProducer.send("alarm", new AlarmEvent(
                     receiverId,
                     "CHAT",
                     nickName + "님이 메시지를 보냈습니다",
                     null
             ));
+        } catch (CustomException e) {
+            throw e;
         } catch (Exception e) {
             log.error("채팅 알림 발행 실패", e);
         }

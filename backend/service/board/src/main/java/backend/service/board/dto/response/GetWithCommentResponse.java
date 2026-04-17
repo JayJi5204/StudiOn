@@ -1,6 +1,6 @@
 package backend.service.board.dto.response;
 
-import backend.service.board.dto.otherDto.CommentDto;
+import backend.service.board.dto.other.CommentDto;
 import backend.service.board.entity.BoardEntity;
 import backend.common.enumType.Category;
 import lombok.Data;

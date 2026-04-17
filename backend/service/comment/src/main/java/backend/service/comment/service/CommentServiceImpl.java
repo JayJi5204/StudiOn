@@ -1,6 +1,6 @@
 package backend.service.comment.service;
 
-import backend.common.dto.board.GetBoardResponse;
+import backend.service.comment.dto.other.GetBoardResponse;
 import backend.common.kafkaEvent.KafkaProducer;
 import backend.common.kafkaEvent.alarm.AlarmEvent;
 import backend.common.kafkaEvent.comment.CommentDeletedEvent;

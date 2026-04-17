@@ -1,7 +1,7 @@
 package backend.service.user.dto.response;
 
-import backend.service.user.dto.otherDto.BoardDto;
-import backend.service.user.dto.otherDto.CommentDto;
+import backend.service.user.dto.other.BoardDto;
+import backend.service.user.dto.other.CommentDto;
 import backend.service.user.entity.UserEntity;
 import backend.common.enumType.UserRole;
 import lombok.Getter;

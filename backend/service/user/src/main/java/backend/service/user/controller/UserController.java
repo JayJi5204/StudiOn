@@ -1,6 +1,7 @@
 package backend.service.user.controller;
 
 import backend.service.user.dto.request.CreateRequest;
+import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +31,7 @@ public class UserController {
     @Operation(summary = "회원 가입", description = "사용자의 정보를 받아 회원가입을 합니다.")
     @SecurityRequirements
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequest dto) {
+    public CreateResponse create(@RequestBody @Valid CreateRequest dto) {
         return userService.create(dto);
     }
 
@@ -40,7 +42,7 @@ public class UserController {
                     """)
     @SecurityRequirements
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest dto, HttpServletResponse response) {
+    public LoginResponse login(@RequestBody @Valid LoginRequest dto, HttpServletResponse response) {
         return userService.login(dto, response);
     }
 
@@ -66,14 +68,14 @@ public class UserController {
 
     @Operation(summary = "회원 정보 수정", description = "기존 사용자의 정보를 업데이트합니다.")
     @PutMapping("/update")
-    public UpdateResponse update(@RequestBody UpdateRequest dto,HttpServletRequest request) {
+    public UpdateResponse update(@RequestBody @Valid UpdateRequest dto,HttpServletRequest request) {
         return userService.update(dto,request);
     }
 
     @Operation(summary = "회원 탈퇴", description = "사용자 계정을 삭제합니다.")
     @DeleteMapping("/delete")
-    public DeletedResponse delete(HttpServletRequest request) {
-        return userService.delete(request);
+    public DeletedResponse delete(@RequestBody @Valid DeleteRequest dto, HttpServletRequest request) {
+        return userService.delete(dto,request);
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 합니다.")

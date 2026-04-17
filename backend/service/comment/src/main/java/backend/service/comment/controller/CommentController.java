@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,7 @@ public class CommentController {
                     """
     )
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequest createRequest, HttpServletRequest request) {
+    public CreateResponse create(@RequestBody @Valid CreateRequest createRequest, HttpServletRequest request) {
         return commentService.create(createRequest, request);
     }
 
@@ -103,7 +104,7 @@ public class CommentController {
     public UpdateResponse update(
             @Parameter(description = "수정할 댓글 ID", example = "279305241031393280")
             @PathVariable Long commentId,
-            @RequestBody UpdateRequest dto,
+            @RequestBody @Valid UpdateRequest dto,
             HttpServletRequest request) {
         return commentService.update(commentId, dto, request);
     }
