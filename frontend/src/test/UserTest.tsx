@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import useUserInfoStore from "../store/userInfoStore";
 
 interface LoginResponse {
   userId: string;
@@ -52,7 +53,12 @@ function UserTest() {
   const [loading, setLoading] = useState(false);
 
   // 로그인 상태
-  const [loginInfo, setLoginInfo] = useState<LoginResponse | null>(null);
+  const { userInfo, setUserInfo } = useUserInfoStore();
+
+  // 초기값으로 zustand 값 사용
+  const [loginInfo, setLoginInfo] = useState<LoginResponse | null>(
+    userInfo.isLoggedIn ? (userInfo as any) : null,
+  );
 
   // 회원가입
   const [regEmail, setRegEmail] = useState("");
@@ -107,8 +113,6 @@ function UserTest() {
   };
 
   const handleLogin = async () => {
-    if (!email || !password) return alert("이메일과 비밀번호를 입력하세요");
-    setLoading(true);
     try {
       const res = await axios.post<LoginResponse>(
         "/api/users/login",
@@ -116,11 +120,16 @@ function UserTest() {
         { withCredentials: true },
       );
       setLoginInfo(res.data);
+
+      // zustand에 저장 → localStorage에 persist
+      setUserInfo({
+        ...res.data,
+        isLoggedIn: true,
+      } as any);
+
       addLog(`로그인 성공 → ${JSON.stringify(res.data)}`);
     } catch (e: any) {
       addLog(`로그인 실패 → ${e.response?.data?.message ?? e.message}`);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -260,7 +269,7 @@ function UserTest() {
           <button
             onClick={handleLogout}
             disabled={loading}
-            className="ml-auto px-3 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600 disabled:opacity-50"
+            className="ml-auto px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 disabled:opacity-50"
           >
             로그아웃
           </button>

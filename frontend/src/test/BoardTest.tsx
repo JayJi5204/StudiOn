@@ -7,6 +7,16 @@ interface CreateResponse {
   content: string;
 }
 
+interface CommentDto {
+  commentId: string;
+  content: string;
+  nickName: string;
+  userId: string;
+  commentPath: string;
+  isDeleted: boolean;
+  createdAt: string;
+}
+
 interface GetWithCommentResponse {
   boardId: string;
   title: string;
@@ -14,7 +24,7 @@ interface GetWithCommentResponse {
   category: string;
   likeCount: number;
   isLiked: boolean;
-  comments: any[];
+  comment: CommentDto[];
 }
 
 interface PageResponse {
@@ -51,36 +61,29 @@ function BoardTest() {
   const [log, setLog] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // create
   const [createTitle, setCreateTitle] = useState("");
   const [createContent, setCreateContent] = useState("");
   const [createCategory, setCreateCategory] = useState("COMMUNITY");
 
-  // getOne
   const [getBoardId, setGetBoardId] = useState("");
   const [boardDetail, setBoardDetail] = useState<GetWithCommentResponse | null>(
     null,
   );
 
-  // getPage
   const [pageCategory, setPageCategory] = useState("");
   const [page, setPage] = useState("1");
   const [size, setSize] = useState("10");
   const [pageResult, setPageResult] = useState<PageResponse[]>([]);
 
-  // getByUser
   const [byUserUserId, setByUserUserId] = useState("");
   const [userBoards, setUserBoards] = useState<GetBoardResponse[]>([]);
 
-  // update
   const [updateBoardId, setUpdateBoardId] = useState("");
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
 
-  // delete
   const [deleteBoardId, setDeleteBoardId] = useState("");
 
-  // like
   const [likeBoardId, setLikeBoardId] = useState("");
   const [likeStatus, setLikeStatus] = useState<LikeResponse | null>(null);
 
@@ -133,7 +136,7 @@ function BoardTest() {
   const handleGetPage = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/boards/", {
+      const res = await axios.get("/api/boards/list", {
         params: {
           category: pageCategory || undefined,
           page: Number(page),
@@ -258,25 +261,22 @@ function BoardTest() {
 
   return (
     <div className="space-y-5">
-      {/* 탭 */}
       <div className="flex gap-2 flex-wrap">
         {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors
-              ${
-                tab === t.key
-                  ? "bg-blue-600 text-white"
-                  : "border border-gray-300 hover:bg-gray-50"
-              }`}
+            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+              tab === t.key
+                ? "bg-blue-600 text-white"
+                : "border border-gray-300 hover:bg-gray-50"
+            }`}
           >
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* 작성 */}
       {tab === "create" && (
         <div className="space-y-3">
           <select
@@ -314,7 +314,6 @@ function BoardTest() {
         </div>
       )}
 
-      {/* 상세 조회 */}
       {tab === "getOne" && (
         <div className="space-y-3">
           <div className="flex gap-2">
@@ -337,20 +336,31 @@ function BoardTest() {
             <div className="border border-gray-200 rounded p-3 text-sm space-y-2">
               <p className="font-medium text-base">{boardDetail.title}</p>
               <p className="text-gray-500 text-xs">
-                {boardDetail.category} · ❤️ {boardDetail.likeCount}
+                {boardDetail.category} · ❤️ {boardDetail.likeCount} ·{" "}
+                {boardDetail.isLiked ? "좋아요 누름" : "좋아요 안 누름"}
               </p>
               <p className="text-gray-700">{boardDetail.content}</p>
-              {boardDetail.comments?.length > 0 && (
-                <p className="text-xs text-gray-400">
-                  댓글 {boardDetail.comments.length}개
-                </p>
+              {boardDetail.comment?.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs text-gray-400">
+                    댓글 {boardDetail.comment.length}개
+                  </p>
+                  {boardDetail.comment.map((c) => (
+                    <div
+                      key={c.commentId}
+                      className="text-xs bg-gray-50 rounded p-2"
+                    >
+                      <span className="font-medium">{c.nickName}: </span>
+                      {c.isDeleted ? "삭제된 댓글입니다" : c.content}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
         </div>
       )}
 
-      {/* 목록 조회 */}
       {tab === "getPage" && (
         <div className="space-y-3">
           <div className="flex gap-2 flex-wrap">
@@ -368,10 +378,10 @@ function BoardTest() {
             </select>
             <input
               type="number"
-              placeholder="페이지"
+              placeholder="페이지(0부터)"
               value={page}
               onChange={(e) => setPage(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2 text-sm w-20"
+              className="border border-gray-300 rounded px-3 py-2 text-sm w-24"
             />
             <input
               type="number"
@@ -407,7 +417,6 @@ function BoardTest() {
         </div>
       )}
 
-      {/* 사용자별 조회 */}
       {tab === "getByUser" && (
         <div className="space-y-3">
           <div className="flex gap-2">
@@ -444,7 +453,6 @@ function BoardTest() {
         </div>
       )}
 
-      {/* 수정 */}
       {tab === "update" && (
         <div className="space-y-3">
           <input
@@ -456,13 +464,13 @@ function BoardTest() {
           />
           <input
             type="text"
-            placeholder="새 제목 (변경 안 하면 비워두세요)"
+            placeholder="새 제목"
             value={updateTitle}
             onChange={(e) => setUpdateTitle(e.target.value)}
             className="border border-gray-300 rounded px-3 py-2 text-sm w-full"
           />
           <textarea
-            placeholder="새 내용 (변경 안 하면 비워두세요)"
+            placeholder="새 내용"
             value={updateContent}
             onChange={(e) => setUpdateContent(e.target.value)}
             rows={4}
@@ -478,7 +486,6 @@ function BoardTest() {
         </div>
       )}
 
-      {/* 삭제 */}
       {tab === "delete" && (
         <div className="space-y-3">
           <input
@@ -498,7 +505,6 @@ function BoardTest() {
         </div>
       )}
 
-      {/* 좋아요 */}
       {tab === "like" && (
         <div className="space-y-3">
           <input
@@ -524,20 +530,19 @@ function BoardTest() {
               disabled={loading}
               className="px-4 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600 disabled:opacity-50"
             >
-              좋아요 (POST)
+              좋아요
             </button>
             <button
               onClick={handleUnlike}
               disabled={loading}
               className="px-4 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 disabled:opacity-50"
             >
-              취소 (DELETE)
+              취소
             </button>
           </div>
         </div>
       )}
 
-      {/* 로그 */}
       <div className="bg-gray-50 border border-gray-200 rounded p-3 space-y-1 max-h-40 overflow-y-auto">
         {log.length === 0 ? (
           <p className="text-gray-400 text-xs">요청 로그가 여기 표시됩니다</p>
