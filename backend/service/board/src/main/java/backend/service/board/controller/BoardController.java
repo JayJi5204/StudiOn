@@ -41,7 +41,7 @@ public class BoardController {
             summary = "게시글 페이징 조회",
             description = "페이징 처리된 게시글 목록을 조회합니다. 카테고리를 지정하면 해당 카테고리 게시글만 조회됩니다."
     )
-    @GetMapping
+    @GetMapping("/list")
     public Page<PageResponse> getPage(
             @Parameter(description = "게시글 카테고리 (미입력 시 전체 조회)", example = "COMMUNITY")
             @RequestParam(required = false)

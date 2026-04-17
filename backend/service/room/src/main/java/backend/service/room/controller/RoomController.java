@@ -77,4 +77,13 @@ public class RoomController {
             HttpServletRequest httpRequest) {
         return roomService.enterByInviteCode(inviteCode,httpRequest);
     }
+
+    @Operation(summary = "방 초대", description = "특정 유저를 방에 초대합니다.")
+    @PostMapping("/{roomId}/invite/{targetUserId}")
+    public void invite(
+            @Parameter(description = "방 ID") @PathVariable Long roomId,
+            @Parameter(description = "초대할 유저 ID") @PathVariable Long targetUserId,
+            HttpServletRequest request) {
+        roomService.invite(roomId, targetUserId, request);
+    }
 }

@@ -1,19 +1,22 @@
 package backend.service.comment.service;
 
-import backend.common.kafkaDto.comment.CommentCreatedEvent;
-import backend.common.kafkaDto.comment.CommentDeletedEvent;
+import backend.common.dto.board.GetBoardResponse;
+import backend.common.kafkaEvent.KafkaProducer;
+import backend.common.kafkaEvent.alarm.AlarmEvent;
+import backend.common.kafkaEvent.comment.CommentDeletedEvent;
 import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.*;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
-import backend.service.comment.kafka.KafkaProducer;
+import backend.service.comment.feign.BoardClient;
 import backend.service.comment.repository.CommentRepository;
 import backend.service.comment.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import backend.common.id.Snowflake;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +24,7 @@ import java.util.List;
 
 import static java.util.function.Predicate.not;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -30,14 +33,15 @@ public class CommentServiceImpl implements CommentService {
     private final Snowflake snowflake = new Snowflake();
     private final CommentCountService commentCountService;
     private final KafkaProducer kafkaProducer;
+    private final BoardClient boardClient;
 
     @Transactional
     public CreateResponse create(CreateRequest dto, HttpServletRequest request) {
         CommentEntity parent = findParent(dto);
         CommentPath parentCommentPath = parent == null ? CommentPath.create("") : parent.getCommentPath();
 
-        Long userId=SecurityUtil.getCurrentUserId(request);
-        String nickName=SecurityUtil.getNickname(request);
+        Long userId = SecurityUtil.getCurrentUserId(request);
+        String nickName = SecurityUtil.getNickname(request);
 
         CommentEntity comment = commentRepository.save(
                 CommentEntity.create(
@@ -46,10 +50,25 @@ public class CommentServiceImpl implements CommentService {
                         parentCommentPath.createChildCommentPath(
                                 commentRepository.findDescendantsTopPath(
                                         Long.parseLong(dto.getBoardId()), parentCommentPath.getPath()).orElse(null)),
-                        Long.parseLong(dto.getBoardId()), userId,nickName));
+                        Long.parseLong(dto.getBoardId()), userId, nickName));
 
-        kafkaProducer.send("comment.created", new CommentCreatedEvent(Long.parseLong(dto.getBoardId())));
+        // 게시글 작성자에게 댓글 알림
+        try {
+            GetBoardResponse board = boardClient.getBoard(Long.parseLong(dto.getBoardId()));
+            Long boardOwnerId = Long.parseLong(board.getUserId());
 
+            // 본인 댓글이면 알림 안 보냄
+            if (!boardOwnerId.equals(userId)) {
+                kafkaProducer.send("alarm", new AlarmEvent(
+                        boardOwnerId,
+                        "COMMENT",
+                        nickName + "님이 댓글을 달았습니다",
+                        Long.parseLong(dto.getBoardId())
+                ));
+            }
+        } catch (Exception e) {
+            log.error("댓글 알림 발행 실패", e);
+        }
 
         return CreateResponse.from(comment, 0L);
     }

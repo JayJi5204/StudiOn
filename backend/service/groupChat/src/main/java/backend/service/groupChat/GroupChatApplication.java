@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"backend.service.groupChat", "backend.common"})
 @EnableDiscoveryClient
 @EnableFeignClients
 public class GroupChatApplication {

@@ -7,7 +7,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"backend.service.chat", "backend.common"})
 @EnableDiscoveryClient
 public class ChatApplication {
     public static void main(String[] args) {
