@@ -1,9 +1,10 @@
 package backend.service.chat.service;
 
 import backend.common.id.Snowflake;
+import backend.common.kafkaEvent.KafkaProducer;
+import backend.common.kafkaEvent.alarm.AlarmEvent;
 import backend.service.chat.dto.response.CreateResponse;
 import backend.service.chat.entity.ChatEntity;
-import backend.service.chat.kafka.KafkaProducer;
 import backend.service.chat.repository.ChatRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +32,26 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     public void sendMessage(String roomId, String message, Long userId, String nickName) {
         ChatEntity entity = ChatEntity.create(snowflake.nextId(), roomId, userId, nickName, message);
-
         CreateResponse response = CreateResponse.from(entity);
 
-        // Entity 대신 DTO를 Redis에 발행
         redisTemplate.convertAndSend(CHAT_TOPIC + roomId, response);
-
-        // Kafka로 발행
         kafkaProducer.send("chat.message", entity);
 
+        // 상대방에게 채팅 알림
+        try {
+            String[] ids = roomId.split(":");
+            Long user1 = Long.parseLong(ids[0]);
+            Long user2 = Long.parseLong(ids[1]);
+            Long receiverId = userId.equals(user1) ? user2 : user1;
+            kafkaProducer.send("alarm", new AlarmEvent(
+                    receiverId,
+                    "CHAT",
+                    nickName + "님이 메시지를 보냈습니다",
+                    null
+            ));
+        } catch (Exception e) {
+            log.error("채팅 알림 발행 실패", e);
+        }
     }
 
     @Override

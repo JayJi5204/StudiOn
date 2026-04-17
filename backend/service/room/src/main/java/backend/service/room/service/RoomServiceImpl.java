@@ -1,6 +1,8 @@
 package backend.service.room.service;
 
 import backend.common.id.Snowflake;
+import backend.common.kafkaEvent.KafkaProducer;
+import backend.common.kafkaEvent.alarm.AlarmEvent;
 import backend.service.room.dto.request.CreateRequest;
 import backend.service.room.dto.response.CreateResponse;
 import backend.service.room.dto.response.EnterResponse;
@@ -25,6 +27,7 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final Snowflake snowflake = new Snowflake();
     private final StringRedisTemplate stringRedisTemplate;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     @Transactional
@@ -129,5 +132,25 @@ public class RoomServiceImpl implements RoomService {
         stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(room.getRoomId()));
 
         return EnterResponse.from(room);
+    }
+    @Override
+    public void invite(Long roomId, Long targetUserId, HttpServletRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId(request);
+
+        RoomEntity room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("방이 존재하지 않습니다."));
+
+        // 방장만 초대 가능
+        if (!room.getHostId().equals(userId)) {
+            throw new RuntimeException("초대 권한이 없습니다.");
+        }
+
+        // 알림 발행
+        kafkaProducer.send("alarm", new AlarmEvent(
+                targetUserId,
+                "ROOM_INVITE",
+                room.getRoomName() + " 방에 초대되었습니다. 초대코드: " + room.getInviteCode(),
+                roomId
+        ));
     }
 }

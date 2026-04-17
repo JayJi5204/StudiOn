@@ -1,10 +1,19 @@
 import { useState } from "react";
 import DirectChatTest from "../test/DirectChatTest";
 import GroupChatTest from "../test/GroupChatTest";
-
+import BoardTest from "../test/BoardTest";
+import CommentTest from "../test/CommentTest";
+import UserTest from "../test/UserTest";
 const tests = [
-  { key: "1", label: "1대1 채팅", component: <DirectChatTest /> },
-  { key: "2", label: "그룹 채팅", component: <GroupChatTest /> },
+  { key: "유저 테스트", label: "회원 관리", component: <UserTest /> },
+  { key: "게시판 테스트", label: "게시판", component: <BoardTest /> },
+  { key: "댓글 테스트", label: "댓글", component: <CommentTest /> },
+  {
+    key: "1대1 채팅 테스트",
+    label: "1대1 채팅",
+    component: <DirectChatTest />,
+  },
+  { key: "그룹 채팅 테스트", label: "그룹 채팅", component: <GroupChatTest /> },
 ];
 
 function TestPage() {

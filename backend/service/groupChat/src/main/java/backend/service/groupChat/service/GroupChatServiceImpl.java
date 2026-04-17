@@ -1,10 +1,10 @@
 package backend.service.groupChat.service;
 
 import backend.common.id.Snowflake;
+import backend.common.kafkaEvent.KafkaProducer;
 import backend.service.groupChat.dto.response.CreateResponse;
 import backend.service.groupChat.entity.GroupChatEntity;
 import backend.service.groupChat.feign.RoomClient;
-import backend.service.groupChat.kafka.KafkaProducer;
 import backend.service.groupChat.repository.GroupChatRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GroupChatServiceImpl implements GroupChatService {
 
-    private final GroupChatRepository groupChatRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final KafkaProducer kafkaProducer;
     private final RoomClient roomClient;

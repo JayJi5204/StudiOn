@@ -181,6 +181,28 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
 
+            # 7. ALARM-SERVICE
+            - id: alarm-service-public
+              uri: lb://ALARM-SERVICE
+              predicates:
+                - Path=/alarm-service/health-check,
+                  /alarm-service/v3/api-docs/**,
+                  /alarm-service/swagger-ui/**,
+                  /alarm-service/swagger-ui.html,
+                  /alarm-service/api/alarms/subscribe/**
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/alarm-service/(?<segment>.*),/$\{segment}
+
+            - id: alarm-service-secure
+              uri: lb://ALARM-SERVICE
+              predicates:
+                - Path=/alarm-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/alarm-service/(?<segment>.*),/$\{segment}
+
 management:
   endpoints:
     web:
@@ -206,3 +228,5 @@ springdoc:
         url: /room-service/v3/api-docs
       - name: groupChat-service
         url: /groupChat-service/v3/api-docs
+      - name: alarm-service
+        url: /alarm-service/v3/api-docs
