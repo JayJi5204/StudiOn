@@ -1,7 +1,7 @@
 package backend.service.board.repository;
 
 import backend.service.board.entity.BoardEntity;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

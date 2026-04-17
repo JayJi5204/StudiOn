@@ -1,9 +1,8 @@
 package backend.service.board.entity;
 
 import backend.service.board.converter.StringListConverter;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,6 +23,7 @@ public class BoardEntity {
     private Long userId;
     private String nickName;
     private String title;
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
     private Long viewCount;
     private Long likeCount;

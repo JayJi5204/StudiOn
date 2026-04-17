@@ -1,44 +1,81 @@
 import axios from "axios";
-import type { IComment } from "../types/boards.type";
+import type { IBoardComment } from "../types/Response/board.type";
+import type { ICommentRequest } from "../types/Request/comment.type";
+import type { ICommentResponse, IUpdateCommentResponse, ICommentLikeResponse } from "../types/Response/comment.type";
 
-const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD
+// const API_URL = import.meta.env.VITE_REACT_APP_URL_BOARD
 
 export const commentService = {
     createComment: async (
-        postId: string | number,
-        commentData:IComment
-    ):Promise<IComment>  => {
-        const response = await axios.post<IComment>(`${API_URL}/posts/${postId}/comments`,
+        commentData:ICommentRequest
+    ):Promise<ICommentResponse>  => {
+        const response = await axios.post(`http://localhost:8000/comment-service/api/comments/create`,
+            commentData,
             {
-                postId,
-                ...commentData,
+                withCredentials:true
             }
         );
         return response.data;
     },
     
-    getComments: async (postId: string | number) => {
-        const response = await axios.get(`/post/${postId}/comments`);
-        return response.data;
+    getComments: async ({
+        boardId,
+        lastPath,
+        pageSize,
+    }: {
+        boardId: string;
+        lastPath?: string;
+        pageSize: number;
+    }): Promise<IBoardComment[]> => {
+        const response = await axios.get<IBoardComment[]>(
+            `http://localhost:8000/comment-service/api/comments/infinite-scroll`,
+            {
+                params: { boardId, lastPath, pageSize },
+                withCredentials: true,
+            }
+        );
+        return response.data
     },
 
     updateComment: async (
-        postId:string | number,
-        commentData:IComment,
-    ):Promise<IComment> => {
-        const response = await axios.put(`${API_URL}/posts/${postId}/comments`,
+        commentId:string,
+        content: string,
+    ):Promise<IUpdateCommentResponse> => {
+        const response = await axios.put<IUpdateCommentResponse>(`http://localhost:8000/comment-service/api/comments/update/${commentId}`,
+            { content },
             {
-                ...commentData,
+                withCredentials:true
             }
         );
         return response.data;
     },
     
     deleteComment: async (
-        postId: string | number,
-        commentId: string | number
-    ):Promise<IComment> => {
-        const response = await axios.delete(`${API_URL}/posts/${postId}/comments/${commentId}`);
+        commentId: string
+    ):Promise<IBoardComment> => {
+        const response = await axios.delete<IBoardComment>(`http://localhost:8000/comment-service/api/comments/delete/${commentId}`,{
+            withCredentials:true
+        });
         return response.data;
+    },
+    
+    likeComment: async (
+      commentId: string
+    ): Promise<ICommentLikeResponse> => {
+      const response = await axios.post<ICommentLikeResponse>(`http://localhost:8000/comment-service/api/comments/like/${commentId}`,{
+        commentId
+        },{
+        withCredentials:true
+      });
+      return response.data;
+    },
+
+    unlikeComment: async (
+      commentId: string
+    ): Promise<ICommentLikeResponse> => {
+      const response = await axios.delete<ICommentLikeResponse>(`http://localhost:8000/comment-service/api/comments/like/${commentId}`,{
+        withCredentials:true
+      });
+      return response.data;
     }
 }

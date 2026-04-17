@@ -1,7 +1,7 @@
 package backend.service.board.dto.response;
 
 import backend.service.board.entity.BoardEntity;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,6 +12,7 @@ public class GetBoardResponse {
 
     private String boardId;
     private String nickName;
+    private String userId;
     private String title;
     private String content;
     private Category category;
@@ -25,6 +26,7 @@ public class GetBoardResponse {
         GetBoardResponse dto = new GetBoardResponse();
         dto.boardId = String.valueOf(entity.getBoardId());
         dto.nickName = entity.getNickName();
+        dto.userId=String.valueOf(entity.getUserId());
         dto.title = entity.getTitle();
         dto.content = entity.getContent();
         dto.category = entity.getCategory();

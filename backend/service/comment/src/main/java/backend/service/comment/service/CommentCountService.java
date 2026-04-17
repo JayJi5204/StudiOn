@@ -1,10 +1,12 @@
 package backend.service.comment.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
+import backend.service.comment.dto.response.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
 @Service
 @RequiredArgsConstructor
 public class CommentCountService {
@@ -20,31 +22,39 @@ public class CommentCountService {
         return count != null ? count : 0L;
     }
 
-    public Long like(Long commentId, Long userId) {
+    public LikeResponse like(Long commentId, Long userId) {
         String setKey = LIKE_SET_KEY + commentId;
 
         Boolean isAlreadyLiked = stringRedisTemplate.opsForSet()
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.TRUE.equals(isAlreadyLiked)) {
-            throw new RuntimeException("이미 좋아요한 댓글입니다.");
+            throw new CustomException(ErrorCode.ALREADY_LIKED_COMMENT);
         }
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + commentId);
+        Long likeCount = redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + commentId);
+        return LikeResponse.from(likeCount, true);
     }
 
-    public Long unlike(Long commentId, Long userId) {
+    public LikeResponse unlike(Long commentId, Long userId) {
         String setKey = LIKE_SET_KEY + commentId;
 
         Boolean isLiked = stringRedisTemplate.opsForSet()
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.FALSE.equals(isLiked)) {
-            throw new RuntimeException("좋아요하지 않은 댓글입니다.");
+            throw new CustomException(ErrorCode.NOT_LIKED_COMMENT);
         }
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + commentId);
+        Long likeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + commentId);
+        return LikeResponse.from(likeCount, false);
+    }
+
+    public boolean isLiked(Long commentId, Long userId) {
+        Boolean isLiked = stringRedisTemplate.opsForSet()
+                .isMember(LIKE_SET_KEY + commentId, String.valueOf(userId));
+        return Boolean.TRUE.equals(isLiked);
     }
 }

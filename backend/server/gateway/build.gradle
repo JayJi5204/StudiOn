@@ -19,6 +19,4 @@ dependencies {
     // Devtools
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    // 공통 모듈
-    implementation project(':common')
 }

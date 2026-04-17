@@ -1,6 +1,10 @@
 package backend.service.room.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.common.id.Snowflake;
+import backend.common.kafkaEvent.KafkaProducer;
+import backend.common.kafkaEvent.alarm.AlarmEvent;
 import backend.service.room.dto.request.CreateRequest;
 import backend.service.room.dto.response.CreateResponse;
 import backend.service.room.dto.response.EnterResponse;
@@ -25,6 +29,7 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final Snowflake snowflake = new Snowflake();
     private final StringRedisTemplate stringRedisTemplate;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     @Transactional
@@ -44,7 +49,6 @@ public class RoomServiceImpl implements RoomService {
 
         roomRepository.save(room);
 
-        // 방 생성자를 Redis에 추가
         stringRedisTemplate.opsForSet().add("room:participants:" + room.getRoomId(), String.valueOf(userId));
         stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(room.getRoomId()));
 
@@ -54,7 +58,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public CreateResponse getRoom(Long roomId) {
         RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("방이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         return CreateResponse.from(room);
     }
 
@@ -65,20 +69,20 @@ public class RoomServiceImpl implements RoomService {
 
         String currentRoomId = stringRedisTemplate.opsForValue().get("user:room:" + userId);
         if (currentRoomId != null) {
-            throw new RuntimeException("이미 다른 방에 입장중입니다.");
+            throw new CustomException(ErrorCode.ALREADY_IN_ROOM);
         }
 
         RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("방이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
 
         if (room.isPrivate()) {
             if (!room.checkPassword(password)) {
-                throw new RuntimeException("비밀번호가 틀렸습니다.");
+                throw new CustomException(ErrorCode.INVALID_PASSWORD_ROOM);
             }
         }
 
         if (room.getCurrentPeople() >= room.getMaxPeople()) {
-            throw new RuntimeException("방이 꽉 찼습니다.");
+            throw new CustomException(ErrorCode.ROOM_FULL);
         }
 
         room.enter();
@@ -94,11 +98,10 @@ public class RoomServiceImpl implements RoomService {
         Long userId = SecurityUtil.getCurrentUserId(httpRequest);
 
         RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("방이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
 
         room.leave();
         stringRedisTemplate.delete("user:room:" + userId);
-
         stringRedisTemplate.opsForSet().remove("room:participants:" + roomId, String.valueOf(userId));
 
         if (room.getCurrentPeople() <= 0) {
@@ -115,19 +118,38 @@ public class RoomServiceImpl implements RoomService {
 
         String currentRoomId = stringRedisTemplate.opsForValue().get("user:room:" + userId);
         if (currentRoomId != null) {
-            throw new RuntimeException("이미 다른 방에 입장중입니다.");
+            throw new CustomException(ErrorCode.ALREADY_IN_ROOM);
         }
 
         RoomEntity room = roomRepository.findByInviteCode(inviteCode)
-                .orElseThrow(() -> new RuntimeException("유효하지 않은 초대코드입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITE_CODE));
 
         if (room.getCurrentPeople() >= room.getMaxPeople()) {
-            throw new RuntimeException("방이 꽉 찼습니다.");
+            throw new CustomException(ErrorCode.ROOM_FULL);
         }
 
         room.enter();
         stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(room.getRoomId()));
 
         return EnterResponse.from(room);
+    }
+
+    @Override
+    public void invite(Long roomId, Long targetUserId, HttpServletRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId(request);
+
+        RoomEntity room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+
+        if (!room.getHostId().equals(userId)) {
+            throw new CustomException(ErrorCode.ROOM_UNAUTHORIZED);
+        }
+
+        kafkaProducer.send("alarm", new AlarmEvent(
+                targetUserId,
+                "ROOM_INVITE",
+                room.getRoomName() + " 방에 초대되었습니다. 초대코드: " + room.getInviteCode(),
+                roomId
+        ));
     }
 }

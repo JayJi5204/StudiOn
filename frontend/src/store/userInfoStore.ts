@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { IUser } from '../types/user.type';
 
 const initialUserInfo = {
-    userId:0,
+    userId:'0',
     nickName:'',
     password:'',
     phoneNumber:'',

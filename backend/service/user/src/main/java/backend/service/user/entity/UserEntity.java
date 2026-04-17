@@ -1,12 +1,11 @@
 package backend.service.user.entity;
 
-import backend.service.user.enumType.UserRole;
+import backend.common.enumType.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -47,7 +46,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static UserEntity create(Long userId, String nickName, String password, String email, String adminPassword, String phoneNumber) {
+    public static UserEntity create(Long userId, String nickName, String password, String email, String phoneNumber) {
 
         UserEntity entity = new UserEntity();
         entity.userId = userId;
@@ -56,12 +55,7 @@ public class UserEntity {
         entity.email = email;
         entity.createdAt = LocalDateTime.now();
         entity.isDeleted = false;
-
-        if (adminPassword == null) {
             entity.role = UserRole.USER;
-        } else {
-            entity.role = UserRole.ADMIN;
-        }
         entity.phoneNumber = phoneNumber;
         entity.isLoggedIn = false;
         entity.studyTime = 0L;

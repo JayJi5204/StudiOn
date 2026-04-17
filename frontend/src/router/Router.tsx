@@ -6,7 +6,7 @@ const Layout = lazy(() => import('../pages/Layout.tsx'))
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
 const CommunityBoardPage = lazy(() => import("../pages/CommunityBoardPage.tsx"));
-const PostDetailsPage = lazy(() => import("../pages/PostDetailPage.tsx"));
+const BoardDetailsPage = lazy(() => import("../pages/BoardDetailPage.tsx"));
 const WritePostPage = lazy(() => import('../pages/WritePostPage.tsx'));
 const SignInPage = lazy(() => import("../pages/SignInPage.tsx"));
 const SignUpPage = lazy(() => import("../pages/SignUpPage.tsx"));
@@ -16,7 +16,6 @@ const GoogleCallback = lazy(() => import("../components/OAuth/GoogleCallback.tsx
 const layoutPageUrl = import.meta.env.VITE_REACT_APP_URL;
 const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
 const writePostPageUrl = import.meta.env.VITE_REACT_APP_URL_WRITE_POST;
-const updatePostPageUrl = `${import.meta.env.VITE_REACT_APP_URL_WRITE_UPDATE}/post/:id`;
 const signinPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
 const signupPageUrl = import.meta.env.VITE_REACT_APP_URL_SIGNUP;
 const profilePageUrl = `${import.meta.env.VITE_REACT_APP_URL_PROFILE}/:id`;
@@ -61,39 +60,33 @@ const Router = createBrowserRouter([
         path:":id",
         element: (
           <Suspense fallback={<Loading />}>
-            <PostDetailsPage/> 
+            <BoardDetailsPage/> 
           </Suspense>
         ),
       }
     ],
   },
   {
-    path: writePostPageUrl,
+    path: writePostPageUrl,  // /post/write
     Component: Layout,
     children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<Loading/>}>
-              <WritePostPage/>
-          </Suspense>
-        )
-      }
+        {
+            index: true,
+            element: (
+                <Suspense fallback={<Loading/>}>
+                    <WritePostPage/>
+                </Suspense>
+            )
+        },
+        {
+            path: ':boardId',
+            element: (
+                <Suspense fallback={<Loading/>}>
+                    <WritePostPage/>
+                </Suspense>
+            )
+        }
     ]
-  },
-  {
-    path: updatePostPageUrl,
-    Component: Layout,
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<Loading/>}>
-              <WritePostPage/>
-          </Suspense>
-        )
-      }
-    ]    
   },
   {
     path: signinPageUrl,
@@ -139,7 +132,7 @@ const Router = createBrowserRouter([
         path:"myBoards/:id",
         element: (
           <Suspense fallback={<Loading />}>
-            <PostDetailsPage/> 
+            <BoardDetailsPage/> 
           </Suspense>
         ),
       }

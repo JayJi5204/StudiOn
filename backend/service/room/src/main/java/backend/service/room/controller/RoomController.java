@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class RoomController {
 
     @Operation(summary = "방 생성", description = "새로운 방을 생성합니다.")
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequest request, HttpServletRequest httpRequest) {
+    public CreateResponse create(@RequestBody @Valid CreateRequest request, HttpServletRequest httpRequest) {
         return roomService.create(request, httpRequest);
     }
 
@@ -51,7 +52,7 @@ public class RoomController {
     @PostMapping("/{roomId}/enter")
     public EnterResponse enter(
             @Parameter(description = "방 ID") @PathVariable Long roomId,
-            @RequestBody(required = false) EnterRequest request,
+            @RequestBody(required = false) @Valid EnterRequest request,
             HttpServletRequest httpRequest
     ) {
         String password = request != null ? request.getPassword() : null;
@@ -76,5 +77,14 @@ public class RoomController {
             @Parameter(description = "초대코드") @PathVariable String inviteCode,
             HttpServletRequest httpRequest) {
         return roomService.enterByInviteCode(inviteCode,httpRequest);
+    }
+
+    @Operation(summary = "방 초대", description = "특정 유저를 방에 초대합니다.")
+    @PostMapping("/{roomId}/invite/{targetUserId}")
+    public void invite(
+            @Parameter(description = "방 ID") @PathVariable Long roomId,
+            @Parameter(description = "초대할 유저 ID") @PathVariable Long targetUserId,
+            HttpServletRequest request) {
+        roomService.invite(roomId, targetUserId, request);
     }
 }

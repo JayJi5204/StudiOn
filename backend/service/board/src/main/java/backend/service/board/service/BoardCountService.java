@@ -1,5 +1,8 @@
 package backend.service.board.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
+import backend.service.board.dto.response.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,6 +18,7 @@ public class BoardCountService {
     private static final String VIEW_COUNT_KEY = "board:view:";
     private static final String LIKE_COUNT_KEY = "board:like:";
     private static final String LIKE_SET_KEY = "board:like:set:";
+    private static final String COMMENT_COUNT_KEY = "board:comment:count:";
 
     public Long incrementViewCount(Long boardId) {
         return redisTemplate.opsForValue().increment(VIEW_COUNT_KEY + boardId);
@@ -30,31 +34,54 @@ public class BoardCountService {
         return count != null ? count : 0L;
     }
 
-    public Long like(Long boardId, Long userId) {
+    public LikeResponse like(Long boardId, Long userId) {
         String setKey = LIKE_SET_KEY + boardId;
 
         Boolean isLiked = stringRedisTemplate.opsForSet()
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.TRUE.equals(isLiked)) {
-            throw new RuntimeException("이미 좋아요한 게시글입니다.");
+            throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + boardId);
+        Long likeCount = redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + boardId);
+
+        return LikeResponse.from(likeCount, true);
     }
 
-    public Long unlike(Long boardId, Long userId) {
+    public LikeResponse unlike(Long boardId, Long userId) {
         String setKey = LIKE_SET_KEY + boardId;
 
         Boolean isLiked = stringRedisTemplate.opsForSet()
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.FALSE.equals(isLiked)) {
-            throw new RuntimeException("좋아요하지 않은 게시글입니다.");
+            throw new CustomException(ErrorCode.NOT_LIKED);
         }
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));
-        return redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + boardId);
+        Long likeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + boardId);
+
+        return LikeResponse.from(likeCount, false);
+    }
+
+    public boolean isLiked(Long boardId, Long userId) {
+        Boolean isLiked = stringRedisTemplate.opsForSet()
+                .isMember(LIKE_SET_KEY + boardId, String.valueOf(userId));
+        return Boolean.TRUE.equals(isLiked);
+    }
+
+    public Long getCommentCount(Long boardId) {
+        String count = stringRedisTemplate.opsForValue().get(COMMENT_COUNT_KEY + boardId);
+        return count != null ? Long.parseLong(count) : 0L;
+    }
+
+    public void incrementCommentCount(Long boardId) {
+        stringRedisTemplate.opsForValue().increment(COMMENT_COUNT_KEY + boardId);
+    }
+
+    public void decrementCommentCount(Long boardId) {
+        stringRedisTemplate.opsForValue().decrement(COMMENT_COUNT_KEY + boardId);
     }
 }

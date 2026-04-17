@@ -1,26 +1,27 @@
 package backend.service.comment.service;
 
-import backend.service.comment.dto.request.CreateRequestDto;
-import backend.service.comment.dto.response.CreateResponse;
-import backend.service.comment.dto.response.DeletedResponse;
+import backend.service.comment.dto.request.CreateRequest;
+import backend.service.comment.dto.request.UpdateRequest;
+import backend.service.comment.dto.response.*;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
 public interface CommentService {
 
-    CreateResponse create(CreateRequestDto createRequestDto, HttpServletRequest request);
+    CreateResponse create(CreateRequest createRequest, HttpServletRequest request);
 
     DeletedResponse delete(Long commentId);
 
-    List<CreateResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize);
+    UpdateResponse update(Long commentId, UpdateRequest dto, HttpServletRequest request);
 
-    List<CreateResponse> getBoardWhoCreateWithBoardId(Long boardId);
+    List<GetResponse> getAllInfiniteScroll(Long boardId, String lastPath, Long pageSize, HttpServletRequest request);
 
-    List<CreateResponse> getBoardWhoCreateWithUserId(Long userId);
+    List<GetResponse> getCommentWithBoardId(Long boardId, HttpServletRequest request);
 
-    Long like(Long commentId, HttpServletRequest request);
+    List<GetResponse> getCommentWithUserId(Long userId,HttpServletRequest request);
 
-    Long unlike(Long commentId, HttpServletRequest request);
+    LikeResponse like(Long commentId, HttpServletRequest request);
 
-    }
+    LikeResponse unlike(Long commentId, HttpServletRequest request);
+}

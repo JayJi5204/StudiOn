@@ -7,7 +7,7 @@ interface IconProps {
 
 export const LoadingSpinner = ({ text, icon }: IconProps) => (
   <>
-    <div className="w-5 h-5 animate-spin">
+    <div className="w-5 h-5">
       {React.cloneElement(icon as React.ReactElement)}
     </div>
     <span>{text}</span>
@@ -16,9 +16,9 @@ export const LoadingSpinner = ({ text, icon }: IconProps) => (
 
 export const LoadingComplete = ({ text, icon }: IconProps) => (
   <>
-    <span>{text}</span>
     <div className="w-5 h-5">
       {React.cloneElement(icon as React.ReactElement)}
     </div>
+    <span>{text}</span>
   </>
 );

@@ -1,7 +1,7 @@
 package backend.service.board;
 
 import backend.service.board.entity.BoardEntity;
-import backend.service.board.enumType.Category;
+import backend.common.enumType.Category;
 import backend.service.board.repository.BoardRepository;
 import backend.service.board.service.BoardCountService;
 import org.junit.jupiter.api.BeforeEach;
