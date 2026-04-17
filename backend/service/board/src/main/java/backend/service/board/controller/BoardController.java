@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 등록합니다.")
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequest createRequest, HttpServletRequest request) {
+    public CreateResponse create(@RequestBody @Valid CreateRequest createRequest, HttpServletRequest request) {
         return boardService.create(createRequest,request);
     }
 
@@ -68,7 +69,7 @@ public class BoardController {
     @PutMapping("/update/{boardId}")
     public UpdateResponse update(
             @Parameter(description = "수정할 게시글 ID", example = "279296958190669824") @PathVariable Long boardId,
-            @RequestBody UpdateRequest updateRequest,HttpServletRequest request) {
+            @RequestBody @Valid UpdateRequest updateRequest,HttpServletRequest request) {
         return boardService.update(boardId, updateRequest,request);
     }
 

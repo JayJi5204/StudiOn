@@ -1,9 +1,12 @@
 package backend.service.user.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.common.id.Snowflake;
-import backend.service.user.dto.otherDto.BoardDto;
-import backend.service.user.dto.otherDto.CommentDto;
+import backend.service.user.dto.other.BoardDto;
+import backend.service.user.dto.other.CommentDto;
 import backend.service.user.dto.request.CreateRequest;
+import backend.service.user.dto.request.DeleteRequest;
 import backend.service.user.dto.request.LoginRequest;
 import backend.service.user.dto.request.UpdateRequest;
 import backend.service.user.dto.response.*;
@@ -40,49 +43,45 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
     private final StringRedisTemplate redisTemplate;
-
     private final BoardClient boardClient;
     private final CommentClient commentClient;
 
     @Override
     public CreateResponse create(CreateRequest dto) {
-
-        UserEntity entity = userRepository.save(UserEntity.create(snowflake.nextId(), dto.getNickName(), encoder.encode(dto.getPassword()), dto.getEmail(), dto.getAdminPassword(),dto.getPhoneNumber()));
-
+        UserEntity entity = userRepository.save(
+                UserEntity.create(snowflake.nextId(), dto.getNickName(), encoder.encode(dto.getPassword()),
+                        dto.getEmail(), dto.getPhoneNumber()));
         return CreateResponse.from(entity);
     }
 
     @Override
     public UpdateResponse update(UpdateRequest dto, HttpServletRequest request) {
-
         Long userId = SecurityUtil.getCurrentUserId(request);
-
         UserEntity entity = userRepository.findByUserId(userId);
 
         if (entity == null) {
-            throw new RuntimeException("유저 없음");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        entity.update(dto.getNickName(), dto.getPassword(), dto.getEmail(), dto.getPhoneNumber(),dto.getBio());
-
+        entity.update(dto.getNickName(), dto.getPassword(), dto.getEmail(), dto.getPhoneNumber(), dto.getBio());
         userRepository.save(entity);
-
         return UpdateResponse.from(entity);
     }
 
     @Override
-    public DeletedResponse delete(HttpServletRequest request) {
-
+    public DeletedResponse delete(DeleteRequest dto, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
-
         UserEntity entity = userRepository.findByUserId(userId);
 
         if (entity == null) {
-            throw new RuntimeException("유저 없음");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        if (!encoder.matches(dto.getPassword(), entity.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         entity.delete();
-
         return DeletedResponse.from(entity);
     }
 
@@ -92,17 +91,17 @@ public class UserServiceImpl implements UserService {
         UserEntity entity = userRepository.findByEmail(dto.getEmail());
 
         if (entity == null) {
-            throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         if (!encoder.matches(dto.getPassword(), entity.getPassword())) {
-            throw new RuntimeException("입력하신 정보가 올바르지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         String userId = String.valueOf(entity.getUserId());
 
-        String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString(),entity.getNickName());
-        String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString(),entity.getNickName());
+        String accessToken = jwtUtil.createAccessToken(userId, entity.getEmail(), entity.getRole().toString(), entity.getNickName());
+        String refreshToken = jwtUtil.createRefreshToken(userId, entity.getEmail(), entity.getRole().toString(), entity.getNickName());
 
         redisTemplate.opsForValue().set(userId, refreshToken, 7, TimeUnit.DAYS);
 
@@ -118,16 +117,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
-        // 쿠키에서 refreshToken 추출
         String refreshToken = cookieUtil.getCookieValue(request, "refreshToken");
 
         if (refreshToken == null) {
-            throw new RuntimeException("refreshToken이 없습니다.");
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        // 만료 확인
         if (jwtUtil.isExpired(refreshToken)) {
-            throw new RuntimeException("refreshToken이 만료되었습니다.");
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
         String userId = jwtUtil.getUserId(refreshToken);
@@ -135,20 +132,19 @@ public class UserServiceImpl implements UserService {
         String role = jwtUtil.getRole(refreshToken);
         String nickName = jwtUtil.getNickName(refreshToken);
 
-        // Redis에 저장된 refreshToken과 비교
         String savedToken = redisTemplate.opsForValue().get(userId);
 
         if (savedToken == null || !savedToken.equals(refreshToken)) {
-            throw new RuntimeException("유효하지 않은 refreshToken입니다.");
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
-        String newAccessToken = jwtUtil.createAccessToken(userId, email, role,nickName);
-        String newRefreshToken = jwtUtil.createRefreshToken(userId, email, role,nickName);
+        String newAccessToken = jwtUtil.createAccessToken(userId, email, role, nickName);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId, email, role, nickName);
 
         redisTemplate.opsForValue().set(userId, newRefreshToken, 7, TimeUnit.DAYS);
 
-        ResponseCookie accessCookie =  cookieUtil.createAccessTokenCookie(newAccessToken);
-        ResponseCookie refreshCookie =  cookieUtil.createRefreshTokenCookie(newRefreshToken);
+        ResponseCookie accessCookie = cookieUtil.createAccessTokenCookie(newAccessToken);
+        ResponseCookie refreshCookie = cookieUtil.createRefreshTokenCookie(newRefreshToken);
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -162,13 +158,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetMyInfoResponse getMyInfo(HttpServletRequest request) {
-
         Long userId = SecurityUtil.getCurrentUserId(request);
-
         UserEntity entity = userRepository.findByUserId(userId);
 
         if (entity == null) {
-            throw new RuntimeException("존재하지 않는 사용자 입니다.");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         List<BoardDto> responseBoards = boardClient.getBoards(userId);
@@ -179,12 +173,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetUserResponse getUser(Long userId) {
-
         UserEntity entity = userRepository.findByUserId(userId);
 
         if (entity == null) {
-            throw new RuntimeException("존재하지 않는 사용자 입니다.");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
+
         List<BoardDto> responseBoards = boardClient.getBoards(userId);
         List<CommentDto> responseComments = commentClient.getComments(userId);
 
@@ -193,11 +187,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GetUserResponse getUserByAdmin(Long userId) {
-
         UserEntity entity = userRepository.findByUserId(userId);
 
         if (entity == null) {
-            throw new RuntimeException("존재하지 않는 사용자 입니다.");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         List<BoardDto> boards = boardClient.getBoards(userId);
@@ -208,14 +201,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public LogoutResponse logout(HttpServletResponse response,HttpServletRequest request) {
-
+    public LogoutResponse logout(HttpServletResponse response, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
-
         UserEntity entity = userRepository.findByUserId(userId);
 
         if (entity == null) {
-            throw new RuntimeException("유저 없음");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         redisTemplate.delete(String.valueOf(userId));
@@ -227,7 +218,6 @@ public class UserServiceImpl implements UserService {
         response.addHeader(HttpHeaders.SET_COOKIE, deleteRefreshCookie.toString());
 
         SecurityContextHolder.clearContext();
-
         entity.logout();
 
         return LogoutResponse.from(entity);

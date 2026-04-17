@@ -1,4 +1,4 @@
-package backend.common.dto.room;
+package backend.service.groupChat.dto.other;
 
 import lombok.Data;
 

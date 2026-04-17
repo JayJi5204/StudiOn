@@ -1,4 +1,4 @@
-package backend.service.user.dto.otherDto;
+package backend.service.user.dto.other;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

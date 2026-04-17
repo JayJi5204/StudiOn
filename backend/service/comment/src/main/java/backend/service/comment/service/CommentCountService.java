@@ -1,11 +1,12 @@
 package backend.service.comment.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.service.comment.dto.response.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
 @Service
 @RequiredArgsConstructor
 public class CommentCountService {
@@ -28,7 +29,7 @@ public class CommentCountService {
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.TRUE.equals(isAlreadyLiked)) {
-            throw new RuntimeException("이미 좋아요한 댓글입니다.");
+            throw new CustomException(ErrorCode.ALREADY_LIKED_COMMENT);
         }
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
@@ -43,7 +44,7 @@ public class CommentCountService {
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.FALSE.equals(isLiked)) {
-            throw new RuntimeException("좋아요하지 않은 댓글입니다.");
+            throw new CustomException(ErrorCode.NOT_LIKED_COMMENT);
         }
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));

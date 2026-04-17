@@ -1,6 +1,6 @@
 package backend.service.board.feign;
 
-import backend.service.board.dto.otherDto.CommentDto;
+import backend.service.board.dto.other.CommentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

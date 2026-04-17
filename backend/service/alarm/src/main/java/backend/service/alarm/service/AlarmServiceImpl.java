@@ -1,6 +1,8 @@
 package backend.service.alarm.service;
 
 import backend.common.enumType.AlarmType;
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.common.id.Snowflake;
 import backend.service.alarm.dto.response.AlarmResponse;
 import backend.service.alarm.entity.AlarmEntity;
@@ -29,7 +31,6 @@ public class AlarmServiceImpl implements AlarmService {
         );
         alarmRepository.save(entity);
 
-        // SSE로 실시간 전송
         sseEmitterManager.send(userId, alarmType.name(), AlarmResponse.from(entity));
         log.info("알림 생성 userId={}, alarmType={}", userId, alarmType);
     }
@@ -54,9 +55,10 @@ public class AlarmServiceImpl implements AlarmService {
     @Transactional
     public void read(Long alarmId) {
         AlarmEntity entity = alarmRepository.findById(alarmId)
-                .orElseThrow(() -> new RuntimeException("알림이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ALARM_NOT_FOUND));
         entity.read();
     }
+
     @Override
     @Transactional
     public void readAll(Long userId) {

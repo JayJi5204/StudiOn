@@ -1,4 +1,4 @@
-package backend.common.dto.board;
+package backend.service.comment.dto.other;
 
 import lombok.Data;
 

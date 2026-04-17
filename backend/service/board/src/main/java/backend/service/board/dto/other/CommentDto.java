@@ -1,4 +1,4 @@
-package backend.service.user.dto.otherDto;
+package backend.service.board.dto.other;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentDto {
-
     private String commentId;
     private String content;
     private String commentPath;

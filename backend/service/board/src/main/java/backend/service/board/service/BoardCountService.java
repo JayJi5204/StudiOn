@@ -1,5 +1,7 @@
 package backend.service.board.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.service.board.dto.response.LikeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,13 +41,13 @@ public class BoardCountService {
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.TRUE.equals(isLiked)) {
-            throw new RuntimeException("이미 좋아요한 게시글입니다.");
+            throw new CustomException(ErrorCode.ALREADY_LIKED);
         }
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
         Long likeCount = redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + boardId);
 
-        return LikeResponse.from(likeCount,true);
+        return LikeResponse.from(likeCount, true);
     }
 
     public LikeResponse unlike(Long boardId, Long userId) {
@@ -55,13 +57,13 @@ public class BoardCountService {
                 .isMember(setKey, String.valueOf(userId));
 
         if (Boolean.FALSE.equals(isLiked)) {
-            throw new RuntimeException("좋아요하지 않은 게시글입니다.");
+            throw new CustomException(ErrorCode.NOT_LIKED);
         }
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));
         Long likeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + boardId);
 
-        return LikeResponse.from(likeCount,false);
+        return LikeResponse.from(likeCount, false);
     }
 
     public boolean isLiked(Long boardId, Long userId) {
