@@ -3,7 +3,7 @@ import { MoreVertical, Send, CornerDownRight } from "lucide-react";
 import EditButton from "../button/EditButton";
 import type { IBoardComment } from "../../types/Response/board.type";
 import LikesButton from "../button/LikesButton";
-import { commentService } from "../../services/comment.service";
+import useUserInfoStore from "../../store/userInfoStore";
 
 const MAX_DEPTH = 10;
 
@@ -12,6 +12,7 @@ interface CommentItemProps {
     userRole: string;
     comment: IBoardComment;
     depth: number;
+    handleLikeComent: (commentId:string, isLiked:boolean) => void;
     handleUpdateComment: (editComment: IBoardComment) => void;
     handleDeleteComment: () => void;
     handleReplySubmit: (content: string) => void;
@@ -22,6 +23,7 @@ const CommentItem = ({
     userRole,
     comment,
     depth,
+    handleLikeComent,
     handleUpdateComment,
     handleDeleteComment,
     handleReplySubmit,
@@ -31,24 +33,7 @@ const CommentItem = ({
     const [editText, setEditText] = useState(comment.content);
     const [isReplying, setIsReplying] = useState(false);
     const [replyText, setReplyText] = useState('');
-    const [isLiked, setIsLiked] = useState(false);
-
-    const handleLikeClick = async (commentId: string) => {
-        try {
-            if (isLiked) {
-                await commentService.unlikeComment(commentId);
-            } else {
-                await commentService.likeComment(commentId);
-            }
-            setIsLiked(!isLiked);
-            handleUpdateComment({
-                ...comment,
-                likeCount: isLiked ? comment.likeCount - 1 : comment.likeCount + 1,
-            });
-        } catch (error) {
-            console.error("좋아요 처리 중 오류 발생:", error);
-        }
-    };
+    const userInfo = useUserInfoStore((state) => state.userInfo);
 
     const handleEdit = () => {
         setShowMoreMenu(false);
@@ -78,7 +63,7 @@ const CommentItem = ({
 
                 {/* 아바타 */}
                 <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                    {comment.nickName[0].toUpperCase()}
+                    {userInfo.profileAvatar}
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -148,7 +133,7 @@ const CommentItem = ({
                             <div className="flex items-center space-x-4">
                                 <LikesButton
                                     likeCount={comment.likeCount}
-                                    handleLikeCount={() => handleLikeClick(comment.commentId)}
+                                    handleLikeCount={() => handleLikeComent(comment.commentId,comment.isLiked)}
                                 />
                                 {depth < MAX_DEPTH && (
                                     <button

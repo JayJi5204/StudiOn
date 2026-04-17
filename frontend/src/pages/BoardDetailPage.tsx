@@ -1,8 +1,8 @@
 import { useState,useEffect } from 'react';
 import { useNavigate,useParams } from 'react-router';
-import { usePost } from '../hooks/useBoard';
+import { useBoard } from '../hooks/useBoard';
 import { useBoards} from '../hooks/useBoards';
-import { postService } from '../services/posts.service';
+import { boardService } from '../services/board.service';
 import useUserInfoStore from '../store/userInfoStore';
 import CommentSection from '../components/communityboard/CommentSection';
 import { dateFormatter } from '../utils/date';
@@ -18,11 +18,11 @@ import {
   Flag
 } from 'lucide-react';
 
-const PostDetailPage = () => {
+const BoardDetailPage = () => {
   const userInfo = useUserInfoStore((state) => state.userInfo);
   const navigate = useNavigate();
   const { id } = useParams();
-  const { board,isLoading } = usePost(String(id));
+  const { board,isLoading } = useBoard(String(id));
   const { setBoards } = useBoards(
             { page: 1,size: 10 },
             Boolean(userInfo.isLoggedIn)
@@ -58,7 +58,7 @@ const PostDetailPage = () => {
   const handleDelete = async (deletedId:string) => {
       //삭제할 포스트를 제외하고 목록을 새로 고침
       try {
-        await postService.deletePost(deletedId);
+        await boardService.deleteBoard(deletedId);
         setBoards(prevBoards => prevBoards.filter(board => String(board.boardId) !== deletedId));
         alert("삭제되었습니다.");
         navigate(-1);
@@ -78,11 +78,11 @@ const PostDetailPage = () => {
 
       try {
           if (isLiked) {
-              await postService.unlikeBoard(board.boardId);
+              await boardService.unlikeBoard(board.boardId);
               setLikeCount(prev => prev - 1);
               setIsLiked(false);
           } else {
-              await postService.likeBoard(board.boardId);
+              await boardService.likeBoard(board.boardId);
               setLikeCount(prev => prev + 1);
               setIsLiked(true);
           }
@@ -292,4 +292,4 @@ const PostDetailPage = () => {
   );
 };
 
-export default PostDetailPage;
+export default BoardDetailPage;

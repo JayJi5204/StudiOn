@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X,FileText, Save, Eye, ChevronDown } from 'lucide-react';
-import { postService } from '../services/posts.service';
+import { boardService } from '../services/board.service';
 import { useLocation,useNavigate } from 'react-router';
 import type { IBoard } from '../types/boards.type';
 
@@ -10,7 +10,7 @@ const WritePostPage = () => {
 
     const editData = location.state as IBoard;
     console.log(editData)
-    const isEditMode = !!editData;
+    const isEditing = !!editData;
 
     const [title, setTitle] = useState(editData?.title || '');
     const [content, setContent] = useState(editData?.content || '');
@@ -46,8 +46,8 @@ const WritePostPage = () => {
         }
         
         try {
-            if (isEditMode) {
-                const response = await postService.updateBoard(
+            if (isEditing) {
+                const response = await boardService.updateBoard(
                     editData.boardId,
                     {
                         title,
@@ -61,7 +61,7 @@ const WritePostPage = () => {
             } else {
                 
                 // 게시글 저장 로직 추가
-                const res = await postService.createBoard(
+                const res = await boardService.createBoard(
                     {
                         title,
                         content,

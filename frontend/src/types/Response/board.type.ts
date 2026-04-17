@@ -7,6 +7,7 @@ export interface IPageResponse {
   content: string;
   tags: string[];
   category: Category;
+  commentCount: number;
   viewCount: number;
   likeCount: number;
   createdAt: string;
@@ -47,6 +48,7 @@ export interface IBoardComment {
   commentPath: string;     
   parentPath: string | null;
   likeCount: number;
+  isLiked: boolean;
   isDeleted: boolean;
   createdAt: string;
   modifiedAt: string;

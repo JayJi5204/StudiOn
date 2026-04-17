@@ -6,20 +6,21 @@ import {
     Clock,
     Bookmark,
     Share2,
+    MessageCircle,
     Eye,
  } from "lucide-react"
 import useUserInfoStore from "../../store/userInfoStore"
-import { postService } from "../../services/posts.service"
+import { boardService } from "../../services/board.service"
 
-interface PostsSectionProps {
+interface BoardsSectionProps {
     boards: IPageResponse[];
     setBoards: React.Dispatch<React.SetStateAction<IPageResponse[]>>;
 }
 
-const PostSection = ({
+const BoardSection = ({
     boards,
     setBoards,
-}:PostsSectionProps
+}:BoardsSectionProps
 ) => {
     const userInfo = useUserInfoStore((state) => state.userInfo);
 
@@ -39,13 +40,13 @@ const PostSection = ({
             
             setBoards(prevBoards => 
                 prevBoards.map(board => 
-                    (String(board.boardId) === boardId) 
+                    (String(board.boardId) === boardId)
                         ? {...board, likeCount: isLiked ? board.likeCount - 1 : board.likeCount + 1}
                         : board
                 )
             );
             
-            const response = isLiked ? await postService.unlikeBoard(boardId) : await postService.likeBoard(boardId);
+            const response = isLiked ? await boardService.unlikeBoard(boardId) : await boardService.likeBoard(boardId);
             console.log('게시글 좋아요 완료', response);
             
         } catch (error) {
@@ -72,8 +73,8 @@ const PostSection = ({
 
     return (
         <>
-            {boards.map((post) => (
-                <div key={post.boardId} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
+            {boards.map((board) => (
+                <div key={board.boardId} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
                     <div className="space-y-4">
                         {/* Post Header */}
                         <div className="flex items-start justify-between">
@@ -83,12 +84,12 @@ const PostSection = ({
                                         <div className="flex items-center space-x-2">
                                             <span className="font-semibold text-gray-900">{userInfo.nickName}</span>
                                             <span className="px-2 py-1 bg-indigo-100 text-indigo-600 text-xs rounded-full">
-                                                {post.category}
+                                                {board.category}
                                             </span>
                                         </div>
                                         <div className="flex items-center text-sm text-gray-500 mt-1">
                                             <Clock size={14} className="mr-1" />
-                                            {post.createdAt}
+                                            {board.createdAt}
                                         </div>
                                     </div>
                                 </div>
@@ -104,16 +105,16 @@ const PostSection = ({
                         {/* Post Content */}
                         <div className="space-y-2">
                             <h3 className="text-xl font-bold text-gray-900 hover:text-indigo-600 cursor-pointer">
-                                {post.title}
+                                {board.title}
                             </h3>
                             <p className="text-gray-600 line-clamp-2">
-                                {post.content}
+                                {board.content}
                             </p>
                         </div>
                         {/* Tags */}
                         <div className="flex flex-wrap gap-2 justify-between">
                             <div className="space-x-1">
-                                {post.tags.map((tag, index) => (
+                                {board.tags.map((tag, index) => (
                                     <span key={index} className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
                                         #{tag}
                                     </span>
@@ -125,20 +126,24 @@ const PostSection = ({
                                 <div className="flex items-center space-x-4 text-sm text-gray-500">
                                     <div className="flex items-center space-x-1">
                                         <Eye size={16} />
-                                        <span>{post.viewCount}</span>
+                                        <span>{board.viewCount}</span>
                                     </div>
                                     <LikesButton
-                                        likeCount={post.likeCount}
+                                        likeCount={board.likeCount}
                                         handleLikeCount={()=>{
-                                            handleLikeClick(String(post.boardId));
+                                            handleLikeClick(String(board.boardId));
                                         }}
                                     />
+                                    <span className="flex items-center">
+                                        <MessageCircle size={16} className="mr-1" />
+                                        {board.commentCount}
+                                    </span>
                                 </div>
 
                                 <ViewButton
-                                    boardId={String(post.boardId)}
+                                    boardId={String(board.boardId)}
                                     handleViewClick={() => {
-                                        handleViewClick(post.boardId);
+                                        handleViewClick(board.boardId);
                                         setIsView(true);
                                     }}
                                 />
@@ -153,4 +158,4 @@ const PostSection = ({
 
 
 
-export default PostSection;
+export default BoardSection;

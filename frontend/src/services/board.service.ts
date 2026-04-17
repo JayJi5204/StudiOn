@@ -6,7 +6,7 @@ import type { IUpdateBoardRequest } from '../types/Request/board.type';
 
 const API_URL = import.meta.env.VITE_REACT_API_URL_BOARD;
 
-export const postService = {
+export const boardService = {
   createBoard: async (
     postData: Partial<IBoard>
   ): Promise<IBoard> => {
@@ -23,7 +23,7 @@ export const postService = {
     return response.data;
   },
 
-  getPosts: async (
+  getBoards: async (
     page: number,
     size: number,
     category?: string
@@ -35,18 +35,18 @@ export const postService = {
         withCredentials: true,             
       }
     );
-    console.log(response.data);
+    console.log("getBoard:",response.data);
     return response.data;
   },
 
-  getPostById: async ( 
+  getBoardById: async ( 
     boardId: string 
   ): Promise<IBoardDetailResponse> => {
     
     const response = await axios.get<IBoardDetailResponse>(`http://localhost:8000/board-service/api/boards/get/${boardId}`,{
       withCredentials:true
     });
-
+    console.log("getBoardById:",response.data);
     return response.data
   },
 
@@ -63,7 +63,7 @@ export const postService = {
     return response.data;
   },
   
-  deletePost: async (
+  deleteBoard: async (
     boardId: string
   ): Promise<void> => {
     const response = await axios.delete(`${API_URL}/delete/${boardId}`);

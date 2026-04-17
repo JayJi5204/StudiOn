@@ -10,6 +10,11 @@ export interface ICommentResponse {
   isDeleted: boolean;
 }
 
+export interface ICommentLikeResponse {
+  likeCount: number;
+  isLiked: boolean;
+}
+
 export interface IUpdateCommentResponse {
   commentId: string;
   content: string;
