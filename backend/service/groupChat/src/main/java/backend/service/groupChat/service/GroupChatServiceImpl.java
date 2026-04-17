@@ -1,6 +1,5 @@
 package backend.service.groupChat.service;
 
-import backend.common.dto.room.RoomResponse;
 import backend.common.id.Snowflake;
 import backend.service.groupChat.dto.response.CreateResponse;
 import backend.service.groupChat.entity.GroupChatEntity;
@@ -10,11 +9,8 @@ import backend.service.groupChat.repository.GroupChatRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 
 @Slf4j

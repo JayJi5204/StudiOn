@@ -1,4 +1,4 @@
-package backend.common.dto.room;
+package backend.common.kafkaDto.room;
 
 import lombok.Data;
 
