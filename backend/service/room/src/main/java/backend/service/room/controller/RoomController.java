@@ -4,6 +4,7 @@ import backend.service.room.dto.request.CreateRequest;
 import backend.service.room.dto.request.EnterRequest;
 import backend.service.room.dto.response.CreateResponse;
 import backend.service.room.dto.response.EnterResponse;
+import backend.service.room.dto.response.GetRoomResponse;
 import backend.service.room.dto.response.LeaveResponse;
 import backend.service.room.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +33,7 @@ public class RoomController {
 
     @Operation(summary = "방 조회", description = "방 정보를 조회합니다.")
     @GetMapping("/{roomId}")
-    public CreateResponse getRoom(
+    public GetRoomResponse getRoom(
             @Parameter(description = "방 ID") @PathVariable Long roomId) {
         return roomService.getRoom(roomId);
     }
@@ -97,9 +98,9 @@ public class RoomController {
         roomService.forceDelete(roomId, request);
     }
 
-    @Operation(summary = "전체 방 조회 (관리자)", description = "관리자가 전체 방 목록을 조회합니다.")
-    @GetMapping("/admin/list")
-    public List<CreateResponse> getAllRooms(HttpServletRequest request) {
-        return roomService.getAllRooms(request);
+    @Operation(summary = "전체 방 조회", description = "전체 방 목록을 조회합니다.")
+    @GetMapping("/list")
+    public List<GetRoomResponse> getAllRooms() {
+        return roomService.getAllRooms();
     }
 }

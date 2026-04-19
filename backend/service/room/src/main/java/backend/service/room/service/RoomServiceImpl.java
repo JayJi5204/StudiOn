@@ -9,6 +9,7 @@ import backend.common.kafkaEvent.ranking.StudyTimeEvent;
 import backend.service.room.dto.request.CreateRequest;
 import backend.service.room.dto.response.CreateResponse;
 import backend.service.room.dto.response.EnterResponse;
+import backend.service.room.dto.response.GetRoomResponse;
 import backend.service.room.dto.response.LeaveResponse;
 import backend.service.room.entity.RoomEntity;
 import backend.service.room.repository.RoomRepository;
@@ -61,10 +62,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public CreateResponse getRoom(Long roomId) {
+    public GetRoomResponse getRoom(Long roomId) {
         RoomEntity room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-        return CreateResponse.from(room);
+        return GetRoomResponse.from(room);
     }
 
     @Override
@@ -194,14 +195,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<CreateResponse> getAllRooms(HttpServletRequest request) {
-        String role = SecurityUtil.getCurrentUserRole(request);
-        if (!role.equals("ADMIN")) {
-            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
-        }
+    public List<GetRoomResponse> getAllRooms() {
 
         return roomRepository.findAll().stream()
-                .map(CreateResponse::from)
+                .map(GetRoomResponse::from)
                 .toList();
     }
 }
