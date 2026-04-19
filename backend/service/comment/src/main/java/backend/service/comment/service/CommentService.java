@@ -24,4 +24,6 @@ public interface CommentService {
     LikeResponse like(Long commentId, HttpServletRequest request);
 
     LikeResponse unlike(Long commentId, HttpServletRequest request);
+
+    DeletedResponse forceDelete(Long commentId, HttpServletRequest request);
 }

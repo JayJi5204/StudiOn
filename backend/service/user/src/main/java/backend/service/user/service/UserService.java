@@ -15,7 +15,7 @@ public interface UserService {
 
     CreateResponse create(CreateRequest dto);
 
-    List<CreateResponse> getAllUsers();
+    List<GetAllResponse> getAllUsers();
 
     GetMyInfoResponse getMyInfo(HttpServletRequest request);
 
@@ -38,4 +38,8 @@ public interface UserService {
     List<StudyDailyResponse> getDailyStudy(int days, HttpServletRequest request);
 
     Long getMyStudyRank(HttpServletRequest request);
+
+
+    void forceDelete(Long targetUserId, HttpServletRequest request);
+
 }

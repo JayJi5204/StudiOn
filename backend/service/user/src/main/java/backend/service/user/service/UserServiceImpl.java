@@ -16,7 +16,7 @@ import backend.service.user.feign.CommentClient;
 import backend.service.user.util.JwtUtil;
 import backend.service.user.repository.UserRepository;
 import backend.service.user.util.CookieUtil;
-import backend.service.user.util.SecurityUtil;
+import backend.common.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -155,9 +155,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CreateResponse> getAllUsers() {
-        List<UserEntity> entities = userRepository.findAll();
-        return entities.stream().map(CreateResponse::from).toList();
+    public List<GetAllResponse> getAllUsers() {
+        return userRepository.findAllByIsDeletedFalse()
+                .stream()
+                .map(GetAllResponse::from)
+                .toList();
     }
 
     @Override
@@ -268,5 +270,22 @@ public class UserServiceImpl implements UserService {
         Long userId = SecurityUtil.getCurrentUserId(request);
         Long rank = stringRedisTemplate.opsForZSet().reverseRank("ranking:study", String.valueOf(userId));
         return rank != null ? rank + 1 : null;
+    }
+
+    @Override
+    @Transactional
+    public void forceDelete(Long targetUserId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        UserEntity entity = userRepository.findByUserId(targetUserId);
+        if (entity == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        entity.delete();
+        userRepository.save(entity);
     }
 }

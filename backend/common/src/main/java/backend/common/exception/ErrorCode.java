@@ -42,7 +42,10 @@ public enum ErrorCode {
 
     // Auth
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH001", "인증 정보가 없습니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH002", "유효하지 않은 토큰입니다.");
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH002", "유효하지 않은 토큰입니다."),
+
+    // Admin
+    ADMIN_UNAUTHORIZED(HttpStatus.FORBIDDEN, "ADMIN001", "관리자 권한이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

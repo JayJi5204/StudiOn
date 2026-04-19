@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Room", description = "방 관리 API")
 @RestController
 @RequiredArgsConstructor
@@ -86,5 +88,18 @@ public class RoomController {
             @Parameter(description = "초대할 유저 ID") @PathVariable Long targetUserId,
             HttpServletRequest request) {
         roomService.invite(roomId, targetUserId, request);
+    }
+    @Operation(summary = "방 강제 삭제 (관리자)", description = "관리자가 방을 강제 삭제합니다.")
+    @DeleteMapping("/admin/force/{roomId}")
+    public void forceDelete(
+            @Parameter(description = "삭제할 방 ID") @PathVariable Long roomId,
+            HttpServletRequest request) {
+        roomService.forceDelete(roomId, request);
+    }
+
+    @Operation(summary = "전체 방 조회 (관리자)", description = "관리자가 전체 방 목록을 조회합니다.")
+    @GetMapping("/admin/list")
+    public List<CreateResponse> getAllRooms(HttpServletRequest request) {
+        return roomService.getAllRooms(request);
     }
 }

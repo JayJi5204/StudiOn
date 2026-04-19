@@ -24,7 +24,7 @@ public class AuthorizationHeaderFilter
 
     private final JwtValidator jwtValidator;
 
-    private static final String HEADER_USER_ID = "X-User-ID";
+    private static final String HEADER_USER_ID = "X-User-Id";
     private static final String HEADER_USER_EMAIL = "X-User-Email";
     private static final String HEADER_USER_ROLE = "X-User-Role";
     private static final String HEADER_USER_NICKNAME = "X-User-NickName";
