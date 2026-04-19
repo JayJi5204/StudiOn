@@ -203,6 +203,26 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/alarm-service/(?<segment>.*),/$\{segment}
 
+            - id: ranking-service-public
+              uri: lb://RANKING-SERVICE
+              predicates:
+                - Path=/ranking-service/health-check,
+                  /ranking-service/v3/api-docs/**,
+                  /ranking-service/swagger-ui/**,
+                  /ranking-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/ranking-service/(?<segment>.*),/$\{segment}
+
+            - id: ranking-service-secure
+              uri: lb://RANKING-SERVICE
+              predicates:
+                - Path=/ranking-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/ranking-service/(?<segment>.*),/$\{segment}
+
 management:
   endpoints:
     web:

@@ -8,6 +8,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class BoardCountService {
@@ -19,9 +23,13 @@ public class BoardCountService {
     private static final String LIKE_COUNT_KEY = "board:like:";
     private static final String LIKE_SET_KEY = "board:like:set:";
     private static final String COMMENT_COUNT_KEY = "board:comment:count:";
+    private static final String VIEW_RANKING_KEY = "ranking:board:view";  // 추가
+    private static final String LIKE_RANKING_KEY = "ranking:board:like";  // 추가
 
     public Long incrementViewCount(Long boardId) {
-        return redisTemplate.opsForValue().increment(VIEW_COUNT_KEY + boardId);
+        Long count = redisTemplate.opsForValue().increment(VIEW_COUNT_KEY + boardId);
+        stringRedisTemplate.opsForZSet().incrementScore(VIEW_RANKING_KEY, String.valueOf(boardId), 1);
+        return count;
     }
 
     public Long getViewCount(Long boardId) {
@@ -46,6 +54,7 @@ public class BoardCountService {
 
         stringRedisTemplate.opsForSet().add(setKey, String.valueOf(userId));
         Long likeCount = redisTemplate.opsForValue().increment(LIKE_COUNT_KEY + boardId);
+        stringRedisTemplate.opsForZSet().incrementScore(LIKE_RANKING_KEY, String.valueOf(boardId), 1);
 
         return LikeResponse.from(likeCount, true);
     }
@@ -62,6 +71,7 @@ public class BoardCountService {
 
         stringRedisTemplate.opsForSet().remove(setKey, String.valueOf(userId));
         Long likeCount = redisTemplate.opsForValue().decrement(LIKE_COUNT_KEY + boardId);
+        stringRedisTemplate.opsForZSet().incrementScore(LIKE_RANKING_KEY, String.valueOf(boardId), -1);
 
         return LikeResponse.from(likeCount, false);
     }
@@ -83,5 +93,17 @@ public class BoardCountService {
 
     public void decrementCommentCount(Long boardId) {
         stringRedisTemplate.opsForValue().decrement(COMMENT_COUNT_KEY + boardId);
+    }
+
+    public List<String> getViewRanking(int top) {
+        Set<String> ranking = stringRedisTemplate.opsForZSet()
+                .reverseRange(VIEW_RANKING_KEY, 0, top - 1);
+        return ranking != null ? new ArrayList<>(ranking) : List.of();
+    }
+
+    public List<String> getLikeRanking(int top) {
+        Set<String> ranking = stringRedisTemplate.opsForZSet()
+                .reverseRange(LIKE_RANKING_KEY, 0, top - 1);
+        return ranking != null ? new ArrayList<>(ranking) : List.of();
     }
 }

@@ -95,4 +95,20 @@ public class BoardController {
             @PathVariable Long boardId,HttpServletRequest request) {
         return boardService.unlike(boardId,request);
     }
+
+    @Operation(summary = "조회수 랭킹 조회", description = "조회수 기준 상위 게시글을 조회합니다.")
+    @GetMapping("/ranking/view")
+    public List<RankingResponse> getViewRanking(
+            @Parameter(description = "조회할 랭킹 수", example = "10")
+            @RequestParam(defaultValue = "10") int top) {
+        return boardService.getViewRanking(top);
+    }
+
+    @Operation(summary = "좋아요 랭킹 조회", description = "좋아요 기준 상위 게시글을 조회합니다.")
+    @GetMapping("/ranking/like")
+    public List<RankingResponse> getLikeRanking(
+            @Parameter(description = "조회할 랭킹 수", example = "10")
+            @RequestParam(defaultValue = "10") int top) {
+        return boardService.getLikeRanking(top);
+    }
 }

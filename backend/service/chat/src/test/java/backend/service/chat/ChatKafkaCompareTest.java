@@ -1,9 +1,9 @@
 package backend.service.chat;
 
 import backend.common.id.Snowflake;
+import backend.common.kafkaEvent.KafkaProducer;
 import backend.service.chat.dto.response.CreateResponse;
 import backend.service.chat.entity.ChatEntity;
-import backend.service.chat.kafka.KafkaProducer;
 import backend.service.chat.repository.ChatRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
