@@ -32,4 +32,10 @@ public interface UserService {
     LogoutResponse logout(HttpServletResponse response,HttpServletRequest request);
 
     void reissue(HttpServletRequest request, HttpServletResponse response);
+
+    List<StudyRankingResponse> getStudyRanking(int top);
+
+    List<StudyDailyResponse> getDailyStudy(int days, HttpServletRequest request);
+
+    Long getMyStudyRank(HttpServletRequest request);
 }

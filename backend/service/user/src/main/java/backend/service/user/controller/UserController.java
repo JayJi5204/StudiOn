@@ -90,4 +90,27 @@ public class UserController {
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
         userService.reissue(request, response);
     }
+
+    @Operation(summary = "공부시간 랭킹 조회", description = "공부시간 기준 상위 랭킹을 조회합니다.")
+    @GetMapping("/ranking/study")
+    public List<StudyRankingResponse> getStudyRanking(
+            @Parameter(description = "조회할 랭킹 수", example = "10")
+            @RequestParam(defaultValue = "10") int top) {
+        return userService.getStudyRanking(top);
+    }
+
+    @Operation(summary = "일별 공부시간 조회 (잔디)", description = "날짜별 공부시간을 조회합니다.")
+    @GetMapping("/study/daily")
+    public List<StudyDailyResponse> getDailyStudy(
+            @Parameter(description = "조회 기간 (일)", example = "30")
+            @RequestParam(defaultValue = "30") int days,
+            HttpServletRequest request) {
+        return userService.getDailyStudy(days, request);
+    }
+
+    @Operation(summary = "내 공부시간 랭킹 조회", description = "내 공부시간 랭킹을 조회합니다.")
+    @GetMapping("/ranking/study/my")
+    public Long getMyStudyRank(HttpServletRequest request) {
+        return userService.getMyStudyRank(request);
+    }
 }
