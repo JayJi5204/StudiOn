@@ -7,6 +7,7 @@ import UserTest from "../test/UserTest";
 import AlarmTest from "../test/AlarmTest";
 import RoomTest from "../test/RoomTest";
 import RankingTest from "../test/RankingTest";
+import AdminTest from "../test/AdminTest";
 
 const tests = [
   { key: "유저 테스트", label: "회원 관리", component: <UserTest /> },
@@ -21,6 +22,7 @@ const tests = [
   { key: "그룹 채팅 테스트", label: "그룹 채팅", component: <GroupChatTest /> },
   { key: "알림 테스트", label: "알림", component: <AlarmTest /> },
   { key: "랭킹 테스트", label: "랭킹", component: <RankingTest /> },
+  { key: "관리자 테스트", label: "관리자", component: <AdminTest /> },
 ];
 
 function TestPage() {
