@@ -11,6 +11,16 @@ interface CreateResponse {
   createdAt: string;
 }
 
+interface GetRoomResponse {
+  roomId: string;
+  roomName: string;
+  hostId: string;
+  currentPeople: number;
+  maxPeople: number;
+  isPrivate: boolean;
+  createdAt: string;
+}
+
 interface EnterResponse {
   roomId: string;
   message: string;
@@ -21,35 +31,38 @@ interface LeaveResponse {
   message: string;
 }
 
-type Tab = "create" | "getRoom" | "enter" | "leave" | "invite" | "inviteCode";
+type Tab =
+  | "create"
+  | "getRoom"
+  | "getRooms"
+  | "enter"
+  | "leave"
+  | "invite"
+  | "inviteCode";
 
 function RoomTest() {
   const [tab, setTab] = useState<Tab>("create");
   const [log, setLog] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // create
   const [roomName, setRoomName] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState("");
   const [createdRoom, setCreatedRoom] = useState<CreateResponse | null>(null);
 
-  // getRoom
   const [getRoomId, setGetRoomId] = useState("");
   const [roomDetail, setRoomDetail] = useState<CreateResponse | null>(null);
 
-  // enter
+  const [rooms, setRooms] = useState<GetRoomResponse[]>([]);
+
   const [enterRoomId, setEnterRoomId] = useState("");
   const [enterPassword, setEnterPassword] = useState("");
 
-  // leave
   const [leaveRoomId, setLeaveRoomId] = useState("");
 
-  // invite
   const [inviteRoomId, setInviteRoomId] = useState("");
   const [inviteTargetUserId, setInviteTargetUserId] = useState("");
 
-  // inviteCode
   const [inviteCode, setInviteCode] = useState("");
 
   const addLog = (msg: string) =>
@@ -88,6 +101,21 @@ function RoomTest() {
       addLog(`방 조회 성공 → ${res.data.roomName}`);
     } catch (e: any) {
       addLog(`방 조회 실패 → ${e.response?.data?.message ?? e.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGetRooms = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get<GetRoomResponse[]>("/api/rooms/list", {
+        withCredentials: true,
+      });
+      setRooms(res.data);
+      addLog(`전체 방 조회 성공 → ${res.data.length}개`);
+    } catch (e: any) {
+      addLog(`전체 방 조회 실패 → ${e.response?.data?.message ?? e.message}`);
     } finally {
       setLoading(false);
     }
@@ -164,6 +192,7 @@ function RoomTest() {
 
   const tabs: { key: Tab; label: string }[] = [
     { key: "create", label: "방 생성" },
+    { key: "getRooms", label: "전체 방 조회" },
     { key: "getRoom", label: "방 조회" },
     { key: "enter", label: "방 입장" },
     { key: "leave", label: "방 퇴장" },
@@ -246,6 +275,40 @@ function RoomTest() {
                 <span className="text-gray-500">비공개:</span>{" "}
                 {createdRoom.isPrivate ? "예" : "아니오"}
               </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "getRooms" && (
+        <div className="space-y-3">
+          <button
+            onClick={handleGetRooms}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+          >
+            전체 방 조회
+          </button>
+          {rooms.length > 0 && (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {rooms.map((r) => (
+                <div
+                  key={r.roomId}
+                  className="border border-gray-200 rounded p-3 text-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium">{r.roomName}</p>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded ${r.isPrivate ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}
+                    >
+                      {r.isPrivate ? "비공개" : "공개"}
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-xs mt-1">
+                    인원: {r.currentPeople}/{r.maxPeople} · id: {r.roomId}
+                  </p>
+                </div>
+              ))}
             </div>
           )}
         </div>
