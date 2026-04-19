@@ -6,6 +6,8 @@ import backend.service.room.dto.response.EnterResponse;
 import backend.service.room.dto.response.LeaveResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 public interface RoomService {
     CreateResponse create(CreateRequest request, HttpServletRequest httpRequest);
     CreateResponse getRoom(Long roomId);
@@ -13,4 +15,6 @@ public interface RoomService {
     LeaveResponse leave(Long roomId, HttpServletRequest httpRequest);
     EnterResponse enterByInviteCode(String inviteCode, HttpServletRequest httpRequest);
     void invite(Long roomId, Long targetUserId, HttpServletRequest request);
+    void forceDelete(Long roomId, HttpServletRequest request);
+    List<CreateResponse> getAllRooms(HttpServletRequest request);
 }

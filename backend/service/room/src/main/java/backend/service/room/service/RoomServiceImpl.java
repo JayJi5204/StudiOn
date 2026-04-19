@@ -12,7 +12,7 @@ import backend.service.room.dto.response.EnterResponse;
 import backend.service.room.dto.response.LeaveResponse;
 import backend.service.room.entity.RoomEntity;
 import backend.service.room.repository.RoomRepository;
-import backend.service.room.util.SecurityUtil;
+import backend.common.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -166,5 +168,40 @@ public class RoomServiceImpl implements RoomService {
                 room.getRoomName() + " 방에 초대되었습니다. 초대코드: " + room.getInviteCode(),
                 roomId
         ));
+    }
+    @Override
+    @Transactional
+    public void forceDelete(Long roomId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        RoomEntity room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+
+        // Redis 정리
+        Set<String> participants = stringRedisTemplate.opsForSet().members("room:participants:" + roomId);
+        if (participants != null) {
+            for (String userId : participants) {
+                stringRedisTemplate.delete("user:room:" + userId);
+                stringRedisTemplate.delete("study:start:" + userId);
+            }
+        }
+        stringRedisTemplate.delete("room:participants:" + roomId);
+
+        roomRepository.delete(room);
+    }
+
+    @Override
+    public List<CreateResponse> getAllRooms(HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        return roomRepository.findAll().stream()
+                .map(CreateResponse::from)
+                .toList();
     }
 }

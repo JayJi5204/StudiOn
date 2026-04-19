@@ -48,7 +48,7 @@ public class UserController {
 
     @Operation(summary = "전체 사용자 조회", description = "등록된 모든 사용자 목록을 가져옵니다.")
     @GetMapping("/all-users")
-    public List<CreateResponse> getAllUsers() {
+    public List<GetAllResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 
@@ -112,5 +112,13 @@ public class UserController {
     @GetMapping("/ranking/study/my")
     public Long getMyStudyRank(HttpServletRequest request) {
         return userService.getMyStudyRank(request);
+    }
+
+    @Operation(summary = "유저 강제 탈퇴 (관리자)", description = "특정 유저를 강제 탈퇴시킵니다.")
+    @DeleteMapping("/admin/force/{targetUserId}")
+    public void forceDelete(
+            @Parameter(description = "탈퇴시킬 유저 ID") @PathVariable Long targetUserId,
+            HttpServletRequest request) {
+        userService.forceDelete(targetUserId, request);
     }
 }

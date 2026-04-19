@@ -13,7 +13,7 @@ import backend.service.board.entity.BoardEntity;
 import backend.common.enumType.Category;
 import backend.service.board.feign.CommentClient;
 import backend.service.board.repository.BoardRepository;
-import backend.service.board.util.SecurityUtil;
+import backend.common.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -169,5 +169,23 @@ public class BoardServiceImpl implements BoardService {
             }
         }
         return result;
+    }
+    @Override
+    @Transactional
+    public DeletedResponse forceDelete(Long boardId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        BoardEntity boardEntity = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        boardRepository.deleteById(boardId);
+
+        BoardDeleteEvent event = new BoardDeleteEvent(boardId, LocalDateTime.now());
+        kafkaProducer.send("board.deleted", event);
+
+        return DeletedResponse.from();
     }
 }

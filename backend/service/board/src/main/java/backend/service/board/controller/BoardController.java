@@ -111,4 +111,12 @@ public class BoardController {
             @RequestParam(defaultValue = "10") int top) {
         return boardService.getLikeRanking(top);
     }
+
+    @Operation(summary = "게시글 강제 삭제 (관리자)", description = "관리자가 게시글을 강제 삭제합니다.")
+    @DeleteMapping("/admin/force/{boardId}")
+    public DeletedResponse forceDelete(
+            @Parameter(description = "삭제할 게시글 ID") @PathVariable Long boardId,
+            HttpServletRequest request) {
+        return boardService.forceDelete(boardId, request);
+    }
 }

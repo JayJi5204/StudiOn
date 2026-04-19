@@ -155,4 +155,12 @@ public class CommentController {
             HttpServletRequest request) {
         return commentService.unlike(commentId, request);
     }
+
+    @Operation(summary = "댓글 강제 삭제 (관리자)", description = "관리자가 댓글을 강제 삭제합니다.")
+    @DeleteMapping("/admin/force/{commentId}")
+    public DeletedResponse forceDelete(
+            @Parameter(description = "삭제할 댓글 ID") @PathVariable Long commentId,
+            HttpServletRequest request) {
+        return commentService.forceDelete(commentId, request);
+    }
 }

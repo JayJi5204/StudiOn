@@ -1,9 +1,9 @@
 package backend.service.alarm.controller;
 
+import backend.common.util.SecurityUtil;
 import backend.service.alarm.dto.response.AlarmResponse;
 import backend.service.alarm.service.AlarmService;
 import backend.service.alarm.service.SseEmitterManager;
-import backend.service.alarm.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
