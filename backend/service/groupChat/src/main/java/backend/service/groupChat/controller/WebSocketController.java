@@ -63,7 +63,7 @@ public class WebSocketController {
         String nickName = (String) headerAccessor.getSessionAttributes().get("nickName");
 
         groupChatService.sendMessage(
-                request.getRoomId(),
+                Long.parseLong(request.getRoomId()),
                 request.getMessage(),
                 Long.valueOf(userId),
                 nickName

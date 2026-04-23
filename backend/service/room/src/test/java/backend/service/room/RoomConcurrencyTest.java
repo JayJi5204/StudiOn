@@ -65,10 +65,6 @@ class RoomConcurrencyTest {
                 "testcode"
         );
         roomRepository.save(room);
-
-        // 생성자 Redis에 추가
-        stringRedisTemplate.opsForSet().add("room:participants:" + roomId, "1");
-        stringRedisTemplate.opsForValue().set("user:room:1", String.valueOf(roomId));
     }
 
     @Test
@@ -101,9 +97,9 @@ class RoomConcurrencyTest {
         dbTime = end - start;
 
         System.out.println("=== DB 직접 업데이트 ===");
-        System.out.println("최대 인원: 4명 (생성자 1명 포함)");
-        System.out.println("추가 입장 시도: " + threadCount + "명");
-        System.out.println("실제 입장: " + dbResult + "명 (생성자 포함)");
+        System.out.println("최대 인원: 4명");
+        System.out.println("입장 시도: " + threadCount + "명");
+        System.out.println("실제 입장: " + dbResult + "명");
         System.out.println("미달 입장: " + Math.max(0, 4 - dbResult) + "명 (동시성 문제로 유실)");
         System.out.println("소요 시간: " + dbTime + "ms");
     }
@@ -132,7 +128,7 @@ class RoomConcurrencyTest {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < threadCount; i++) {
-            final long userId = i + 2; // 생성자(1) 제외
+            final long userId = i + 1;
             executorService.submit(() -> {
                 try {
                     Long result = stringRedisTemplate.execute(
@@ -165,9 +161,9 @@ class RoomConcurrencyTest {
         redisFailCount = failCount.get();
 
         System.out.println("\n=== Redis 사용 ===");
-        System.out.println("최대 인원: 4명 (생성자 1명 포함)");
-        System.out.println("추가 입장 시도: " + threadCount + "명");
-        System.out.println("실제 입장: " + redisResult + "명 (생성자 포함)");
+        System.out.println("최대 인원: 4명");
+        System.out.println("입장 시도: " + threadCount + "명");
+        System.out.println("실제 입장: " + redisResult + "명");
         System.out.println("입장 거부: " + redisFailCount + "명");
         System.out.println("소요 시간: " + redisTime + "ms");
     }
@@ -185,22 +181,22 @@ class RoomConcurrencyTest {
 }
 /*
 === DB 직접 업데이트 ===
-최대 인원: 4명 (생성자 1명 포함)
-추가 입장 시도: 10명
-실제 입장: 2명 (생성자 포함)
-미달 입장: 2명 (동시성 문제로 유실)
-소요 시간: 39ms
+최대 인원: 4명
+입장 시도: 10명
+실제 입장: 1명
+미달 입장: 3명 (동시성 문제로 유실)
+소요 시간: 44ms
 
 === Redis 사용 ===
-최대 인원: 4명 (생성자 1명 포함)
-추가 입장 시도: 10명
-실제 입장: 4명 (생성자 포함)
-입장 거부: 7명
-소요 시간: 39ms
+최대 인원: 4명
+입장 시도: 10명
+실제 입장: 4명
+입장 거부: 6명
+소요 시간: 47ms
 
 === DB vs Redis ===
-DB 방식:    2명 입장 (동시성 문제로 2명 유실)
+DB 방식:    1명 입장 (동시성 문제로 3명 유실)
 Redis 방식: 4명 입장 (정확히 최대 인원 제한)
-입장 거부:  DB는 인원 유실 발생, Redis는 정확히 7명 거부
-소요시간:   Redis가 1.0배 빠름 (39ms → 39ms)
+입장 거부:  DB는 인원 유실 발생, Redis는 정확히 6명 거부
+소요시간:   Redis가 0.9배 빠름 (44ms → 47ms)
  */

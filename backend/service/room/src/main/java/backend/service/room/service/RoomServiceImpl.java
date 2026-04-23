@@ -54,10 +54,6 @@ public class RoomServiceImpl implements RoomService {
 
         roomRepository.save(room);
 
-        stringRedisTemplate.opsForSet().add("room:participants:" + room.getRoomId(), String.valueOf(userId));
-        stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(room.getRoomId()));
-        stringRedisTemplate.opsForValue().set("study:start:" + userId, String.valueOf(System.currentTimeMillis()));
-
         return CreateResponse.from(room);
     }
 
@@ -66,90 +62,6 @@ public class RoomServiceImpl implements RoomService {
         RoomEntity room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
         return GetRoomResponse.from(room);
-    }
-
-    @Override
-    @Transactional
-    public EnterResponse enter(Long roomId, String password, HttpServletRequest httpRequest) {
-        Long userId = SecurityUtil.getCurrentUserId(httpRequest);
-
-        String currentRoomId = stringRedisTemplate.opsForValue().get("user:room:" + userId);
-        if (currentRoomId != null) {
-            throw new CustomException(ErrorCode.ALREADY_IN_ROOM);
-        }
-
-        RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-
-        if (room.isPrivate()) {
-            if (!room.checkPassword(password)) {
-                throw new CustomException(ErrorCode.INVALID_PASSWORD_ROOM);
-            }
-        }
-
-        if (room.getCurrentPeople() >= room.getMaxPeople()) {
-            throw new CustomException(ErrorCode.ROOM_FULL);
-        }
-
-        room.enter();
-        stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(roomId));
-        stringRedisTemplate.opsForSet().add("room:participants:" + roomId, String.valueOf(userId));
-        stringRedisTemplate.opsForValue().set("study:start:" + userId, String.valueOf(System.currentTimeMillis()));
-
-        return EnterResponse.from(room);
-    }
-
-    @Override
-    @Transactional
-    public LeaveResponse leave(Long roomId, HttpServletRequest httpRequest) {
-        Long userId = SecurityUtil.getCurrentUserId(httpRequest);
-
-        RoomEntity room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
-
-        room.leave();
-        stringRedisTemplate.delete("user:room:" + userId);
-        stringRedisTemplate.opsForSet().remove("room:participants:" + roomId, String.valueOf(userId));
-
-        // 공부시간 계산 후 Kafka 발행
-        String startTimeStr = stringRedisTemplate.opsForValue().get("study:start:" + userId);
-        if (startTimeStr != null) {
-            long startTime = Long.parseLong(startTimeStr);
-            long studyMinutes = (System.currentTimeMillis() - startTime) / 1000 / 60;
-            String today = LocalDate.now().toString();
-
-            kafkaProducer.send("study.time", new StudyTimeEvent(userId, studyMinutes, today));
-            stringRedisTemplate.delete("study:start:" + userId);
-        }
-
-        if (room.getCurrentPeople() <= 0) {
-            roomRepository.delete(room);
-        }
-
-        return LeaveResponse.from(room);
-    }
-
-    @Override
-    @Transactional
-    public EnterResponse enterByInviteCode(String inviteCode, HttpServletRequest httpRequest) {
-        Long userId = SecurityUtil.getCurrentUserId(httpRequest);
-
-        String currentRoomId = stringRedisTemplate.opsForValue().get("user:room:" + userId);
-        if (currentRoomId != null) {
-            throw new CustomException(ErrorCode.ALREADY_IN_ROOM);
-        }
-
-        RoomEntity room = roomRepository.findByInviteCode(inviteCode)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITE_CODE));
-
-        if (room.getCurrentPeople() >= room.getMaxPeople()) {
-            throw new CustomException(ErrorCode.ROOM_FULL);
-        }
-
-        room.enter();
-        stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(room.getRoomId()));
-
-        return EnterResponse.from(room);
     }
 
     @Override
@@ -200,5 +112,59 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findAll().stream()
                 .map(GetRoomResponse::from)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void joinRoom(Long roomId, Long userId) {
+        String currentRoomId = stringRedisTemplate.opsForValue().get("user:room:" + userId);
+        if (currentRoomId != null) {
+            throw new CustomException(ErrorCode.ALREADY_IN_ROOM);
+        }
+
+        RoomEntity room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
+
+        if (room.getCurrentPeople() >= room.getMaxPeople()) {
+            throw new CustomException(ErrorCode.ROOM_FULL);
+        }
+
+        room.enter();
+        stringRedisTemplate.opsForValue().set("user:room:" + userId, String.valueOf(roomId));
+        stringRedisTemplate.opsForSet().add("room:participants:" + roomId, String.valueOf(userId));
+        stringRedisTemplate.opsForValue().set("study:start:" + userId, String.valueOf(System.currentTimeMillis()));
+        log.info("방 입장 roomId={}, userId={}", roomId, userId);
+    }
+
+    @Override
+    @Transactional
+    public void leaveRoom(Long roomId, Long userId) {
+        RoomEntity room = roomRepository.findById(roomId).orElse(null);
+        if (room == null) return;
+
+        room.leave();
+        stringRedisTemplate.delete("user:room:" + userId);
+        stringRedisTemplate.opsForSet().remove("room:participants:" + roomId, String.valueOf(userId));
+
+        String startTimeStr = stringRedisTemplate.opsForValue().get("study:start:" + userId);
+        if (startTimeStr != null) {
+            long startTime = Long.parseLong(startTimeStr);
+            long studyMinutes = (System.currentTimeMillis() - startTime) / 1000 / 60;
+            String today = LocalDate.now().toString();
+            kafkaProducer.send("study.time", new StudyTimeEvent(userId, studyMinutes, today));
+            stringRedisTemplate.delete("study:start:" + userId);
+        }
+
+        if (room.getCurrentPeople() <= 0) {
+            roomRepository.delete(room);
+        }
+        log.info("방 퇴장 roomId={}, userId={}", roomId, userId);
+    }
+
+    @Override
+    public GetRoomResponse getRoomByInviteCode(String inviteCode) {
+        RoomEntity room = roomRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INVITE_CODE));
+        return GetRoomResponse.from(room);
     }
 }

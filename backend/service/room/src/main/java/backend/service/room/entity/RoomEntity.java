@@ -53,7 +53,7 @@ public class RoomEntity {
         roomEntity.roomName = roomName;
         roomEntity.hostId = userId;
         roomEntity.maxPeople = 4;
-        roomEntity.currentPeople = 1;
+        roomEntity.currentPeople = 0;
         roomEntity.isPrivate = isPrivate;
         roomEntity.password = isPrivate ? password : null;  // isPrivate가 false면 null
         roomEntity.inviteCode = inviteCode;

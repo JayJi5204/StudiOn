@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreateRequest {
-    private Long roomId;
+    private String roomId;
     private String message;
 }

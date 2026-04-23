@@ -1,28 +1,26 @@
 import { useState } from "react";
 import DirectChatTest from "../test/DirectChatTest";
-import GroupChatTest from "../test/GroupChatTest";
 import BoardTest from "../test/BoardTest";
 import CommentTest from "../test/CommentTest";
 import UserTest from "../test/UserTest";
 import AlarmTest from "../test/AlarmTest";
-import RoomTest from "../test/RoomTest";
 import RankingTest from "../test/RankingTest";
 import AdminTest from "../test/AdminTest";
+import StudyRoomTest from "../test/StudyRoomTest";
 
 const tests = [
   { key: "유저 테스트", label: "회원 관리", component: <UserTest /> },
   { key: "게시판 테스트", label: "게시판", component: <BoardTest /> },
   { key: "댓글 테스트", label: "댓글", component: <CommentTest /> },
-  { key: "방 테스트", label: "방", component: <RoomTest /> },
   {
     key: "1대1 채팅 테스트",
     label: "1대1 채팅",
     component: <DirectChatTest />,
   },
-  { key: "그룹 채팅 테스트", label: "그룹 채팅", component: <GroupChatTest /> },
   { key: "알림 테스트", label: "알림", component: <AlarmTest /> },
   { key: "랭킹 테스트", label: "랭킹", component: <RankingTest /> },
   { key: "관리자 테스트", label: "관리자", component: <AdminTest /> },
+  { key: "스터디룸 테스트", label: "스터디룸", component: <StudyRoomTest /> },
 ];
 
 function TestPage() {
