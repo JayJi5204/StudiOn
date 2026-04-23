@@ -103,16 +103,15 @@ spring:
             - id: chat-service-websocket
               uri: lb:ws://CHAT-SERVICE
               predicates:
-                - Path=/chat-service/ws/**
+                - Path=/ws/chat/**
               filters:
-                - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
+                - RewritePath=/ws/chat/(?<segment>.*),/ws/chat/$\{segment}
 
             # 4. CHAT-SERVICE HTTP
             - id: chat-service-public
               uri: lb://CHAT-SERVICE
               predicates:
                 - Path=/chat-service/health-check,
-                  /chat-service/ws/**,
                   /chat-service/v3/api-docs/**,
                   /chat-service/swagger-ui/**,
                   /chat-service/swagger-ui.html
@@ -129,7 +128,15 @@ spring:
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
 
-            # 5. ROOM-SERVICE
+            # 5. ROOM-SERVICE WebSocket
+            - id: room-service-websocket
+              uri: lb:ws://ROOM-SERVICE
+              predicates:
+                - Path=/ws/signal/**
+              filters:
+                - RewritePath=/ws/signal/(?<segment>.*),/ws/signal/$\{segment}
+
+            # 5. ROOM-SERVICE HTTP
             - id: room-service-public
               uri: lb://ROOM-SERVICE
               predicates:
@@ -155,16 +162,15 @@ spring:
             - id: groupChat-service-websocket
               uri: lb:ws://GROUPCHAT-SERVICE
               predicates:
-                - Path=/groupChat-service/ws/**
+                - Path=/ws/group-chat/**
               filters:
-                - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
+                - RewritePath=/ws/group-chat/(?<segment>.*),/ws/group-chat/$\{segment}
 
             # 6. GROUPCHAT-SERVICE HTTP
             - id: groupChat-service-public
               uri: lb://GROUPCHAT-SERVICE
               predicates:
                 - Path=/groupChat-service/health-check,
-                  /groupChat-service/ws/**,
                   /groupChat-service/v3/api-docs/**,
                   /groupChat-service/swagger-ui/**,
                   /groupChat-service/swagger-ui.html
@@ -202,26 +208,6 @@ spring:
                 - name: AuthorizationHeaderFilter
                 - RemoveRequestHeader=Cookie
                 - RewritePath=/alarm-service/(?<segment>.*),/$\{segment}
-
-            - id: ranking-service-public
-              uri: lb://RANKING-SERVICE
-              predicates:
-                - Path=/ranking-service/health-check,
-                  /ranking-service/v3/api-docs/**,
-                  /ranking-service/swagger-ui/**,
-                  /ranking-service/swagger-ui.html
-              filters:
-                - RemoveRequestHeader=Cookie
-                - RewritePath=/ranking-service/(?<segment>.*),/$\{segment}
-
-            - id: ranking-service-secure
-              uri: lb://RANKING-SERVICE
-              predicates:
-                - Path=/ranking-service/**
-              filters:
-                - name: AuthorizationHeaderFilter
-                - RemoveRequestHeader=Cookie
-                - RewritePath=/ranking-service/(?<segment>.*),/$\{segment}
 
 management:
   endpoints:

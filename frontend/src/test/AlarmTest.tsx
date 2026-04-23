@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import useUserInfoStore from "../store/userInfoStore";
 
 interface AlarmResponse {
   alarmId: string;
@@ -12,7 +13,8 @@ interface AlarmResponse {
 }
 
 function AlarmTest() {
-  const [userId, setUserId] = useState("");
+  const { userInfo } = useUserInfoStore();
+  const [userId, setUserId] = useState(userInfo.userId || "");
   const [connected, setConnected] = useState(false);
   const [alarms, setAlarms] = useState<AlarmResponse[]>([]);
   const [log, setLog] = useState<string[]>([]);
@@ -24,9 +26,7 @@ function AlarmTest() {
   const connect = () => {
     if (!userId) return alert("userId를 입력하세요");
 
-    const eventSource = new EventSource(
-      `http://localhost:8167/api/alarms/subscribe/${userId}`,
-    );
+    const eventSource = new EventSource(`/api/alarms/subscribe/${userId}`);
 
     eventSource.onopen = () => {
       setConnected(true);
@@ -189,7 +189,11 @@ function AlarmTest() {
           {alarms.map((a) => (
             <div
               key={a.alarmId}
-              className={`border rounded p-3 text-sm flex items-center justify-between ${a.isRead ? "bg-gray-50 border-gray-200" : "bg-blue-50 border-blue-200"}`}
+              className={`border rounded p-3 text-sm flex items-center justify-between ${
+                a.isRead
+                  ? "bg-gray-50 border-gray-200 opacity-50" // 읽음 → 흐리게
+                  : "bg-blue-50 border-blue-200" // 안 읽음 → 파란색
+              }`}
             >
               <div>
                 <span
@@ -203,7 +207,16 @@ function AlarmTest() {
                 >
                   {a.alarmType}
                 </span>
-                <span>{a.message}</span>
+                <span
+                  className={
+                    a.isRead ? "text-gray-400 line-through" : "text-gray-800"
+                  }
+                >
+                  {a.message}
+                </span>
+                {!a.isRead && (
+                  <span className="ml-2 w-2 h-2 bg-red-500 rounded-full inline-block" />
+                )}
               </div>
               {!a.isRead && (
                 <button

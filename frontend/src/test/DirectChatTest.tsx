@@ -53,7 +53,7 @@ export default function DirectChatTest() {
     const clientRef = userNum === 1 ? client1 : client2;
 
     const client = new Client({
-      brokerURL: "ws://localhost:8000/chat-service/ws/chat",
+      brokerURL: `ws://${window.location.host}/ws/chat`,
       connectHeaders: { userId, nickName },
       onConnect: () => {
         setConnected(true);
