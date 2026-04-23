@@ -1,63 +1,9 @@
-# 📚 StudiOn
-
-> Spring Boot 기반 마이크로서비스 아키텍처로 구현한 웹캠 스터디 플랫폼
+# Backend
 
 ---
+## 서비스 구성
 
-## 🛠 기술 스택
-
-### Backend
-| 기술 | 용도 |
-|------|------|
-| Spring Boot 3.3.5 | 마이크로서비스 구현 |
-| Spring Cloud Gateway | API Gateway |
-| Spring Cloud Eureka | 서비스 디스커버리 |
-| Spring Cloud Config | 중앙화된 설정 관리 |
-| Spring Cloud OpenFeign | 서비스 간 통신 |
-| Spring WebSocket + STOMP | 실시간 채팅 |
-| Spring WebSocket | WebRTC 시그널링 |
-| Spring SSE | 실시간 알림 |
-
-### Database & Messaging
-| 기술 | 용도 |
-|------|------|
-| MySQL | 영구 데이터 저장 |
-| Redis | 캐싱, 실시간 데이터, Pub/Sub |
-| Apache Kafka | 비동기 이벤트 처리 |
-
-### Infra
-| 기술 | 용도 |
-|------|------|
-| Docker + Docker Compose | 컨테이너 환경 |
-| nginx | 리버스 프록시 |
-
----
-
-## 🏗 아키텍처
-
-```
-[Browser]
-    ↓
-[nginx :8167]
-    ↓
-[Spring Cloud Gateway :8000]
-    ↓
-[Eureka Server :8761]
-    ↓
-┌─────────────────────────────────────────────────────┐
-│  user-service  │  board-service  │  comment-service │
-│  chat-service  │  groupChat-service  │  room-service │
-│  alarm-service                                       │
-└─────────────────────────────────────────────────────┘
-    ↓           ↓           ↓
-[MySQL]      [Redis]     [Kafka]
-```
-
----
-
-## 📦 서비스 구성
-
-### 🔧 공통 모듈 (common)
+### 공통 모듈 (common)
 - **Snowflake ID** 생성 (분산 환경 고유 ID)
 - **KafkaProducer** (ObjectMapper로 String JSON 직렬화)
 - **FeignRequestInterceptor** (X-User-ID, X-User-Role 헤더 자동 전달)
@@ -67,7 +13,7 @@
 
 ---
 
-### 👤 user-service
+### user-service
 **주요 기능**
 - 회원가입 / 로그인 / 로그아웃 / 회원 정보 수정 / 회원 탈퇴
 - JWT AccessToken + RefreshToken (Redis 저장)
@@ -109,7 +55,7 @@ Redis "study:daily:{userId}:{date}" 업데이트
 
 ---
 
-### 📋 board-service
+### board-service
 **주요 기능**
 - 게시글 CRUD / 페이지네이션 / 카테고리 필터링
 - 조회수 / 좋아요 Redis 캐싱
@@ -291,26 +237,13 @@ study:start:{userId}        → 공부 시작 시간 (timestamp)
 
 ---
 
-## 🚀 실행 방법
-
-### 사전 요구사항
-- Docker Desktop 설치
-- Docker Compose 설치
-
-### 실행
-
-**백엔드**
-```bash
-cd backend
-docker compose up -d --build
-```
+## 실행 방법
 
 ### 서비스 접속
 | 서비스 | URL |
 |--------|-----|
-| 프론트엔드 | http://localhost:8167 |
-| Gateway | http://localhost:8000 |
 | Eureka | http://localhost:8761 |
+| Gateway | http://localhost:8000 |
 | Swagger (Gateway) | http://localhost:8000/swagger-ui.html |
 
 ### 관리자 계정 설정
@@ -335,24 +268,3 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'your@email.com';
 | BoardRankingTest | DB vs Redis 랭킹 조회 속도 비교 |
 | RoomConcurrencyTest | DB vs Redis 방 인원 제한 동시성 비교 |
 | KafkaTest | Kafka vs Redis Pub/Sub 메시지 유실률 비교 |
-
----
-
-## 📁 프로젝트 구조
-
-```
-backend/
-├── server/
-│   ├── eureka/          # 서비스 디스커버리
-│   ├── config-server/   # 중앙화 설정 서버
-│   └── gateway/         # API Gateway
-├── service/
-│   ├── user/            # 회원 서비스
-│   ├── board/           # 게시판 서비스
-│   ├── comment/         # 댓글 서비스
-│   ├── chat/            # 1대1 채팅 서비스
-│   ├── groupChat/       # 그룹 채팅 서비스
-│   ├── room/            # 스터디룸 + WebRTC 시그널링
-│   └── alarm/           # 알림 서비스
-└── common/              # 공통 모듈
-```
