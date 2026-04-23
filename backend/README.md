@@ -105,7 +105,7 @@ ranking:board:like         → 좋아요 Sorted Set
 
 ---
 
-### 💬 comment-service
+### comment-service
 **주요 기능**
 - 무한 댓글 (Path 기반 계층 구조)
 - 댓글 좋아요 Redis 캐싱
@@ -125,7 +125,7 @@ ranking:board:like         → 좋아요 Sorted Set
 
 ---
 
-### 💌 chat-service (1대1 채팅)
+### chat-service (1대1 채팅)
 **주요 기능**
 - WebSocket + STOMP 기반 실시간 채팅
 - Redis Pub/Sub로 메시지 실시간 전달
@@ -140,7 +140,7 @@ ranking:board:like         → 좋아요 Sorted Set
 
 ---
 
-### 👥 groupChat-service (그룹 채팅)
+### groupChat-service (그룹 채팅)
 **주요 기능**
 - WebSocket + STOMP 기반 그룹 채팅
 - Redis Pub/Sub로 메시지 실시간 전달
@@ -149,7 +149,7 @@ ranking:board:like         → 좋아요 Sorted Set
 
 ---
 
-### 🏠 room-service
+### room-service
 **주요 기능**
 - 방 생성 / 조회 / 초대 / 강제 삭제
 - WebRTC 시그널링 서버
@@ -214,7 +214,7 @@ study:start:{userId}        → 공부 시작 시간 (timestamp)
 
 ---
 
-### 🔔 alarm-service
+### alarm-service
 **주요 기능**
 - SSE(Server-Sent Events) 실시간 알림
 - Kafka "alarm" 토픽 단일 사용
@@ -259,7 +259,7 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'your@email.com';
 
 ---
 
-## 🧪 테스트 코드
+## 테스트 코드
 
 | 테스트 | 설명 |
 |--------|------|
