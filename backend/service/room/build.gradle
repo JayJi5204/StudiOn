@@ -46,4 +46,11 @@ dependencies {
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'com.redis:testcontainers-redis:2.2.2'
 }

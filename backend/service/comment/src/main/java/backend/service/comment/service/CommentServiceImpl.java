@@ -1,5 +1,8 @@
 package backend.service.comment.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
+import backend.common.util.SecurityUtil;
 import backend.service.comment.dto.other.GetBoardResponse;
 import backend.common.kafkaEvent.KafkaProducer;
 import backend.common.kafkaEvent.alarm.AlarmEvent;
@@ -11,7 +14,6 @@ import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
 import backend.service.comment.feign.BoardClient;
 import backend.service.comment.repository.CommentRepository;
-import backend.service.comment.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import backend.common.id.Snowflake;
@@ -80,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
         }
         return commentRepository.findByPath(parentPath)
                 .filter(not(CommentEntity::getIsDeleted))
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
     public CreateResponse get(Long commentId) {
@@ -105,11 +107,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     public UpdateResponse update(Long commentId, UpdateRequest dto, HttpServletRequest request) {
-        CommentEntity entity = commentRepository.findById(commentId).orElseThrow();
-
         Long userId = SecurityUtil.getCurrentUserId(request);
+        CommentEntity entity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
         if (!entity.getUserId().equals(userId)) {
-            throw new RuntimeException("수정 권한 없음");
+            throw new CustomException(ErrorCode.COMMENT_UNAUTHORIZED);
         }
 
         entity.update(dto.getContent());
@@ -170,5 +173,27 @@ public class CommentServiceImpl implements CommentService {
     public LikeResponse unlike(Long commentId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return commentCountService.unlike(commentId, userId);
+    }
+
+    @Override
+    @Transactional
+    public DeletedResponse forceDelete(Long commentId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        CommentEntity entity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (hasChildren(entity)) {
+            entity.delete();
+        } else {
+            delete(entity);
+        }
+
+        kafkaProducer.send("comment.deleted", new CommentDeletedEvent(entity.getBoardId()));
+
+        return DeletedResponse.from();
     }
 }

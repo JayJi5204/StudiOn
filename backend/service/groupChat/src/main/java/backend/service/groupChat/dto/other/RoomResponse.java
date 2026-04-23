@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class RoomResponse {
     private String roomId;
+    private String hostId;
     private String roomName;
     private int maxPeople;
     private int currentPeople;

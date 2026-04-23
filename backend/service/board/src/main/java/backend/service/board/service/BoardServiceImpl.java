@@ -13,7 +13,7 @@ import backend.service.board.entity.BoardEntity;
 import backend.common.enumType.Category;
 import backend.service.board.feign.CommentClient;
 import backend.service.board.repository.BoardRepository;
-import backend.service.board.util.SecurityUtil;
+import backend.common.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 @Log4j2
 @Service
@@ -138,5 +139,53 @@ public class BoardServiceImpl implements BoardService {
     public LikeResponse unlike(Long boardId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return boardCountService.unlike(boardId, userId);
+    }
+
+    @Override
+    public List<RankingResponse> getViewRanking(int top) {
+        List<String> boardIds = boardCountService.getViewRanking(top);
+        long rank = 1;
+        List<RankingResponse> result = new ArrayList<>();
+        for (String boardId : boardIds) {
+            BoardEntity entity = boardRepository.findById(Long.parseLong(boardId)).orElse(null);
+            if (entity != null && entity.getCategory() != Category.NOTICE) {  // NOTICE 제외
+                Long viewCount = boardCountService.getViewCount(Long.parseLong(boardId));
+                result.add(RankingResponse.from(entity, viewCount, rank++));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<RankingResponse> getLikeRanking(int top) {
+        List<String> boardIds = boardCountService.getLikeRanking(top);
+        long rank = 1;
+        List<RankingResponse> result = new ArrayList<>();
+        for (String boardId : boardIds) {
+            BoardEntity entity = boardRepository.findById(Long.parseLong(boardId)).orElse(null);
+            if (entity != null && entity.getCategory() != Category.NOTICE) {  // NOTICE 제외
+                Long likeCount = boardCountService.getLikeCount(Long.parseLong(boardId));
+                result.add(RankingResponse.from(entity, likeCount, rank++));
+            }
+        }
+        return result;
+    }
+    @Override
+    @Transactional
+    public DeletedResponse forceDelete(Long boardId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        BoardEntity boardEntity = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        boardRepository.deleteById(boardId);
+
+        BoardDeleteEvent event = new BoardDeleteEvent(boardId, LocalDateTime.now());
+        kafkaProducer.send("board.deleted", event);
+
+        return DeletedResponse.from();
     }
 }

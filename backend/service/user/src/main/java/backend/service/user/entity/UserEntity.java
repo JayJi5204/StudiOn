@@ -84,4 +84,8 @@ public class UserEntity {
     public void logout(){
         this.isLoggedIn = false;
     }
+
+    public void addStudyTime(Long minutes) {
+        this.studyTime += minutes;
+    }
 }

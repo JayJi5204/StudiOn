@@ -18,4 +18,7 @@ public interface BoardService {
     DeletedResponse delete(Long boardId, HttpServletRequest request);
     LikeResponse like(Long boardId, HttpServletRequest request);
     LikeResponse unlike(Long boardId, HttpServletRequest request);
+    List<RankingResponse> getViewRanking(int top);
+    List<RankingResponse> getLikeRanking(int top);
+    DeletedResponse forceDelete(Long boardId, HttpServletRequest request);
 }
