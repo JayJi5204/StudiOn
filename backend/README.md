@@ -1,6 +1,5 @@
 # Backend
 
----
 ## 서비스 구성
 
 ### 공통 모듈 (common)
@@ -10,8 +9,6 @@
 - **SecurityUtil** (HttpServletRequest 헤더에서 userId, nickName, role 추출)
 - **GlobalExceptionHandler** + ErrorCode + CustomException
 - **Kafka 이벤트**: AlarmEvent, StudyTimeEvent, BoardDeleteEvent, CommentCreatedEvent, CommentDeletedEvent
-
----
 
 ### user-service
 **주요 기능**
@@ -53,7 +50,6 @@ Redis "study:daily:{userId}:{date}" 업데이트
 | GET | /api/users/study/daily | 날짜별 공부시간 (잔디) |
 | DELETE | /api/users/admin/force/{userId} | 유저 강제 탈퇴 |
 
----
 
 ### board-service
 **주요 기능**
@@ -103,8 +99,6 @@ ranking:board:like         → 좋아요 Sorted Set
 | GET | /api/boards/ranking/like | 좋아요 랭킹 |
 | DELETE | /api/boards/admin/force/{boardId} | 게시글 강제 삭제 |
 
----
-
 ### comment-service
 **주요 기능**
 - 무한 댓글 (Path 기반 계층 구조)
@@ -123,8 +117,6 @@ ranking:board:like         → 좋아요 Sorted Set
 | GET | /api/comments/board/{boardId} | 게시글 댓글 조회 |
 | DELETE | /api/comments/admin/force/{commentId} | 댓글 강제 삭제 |
 
----
-
 ### chat-service (1대1 채팅)
 **주요 기능**
 - WebSocket + STOMP 기반 실시간 채팅
@@ -138,16 +130,12 @@ ranking:board:like         → 좋아요 Sorted Set
                                   → Kafka → DB 저장
 ```
 
----
-
 ### groupChat-service (그룹 채팅)
 **주요 기능**
 - WebSocket + STOMP 기반 그룹 채팅
 - Redis Pub/Sub로 메시지 실시간 전달
 - RoomClient Feign으로 방 존재 여부 확인
 - Snowflake ID 정밀도 손실 방지 (roomId를 String으로 처리)
-
----
 
 ### room-service
 **주요 기능**
@@ -212,8 +200,6 @@ study:start:{userId}        → 공부 시작 시간 (timestamp)
 | POST | /api/rooms/{roomId}/invite/{targetUserId} | 유저 초대 |
 | DELETE | /api/rooms/admin/force/{roomId} | 방 강제 삭제 |
 
----
-
 ### alarm-service
 **주요 기능**
 - SSE(Server-Sent Events) 실시간 알림
@@ -234,8 +220,6 @@ study:start:{userId}        → 공부 시작 시간 (timestamp)
 | GET | /api/alarms/unread | 미읽음 알림 조회 |
 | PATCH | /api/alarms/{alarmId}/read | 알림 읽음 처리 |
 | PATCH | /api/alarms/read-all | 전체 읽음 처리 |
-
----
 
 ## 실행 방법
 
