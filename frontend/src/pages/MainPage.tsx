@@ -170,9 +170,9 @@ const MainPage = () => {
                     <h3 className="text-xl font-bold text-gray-900 mb-1">{study.title}</h3>
                     <div className="flex items-center text-sm text-gray-500">
                       <Users size={16} className="mr-1" />
-                      {study.members}/{study.maxMembers}명
+                        {study.members}/{study.maxMembers}명
                       <Star size={16} className="ml-3 mr-1 fill-yellow-400 text-yellow-400" />
-                      {study.rating}
+                        {study.rating}
                     </div>
                   </div>
                 </div>

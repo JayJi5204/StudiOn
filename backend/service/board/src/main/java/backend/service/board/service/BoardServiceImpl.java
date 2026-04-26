@@ -1,17 +1,19 @@
 package backend.service.board.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
 import backend.common.id.Snowflake;
-import backend.common.dto.board.BoardDeleteEvent;
-import backend.service.board.dto.otherDto.CommentDto;
+import backend.common.kafkaEvent.KafkaProducer;
+import backend.common.kafkaEvent.board.BoardDeleteEvent;
+import backend.service.board.dto.other.CommentDto;
 import backend.service.board.dto.request.CreateRequest;
 import backend.service.board.dto.request.UpdateRequest;
 import backend.service.board.dto.response.*;
 import backend.service.board.entity.BoardEntity;
 import backend.common.enumType.Category;
 import backend.service.board.feign.CommentClient;
-import backend.service.board.kafka.KafkaProducer;
 import backend.service.board.repository.BoardRepository;
-import backend.service.board.util.SecurityUtil;
+import backend.common.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public CreateResponse create(CreateRequest dto, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
-        String nickName=SecurityUtil.getNickname(request);
+        String nickName = SecurityUtil.getNickname(request);
         BoardEntity boardEntity = boardRepository.save(
                 BoardEntity.create(snowflake.nextId(), userId, nickName, dto.getTitle(), dto.getContent(), dto.getCategory(), dto.getTags())
         );
@@ -48,7 +50,8 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public GetWithCommentResponse getBoard(Long boardId, HttpServletRequest request) {
-        BoardEntity entity = boardRepository.findById(boardId).orElseThrow();
+        BoardEntity entity = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
         List<CommentDto> responseComments = commentClient.getComments(boardId);
 
         Long viewCount = boardCountService.incrementViewCount(boardId);
@@ -74,7 +77,7 @@ public class BoardServiceImpl implements BoardService {
             Long viewCount = boardCountService.getViewCount(board.getBoardId());
             Long likeCount = boardCountService.getLikeCount(board.getBoardId());
             Long commentCount = boardCountService.getCommentCount(board.getBoardId());
-            return PageResponse.from(board, viewCount, likeCount,commentCount);
+            return PageResponse.from(board, viewCount, likeCount, commentCount);
         });
     }
 
@@ -92,11 +95,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     public UpdateResponse update(Long boardId, UpdateRequest dto, HttpServletRequest request) {
-        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow();
+        BoardEntity boardEntity = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         Long userId = SecurityUtil.getCurrentUserId(request);
         if (!boardEntity.getUserId().equals(userId)) {
-            throw new RuntimeException("수정 권한 없음");
+            throw new CustomException(ErrorCode.BOARD_UNAUTHORIZED);
         }
 
         boardEntity.update(dto.getTitle(), dto.getContent(), dto.getCategory(), dto.getTags());
@@ -109,12 +113,12 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     public DeletedResponse delete(Long boardId, HttpServletRequest request) {
-        BoardEntity boardEntity = boardRepository.findById(boardId).orElseThrow();
+        BoardEntity boardEntity = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         Long userId = SecurityUtil.getCurrentUserId(request);
-
         if (!boardEntity.getUserId().equals(userId)) {
-            throw new RuntimeException("삭제 권한 없음");
+            throw new CustomException(ErrorCode.BOARD_UNAUTHORIZED);
         }
 
         boardRepository.deleteById(boardId);
@@ -135,5 +139,53 @@ public class BoardServiceImpl implements BoardService {
     public LikeResponse unlike(Long boardId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return boardCountService.unlike(boardId, userId);
+    }
+
+    @Override
+    public List<RankingResponse> getViewRanking(int top) {
+        List<String> boardIds = boardCountService.getViewRanking(top);
+        long rank = 1;
+        List<RankingResponse> result = new ArrayList<>();
+        for (String boardId : boardIds) {
+            BoardEntity entity = boardRepository.findById(Long.parseLong(boardId)).orElse(null);
+            if (entity != null && entity.getCategory() != Category.NOTICE) {  // NOTICE 제외
+                Long viewCount = boardCountService.getViewCount(Long.parseLong(boardId));
+                result.add(RankingResponse.from(entity, viewCount, rank++));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<RankingResponse> getLikeRanking(int top) {
+        List<String> boardIds = boardCountService.getLikeRanking(top);
+        long rank = 1;
+        List<RankingResponse> result = new ArrayList<>();
+        for (String boardId : boardIds) {
+            BoardEntity entity = boardRepository.findById(Long.parseLong(boardId)).orElse(null);
+            if (entity != null && entity.getCategory() != Category.NOTICE) {  // NOTICE 제외
+                Long likeCount = boardCountService.getLikeCount(Long.parseLong(boardId));
+                result.add(RankingResponse.from(entity, likeCount, rank++));
+            }
+        }
+        return result;
+    }
+    @Override
+    @Transactional
+    public DeletedResponse forceDelete(Long boardId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        BoardEntity boardEntity = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        boardRepository.deleteById(boardId);
+
+        BoardDeleteEvent event = new BoardDeleteEvent(boardId, LocalDateTime.now());
+        kafkaProducer.send("board.deleted", event);
+
+        return DeletedResponse.from();
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"backend.service.user", "backend.common"})
 @EnableDiscoveryClient
 @EnableFeignClients
 public class UserApplication {

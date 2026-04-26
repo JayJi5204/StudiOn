@@ -1,6 +1,6 @@
 package backend.service.user.feign;
 
-import backend.service.user.dto.otherDto.CommentDto;
+import backend.service.user.dto.other.CommentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

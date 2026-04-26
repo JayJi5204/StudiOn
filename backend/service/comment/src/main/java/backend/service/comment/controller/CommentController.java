@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,7 @@ public class CommentController {
                     """
     )
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequest createRequest, HttpServletRequest request) {
+    public CreateResponse create(@RequestBody @Valid CreateRequest createRequest, HttpServletRequest request) {
         return commentService.create(createRequest, request);
     }
 
@@ -103,7 +104,7 @@ public class CommentController {
     public UpdateResponse update(
             @Parameter(description = "수정할 댓글 ID", example = "279305241031393280")
             @PathVariable Long commentId,
-            @RequestBody UpdateRequest dto,
+            @RequestBody @Valid UpdateRequest dto,
             HttpServletRequest request) {
         return commentService.update(commentId, dto, request);
     }
@@ -153,5 +154,13 @@ public class CommentController {
             @Parameter(description = "좋아요 취소할 댓글 ID", example = "279305241031393280") @PathVariable Long commentId,
             HttpServletRequest request) {
         return commentService.unlike(commentId, request);
+    }
+
+    @Operation(summary = "댓글 강제 삭제 (관리자)", description = "관리자가 댓글을 강제 삭제합니다.")
+    @DeleteMapping("/admin/force/{commentId}")
+    public DeletedResponse forceDelete(
+            @Parameter(description = "삭제할 댓글 ID") @PathVariable Long commentId,
+            HttpServletRequest request) {
+        return commentService.forceDelete(commentId, request);
     }
 }

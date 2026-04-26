@@ -2,14 +2,20 @@ package backend.api.gateway.filter;
 
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 @Component
 @Log4j2
@@ -18,7 +24,7 @@ public class AuthorizationHeaderFilter
 
     private final JwtValidator jwtValidator;
 
-    private static final String HEADER_USER_ID = "X-User-ID";
+    private static final String HEADER_USER_ID = "X-User-Id";
     private static final String HEADER_USER_EMAIL = "X-User-Email";
     private static final String HEADER_USER_ROLE = "X-User-Role";
     private static final String HEADER_USER_NICKNAME = "X-User-NickName";
@@ -33,7 +39,6 @@ public class AuthorizationHeaderFilter
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
-            // 1. Authorization 헤더 확인, 없으면 쿠키에서 가져오기
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
             if (authorizationHeader == null) {
@@ -44,18 +49,17 @@ public class AuthorizationHeaderFilter
             }
 
             if (authorizationHeader == null || !authorizationHeader.toLowerCase().startsWith("bearer ")) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No token found");
+                return onError(exchange, HttpStatus.UNAUTHORIZED, "AUTH001", "인증 정보가 없습니다.");
             }
 
             String token = authorizationHeader.substring(7);
 
-            // 2. JWT 검증
             Claims claims;
             try {
                 claims = jwtValidator.validate(token);
             } catch (Exception e) {
                 log.error("JWT Validation failed: {}", e.getMessage());
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
+                return onError(exchange, HttpStatus.UNAUTHORIZED, "AUTH002", "유효하지 않은 토큰입니다.");
             }
 
             String userId = claims.getSubject();
@@ -63,7 +67,6 @@ public class AuthorizationHeaderFilter
             String role = claims.get("role", String.class);
             String nickName = claims.get("nickName", String.class);
 
-            // 3. Request Mutate
             ServerHttpRequest modifiedRequest = request.mutate()
                     .headers(httpHeaders -> {
                         httpHeaders.remove(HEADER_USER_ID);
@@ -82,6 +85,21 @@ public class AuthorizationHeaderFilter
 
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
         };
+    }
+
+    private Mono<Void> onError(ServerWebExchange exchange, HttpStatus status, String code, String message) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(status);
+        response.getHeaders().add("Content-Type", "application/json");
+
+        String body = String.format(
+                "{\"status\":%d,\"code\":\"%s\",\"message\":\"%s\"}",
+                status.value(), code, message
+        );
+
+        byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+        DataBuffer buffer = response.bufferFactory().wrap(bytes);
+        return response.writeWith(Mono.just(buffer));
     }
 
     public static class Config {}

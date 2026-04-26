@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 등록합니다.")
     @PostMapping("/create")
-    public CreateResponse create(@RequestBody CreateRequest createRequest, HttpServletRequest request) {
+    public CreateResponse create(@RequestBody @Valid CreateRequest createRequest, HttpServletRequest request) {
         return boardService.create(createRequest,request);
     }
 
@@ -41,7 +42,7 @@ public class BoardController {
             summary = "게시글 페이징 조회",
             description = "페이징 처리된 게시글 목록을 조회합니다. 카테고리를 지정하면 해당 카테고리 게시글만 조회됩니다."
     )
-    @GetMapping
+    @GetMapping("/list")
     public Page<PageResponse> getPage(
             @Parameter(description = "게시글 카테고리 (미입력 시 전체 조회)", example = "COMMUNITY")
             @RequestParam(required = false)
@@ -68,7 +69,7 @@ public class BoardController {
     @PutMapping("/update/{boardId}")
     public UpdateResponse update(
             @Parameter(description = "수정할 게시글 ID", example = "279296958190669824") @PathVariable Long boardId,
-            @RequestBody UpdateRequest updateRequest,HttpServletRequest request) {
+            @RequestBody @Valid UpdateRequest updateRequest,HttpServletRequest request) {
         return boardService.update(boardId, updateRequest,request);
     }
 
@@ -93,5 +94,29 @@ public class BoardController {
             @Parameter(description = "좋아요 취소할 게시글 ID", example = "279296958190669824")
             @PathVariable Long boardId,HttpServletRequest request) {
         return boardService.unlike(boardId,request);
+    }
+
+    @Operation(summary = "조회수 랭킹 조회", description = "조회수 기준 상위 게시글을 조회합니다.")
+    @GetMapping("/ranking/view")
+    public List<RankingResponse> getViewRanking(
+            @Parameter(description = "조회할 랭킹 수", example = "10")
+            @RequestParam(defaultValue = "10") int top) {
+        return boardService.getViewRanking(top);
+    }
+
+    @Operation(summary = "좋아요 랭킹 조회", description = "좋아요 기준 상위 게시글을 조회합니다.")
+    @GetMapping("/ranking/like")
+    public List<RankingResponse> getLikeRanking(
+            @Parameter(description = "조회할 랭킹 수", example = "10")
+            @RequestParam(defaultValue = "10") int top) {
+        return boardService.getLikeRanking(top);
+    }
+
+    @Operation(summary = "게시글 강제 삭제 (관리자)", description = "관리자가 게시글을 강제 삭제합니다.")
+    @DeleteMapping("/admin/force/{boardId}")
+    public DeletedResponse forceDelete(
+            @Parameter(description = "삭제할 게시글 ID") @PathVariable Long boardId,
+            HttpServletRequest request) {
+        return boardService.forceDelete(boardId, request);
     }
 }

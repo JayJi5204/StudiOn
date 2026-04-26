@@ -5,15 +5,15 @@ import type { IPage, IPageResponse } from '../types/Response/board.type';
 import type { IUpdateBoardRequest } from '../types/Request/board.type';
 import type { IUserDetailResponse } from '../types/Response/board.type';
 
-const API_URL = import.meta.env.VITE_REACT_API_URL_BOARD;
-const BASE_URL = 'http://localhost:8000/board-service/api/boards';
-const USER_BASE_URL = 'http://localhost:8000/user-service/api/users';
+const BASE_API_URL = import.meta.env.VITE_REACT_API_URL_BOARD;
+// const BASE_URL = 'http://localhost:8000/board-service/api/boards';
+const USER_API_URL = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 
 export const boardService = {
   createBoard: async (
     postData: Partial<IBoard>
   ): Promise<IBoard> => {
-    const response = await axios.post<IBoard>(`${BASE_URL}/create`, {
+    const response = await axios.post<IBoard>(`${BASE_API_URL}/create`, {
       title: postData.title,
       content: postData.content,
       category: postData.category,
@@ -29,7 +29,7 @@ export const boardService = {
     size: number,
     category?: string
   ): Promise<IPage<IPageResponse>> => {
-    const response = await axios.get<IPage<IPageResponse>>(`${BASE_URL}`, {
+    const response = await axios.get<IPage<IPageResponse>>(`${BASE_API_URL}`, {
       params: { page, size, category },
       withCredentials: true,
     });
@@ -39,7 +39,7 @@ export const boardService = {
   getBoardById: async (
     boardId: string
   ): Promise<IBoardDetailResponse> => {
-    const response = await axios.get<IBoardDetailResponse>(`${BASE_URL}/get/${boardId}`, {
+    const response = await axios.get<IBoardDetailResponse>(`${BASE_API_URL}/get/${boardId}`, {
       withCredentials: true,
     });
     return response.data;
@@ -48,7 +48,7 @@ export const boardService = {
   getBoardsByUser: async (
     userId: string
   ): Promise<IPageResponse[]> => {
-    const response = await axios.get<IUserDetailResponse>(`${USER_BASE_URL}/${userId}`, {
+    const response = await axios.get<IUserDetailResponse>(`${USER_API_URL}/${userId}`, {
       withCredentials: true,
     });
     return response.data.boards;
@@ -59,7 +59,7 @@ export const boardService = {
     boardData: IUpdateBoardRequest
   ): Promise<IUpdateBoardResponse> => {
     const response = await axios.put<IUpdateBoardResponse>(
-      `${BASE_URL}/update/${boardId}`,
+      `${BASE_API_URL}/update/${boardId}`,
       boardData,
       { withCredentials: true }
     );
@@ -69,7 +69,7 @@ export const boardService = {
   deleteBoard: async (
     boardId: string
   ): Promise<void> => {
-    const response = await axios.delete(`${API_URL}/delete/${boardId}`, {
+    const response = await axios.delete(`${BASE_API_URL}/delete/${boardId}`, {
       withCredentials: true,
     });
     return response.data;
@@ -78,7 +78,7 @@ export const boardService = {
   likeBoard: async (
     boardId: string
   ) => {
-    const response = await axios.post(`${BASE_URL}/like/${boardId}`, {
+    const response = await axios.post(`${BASE_API_URL}/like/${boardId}`, {
       boardId,
     }, {
       withCredentials: true,
@@ -89,7 +89,7 @@ export const boardService = {
   unlikeBoard: async (
     boardId: string
   ) => {
-    const response = await axios.delete(`${BASE_URL}/like/${boardId}`, {
+    const response = await axios.delete(`${BASE_API_URL}/like/${boardId}`, {
       withCredentials: true,
     });
     return response.data;

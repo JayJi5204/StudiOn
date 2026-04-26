@@ -1,6 +1,6 @@
 package backend.service.user.feign;
 
-import backend.service.user.dto.otherDto.BoardDto;
+import backend.service.user.dto.other.BoardDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

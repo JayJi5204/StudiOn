@@ -1,16 +1,24 @@
 package backend.service.comment.service;
 
+import backend.common.exception.CustomException;
+import backend.common.exception.ErrorCode;
+import backend.common.util.SecurityUtil;
+import backend.service.comment.dto.other.GetBoardResponse;
+import backend.common.kafkaEvent.KafkaProducer;
+import backend.common.kafkaEvent.alarm.AlarmEvent;
+import backend.common.kafkaEvent.comment.CommentDeletedEvent;
 import backend.service.comment.dto.request.CreateRequest;
 import backend.service.comment.dto.request.UpdateRequest;
 import backend.service.comment.dto.response.*;
 import backend.service.comment.entity.CommentEntity;
 import backend.service.comment.entity.CommentPath;
+import backend.service.comment.feign.BoardClient;
 import backend.service.comment.repository.CommentRepository;
-import backend.service.comment.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import backend.common.id.Snowflake;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,7 +26,7 @@ import java.util.List;
 
 import static java.util.function.Predicate.not;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -26,14 +34,16 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final Snowflake snowflake = new Snowflake();
     private final CommentCountService commentCountService;
+    private final KafkaProducer kafkaProducer;
+    private final BoardClient boardClient;
 
     @Transactional
     public CreateResponse create(CreateRequest dto, HttpServletRequest request) {
         CommentEntity parent = findParent(dto);
         CommentPath parentCommentPath = parent == null ? CommentPath.create("") : parent.getCommentPath();
 
-        Long userId=SecurityUtil.getCurrentUserId(request);
-        String nickName=SecurityUtil.getNickname(request);
+        Long userId = SecurityUtil.getCurrentUserId(request);
+        String nickName = SecurityUtil.getNickname(request);
 
         CommentEntity comment = commentRepository.save(
                 CommentEntity.create(
@@ -42,7 +52,25 @@ public class CommentServiceImpl implements CommentService {
                         parentCommentPath.createChildCommentPath(
                                 commentRepository.findDescendantsTopPath(
                                         Long.parseLong(dto.getBoardId()), parentCommentPath.getPath()).orElse(null)),
-                        Long.parseLong(dto.getBoardId()), userId,nickName));
+                        Long.parseLong(dto.getBoardId()), userId, nickName));
+
+        // 게시글 작성자에게 댓글 알림
+        try {
+            GetBoardResponse board = boardClient.getBoard(Long.parseLong(dto.getBoardId()));
+            Long boardOwnerId = Long.parseLong(board.getUserId());
+
+            // 본인 댓글이면 알림 안 보냄
+            if (!boardOwnerId.equals(userId)) {
+                kafkaProducer.send("alarm", new AlarmEvent(
+                        boardOwnerId,
+                        "COMMENT",
+                        nickName + "님이 댓글을 달았습니다",
+                        Long.parseLong(dto.getBoardId())
+                ));
+            }
+        } catch (Exception e) {
+            log.error("댓글 알림 발행 실패", e);
+        }
 
         return CreateResponse.from(comment, 0L);
     }
@@ -54,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
         }
         return commentRepository.findByPath(parentPath)
                 .filter(not(CommentEntity::getIsDeleted))
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
     public CreateResponse get(Long commentId) {
@@ -71,17 +99,20 @@ public class CommentServiceImpl implements CommentService {
             } else {
                 delete(commentEntity);
             }
+
+            kafkaProducer.send("comment.deleted", new CommentDeletedEvent(commentEntity.getBoardId()));
         });
         return DeletedResponse.from();
     }
 
     @Transactional
     public UpdateResponse update(Long commentId, UpdateRequest dto, HttpServletRequest request) {
-        CommentEntity entity = commentRepository.findById(commentId).orElseThrow();
-
         Long userId = SecurityUtil.getCurrentUserId(request);
+        CommentEntity entity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
         if (!entity.getUserId().equals(userId)) {
-            throw new RuntimeException("수정 권한 없음");
+            throw new CustomException(ErrorCode.COMMENT_UNAUTHORIZED);
         }
 
         entity.update(dto.getContent());
@@ -142,5 +173,27 @@ public class CommentServiceImpl implements CommentService {
     public LikeResponse unlike(Long commentId, HttpServletRequest request) {
         Long userId = SecurityUtil.getCurrentUserId(request);
         return commentCountService.unlike(commentId, userId);
+    }
+
+    @Override
+    @Transactional
+    public DeletedResponse forceDelete(Long commentId, HttpServletRequest request) {
+        String role = SecurityUtil.getCurrentUserRole(request);
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorCode.ADMIN_UNAUTHORIZED);
+        }
+
+        CommentEntity entity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (hasChildren(entity)) {
+            entity.delete();
+        } else {
+            delete(entity);
+        }
+
+        kafkaProducer.send("comment.deleted", new CommentDeletedEvent(entity.getBoardId()));
+
+        return DeletedResponse.from();
     }
 }
