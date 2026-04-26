@@ -15,6 +15,7 @@ export const useBoards = (
 ) => {
 
   const [boards, setBoards] = useState<IPageResponse[]>([]);
+  const [totalElements, setTotalElements] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -31,6 +32,7 @@ export const useBoards = (
         const boardsData = await boardService.getBoards(params.page, params.size);
         console.log(boardsData);
         setBoards(boardsData.content);
+        setTotalElements(boardsData.totalElements); 
         setIsLoading(true);
       } catch (error) {
         console.error('❌ 게시글 로드 실패:', error);
@@ -40,6 +42,6 @@ export const useBoards = (
     loadBoards();
     
   }, [params.page,params.size]); // 실제 요청에 필요한 값만!
-  return { boards, setBoards, isLoading };
+  return { boards, setBoards, isLoading, totalElements };
 };
 
