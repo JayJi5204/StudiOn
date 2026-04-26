@@ -13,6 +13,8 @@ const SignUpPage = lazy(() => import("../pages/SignUpPage.tsx"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage.tsx"));
 const GoogleCallback = lazy(() => import("../components/OAuth/GoogleCallback.tsx"));
 const CreateStudyPage = lazy(() => import("../pages/CreateStudyPage.tsx"));
+const StudyDetailPage = lazy(() => import("../pages/StudyDetailPage.tsx"));
+const StudyListPage = lazy(() => import("../pages/StudyListPage.tsx"));
 
 const createStudyPageUrl = import.meta.env.VITE_REACT_APP_URL_CREATE_STUDY;
 const layoutPageUrl = import.meta.env.VITE_REACT_APP_URL;
@@ -103,6 +105,33 @@ const Router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: '/study',
+    Component: Layout,
+    children: [
+      { 
+        index: true, 
+        element:(
+          <Suspense fallback={<Loading />}>
+            <StudyListPage />
+          </Suspense> 
+        )
+      },
+      {
+        path: '/study/:id',
+        children: [
+          { 
+            index: true, 
+            element:(
+              <Suspense fallback={<Loading />}>
+                <StudyDetailPage />
+              </Suspense> 
+            )
+          },
+        ]
+      }
+    ]
   },
   {
     path: signinPageUrl,

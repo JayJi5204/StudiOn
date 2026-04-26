@@ -11,6 +11,7 @@ const profilePageUrl = import.meta.env.VITE_REACT_APP_URL_PROFILE;
 const communityBoardUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
 const redirectUrl = import.meta.env.VITE_REACT_APP_URL_SIGNIN;
 const createStudyPageUrl = import.meta.env.VITE_REACT_APP_URL_CREATE_STUDY;
+const studyListPageUrl = import.meta.env.VITE_REACT_APP_URL_STUDY_LIST;
 
 const Layout = () => {
   let navigate = useNavigate();
@@ -89,7 +90,7 @@ const Layout = () => {
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <Link to="/study" className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 찾기</Link>
+              <Link to={studyListPageUrl} className="text-gray-600 hover:text-indigo-600 transition-colors">스터디 찾기</Link>
               <Link to={createStudyPageUrl} className="text-gray-600 hover:text-indigo-600 transition-colors"> 스터디 만들기</Link>
               <Link to="/my-studies" className="text-gray-600 hover:text-indigo-600 transition-colors">내 스터디</Link>
               <Link to={communityBoardUrl} className="text-gray-600 hover:text-indigo-600 transition-colors">커뮤니티</Link>
