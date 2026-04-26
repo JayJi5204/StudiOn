@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 interface ViewButtonProps {
     boardId:string,
@@ -10,7 +10,6 @@ const ViewButton = ({
     handleViewClick
 }:ViewButtonProps) => {
     const communityPageUrl = import.meta.env.VITE_REACT_APP_URL_BOARD;
-    const navigate = useNavigate();
     return (
         <button
             type="button" // 폼 제출 방지
@@ -18,10 +17,9 @@ const ViewButton = ({
             onClick={(e)=>{
                 e.preventDefault();
                 handleViewClick();
-                navigate(`${communityPageUrl}/${boardId}`);
             }}
         >
-            자세히 보기 →
+            <Link to={`${communityPageUrl}/${boardId}`}>자세히 보기 →</Link>
         </button>
     )
 }

@@ -1,6 +1,6 @@
 import { Formik, Form} from 'formik';
 import { useNavigate } from 'react-router';
-import { signinSchema, signinInitialValues} from '../../schemas/authSchema'; 
+import { signinSchema, signinInitialValues} from '../../schemas/auth.schema'; 
 import { authService } from '../../services/auth.service';
 import useUserInfoStore from '../../store/userInfoStore';
 import SigninEmailField from './SigninEmailField.formik.component'; 

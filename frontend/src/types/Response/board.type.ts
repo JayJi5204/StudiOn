@@ -1,4 +1,4 @@
-export type Category = 'COMMUNITY' | 'QUESTION' | 'NOTICE';
+export type Category = 'COMMUNITY' | 'QUESTION' | 'NOTICE' | "ALL";
 
 export interface IPageResponse {
   boardId: number;
@@ -66,4 +66,25 @@ export interface IUpdateBoardResponse {
   tags: string[],
   modifiedAt: string,
   createdAt: string
+}
+
+export interface IUserComment {
+  commentId: string;
+  content: string;
+  commentPath: string;
+  boardId: string;
+  userId: string;
+  nickName: string;
+  likeCount: number;
+  isDeleted: boolean;
+  isLiked: boolean;
+  createdAt: string;
+  modifiedAt: string;
+}
+
+export interface IUserDetailResponse {
+  email: string;
+  nickName: string;
+  boards: IPageResponse[];
+  comments: IUserComment[];
 }

@@ -14,6 +14,8 @@ export const useCommentList = (boardId: string) => {
     const [isLoading, setIsLoading] = useState(false);
     const observerRef = useRef<HTMLDivElement>(null);
 
+    console.log(comments.map(c => c.commentPath));
+
     const loadComments = async (currentLastPath: string | null = null) => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);

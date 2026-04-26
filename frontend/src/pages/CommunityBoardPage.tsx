@@ -18,11 +18,11 @@ const CommunityBoard= () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const size = 10;
-    const { boards,setBoards } = useBoards(
+    const { boards,setBoards,totalElements } = useBoards(
         { page: currentPage, size: size},
         Boolean(isLoggedIn)
     );
-    const totalPages = Math.ceil(boards.length / size);
+    const totalPages = Math.ceil(totalElements / size);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     const handleCategoryChange = (category:string) => {

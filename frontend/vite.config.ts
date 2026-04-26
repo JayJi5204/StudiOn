@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
         "/api/users": {
           target: "http://localhost:8000",
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, "/user-service/api/users"),
+          rewrite: (path) => path.replace(/^\/api\/users/, "/user-service/api/users"),
         },
         "/api/boards": {
           target: "http://localhost:8000",

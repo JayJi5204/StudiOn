@@ -10,7 +10,7 @@ import SignupPrivacyAgreementField from './SignupPrivacyAgreementField.formik.co
 import SignupPhoneNumberField from './SignupPhoneNumberField.formik.component';
 import SubmitButton from '../button/SubmitButton';
 import Consent from '../footer/Consent.component';
-import { signupInitialValues, signupSchema } from '../../schemas/authSchema';
+import { signupInitialValues, signupSchema } from '../../schemas/auth.schema';
 
 const SignupForm = () => {
 
@@ -29,7 +29,6 @@ const SignupForm = () => {
                 nickName,
                 email,
                 password,
-                "",
                 phoneNumber
             );
             console.log('회원가입 성공:',userData);
