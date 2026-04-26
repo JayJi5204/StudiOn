@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 
 const Main = lazy(() => import("../pages/MainPage.tsx"));
-const Layout = lazy(() => import('../pages/Layout.tsx'))
+const Layout = lazy(() => import('../pages/Layout.tsx'));
 const Loading = lazy(() => import("../pages/LoadingPage.tsx"));
 const TestPage = lazy(() => import("../pages/TestPage.tsx"));
 const CommunityBoardPage = lazy(() => import("../pages/CommunityBoardPage.tsx"));
@@ -69,7 +69,7 @@ const Router = createBrowserRouter([
     ],
   },
   {
-    path: writePostPageUrl,  // /post/write
+    path: writePostPageUrl,
     Component: Layout,
     children: [
         {

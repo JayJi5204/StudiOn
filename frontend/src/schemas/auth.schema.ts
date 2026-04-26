@@ -61,5 +61,5 @@ export const signupInitialValues = {
   rememberMe:false,
 };
 
-export type signinFormValues = typeof signinInitialValues;
-export type signupFormValues = typeof signupInitialValues;
+export type SigninFormValues = typeof signinInitialValues;
+export type SignupFormValues = typeof signupInitialValues;

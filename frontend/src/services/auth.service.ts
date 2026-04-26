@@ -7,14 +7,12 @@ export const authService = {
         nickName:string,
         email:string,
         password:string,
-        adminPassword:string,
         phoneNumber:string
     ):Promise<Partial<IUser>> => {
         const response = await axios.post(`${BASE_API_URL}/create`, {
             nickName,
             email,
             password,
-            adminPassword,
             phoneNumber,
         });
         return response.data;

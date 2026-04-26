@@ -5,8 +5,7 @@ import type { IPage, IPageResponse } from '../types/Response/board.type';
 import type { IUpdateBoardRequest } from '../types/Request/board.type';
 import type { IUserDetailResponse } from '../types/Response/board.type';
 
-const BASE_API_URL = import.meta.env.VITE_REACT_API_URL_BOARD;
-// const BASE_URL = 'http://localhost:8000/board-service/api/boards';
+const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL_BOARD;
 const USER_API_URL = import.meta.env.VITE_REACT_APP_API_URL_USERS;
 
 export const boardService = {
@@ -18,7 +17,8 @@ export const boardService = {
       content: postData.content,
       category: postData.category,
       tags: postData.tags,
-    }, {
+    }, 
+    {
       withCredentials: true,
     });
     return response.data;
@@ -29,7 +29,7 @@ export const boardService = {
     size: number,
     category?: string
   ): Promise<IPage<IPageResponse>> => {
-    const response = await axios.get<IPage<IPageResponse>>(`${BASE_API_URL}`, {
+    const response = await axios.get<IPage<IPageResponse>>(`${BASE_API_URL}/list`, {
       params: { page, size, category },
       withCredentials: true,
     });
