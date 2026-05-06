@@ -1,0 +1,63 @@
+# ===============================
+# Gradle
+# ===============================
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle wrapper
+gradle/wrapper/gradle-wrapper.jar
+
+# ===============================
+# IntelliJ IDEA
+# ===============================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+workspace.xml
+
+# ===============================
+# Eclipse / STS
+# ===============================
+*.class
+*.project
+*.classpath
+.settings/
+.springBeans
+.factorypath
+.apt_generated
+bin/
+
+# ===============================
+# NetBeans
+# ===============================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ===============================
+# VS Code
+# ===============================
+.vscode/
+
+# ===============================
+# Logs, temp files
+# ===============================
+*.log
+*.tmp
+*.swp
+*.DS_Store
+
+# ===============================
+# Build outputs inside source directories
+# ===============================
+**/build/
+**/out/
+**/bin/
+
+.env
+.yml

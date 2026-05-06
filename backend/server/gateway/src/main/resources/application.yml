@@ -1,0 +1,273 @@
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+
+spring:
+  application:
+    name: gateway-server
+
+  config:
+    import: "optional:configserver:"
+
+  output:
+    ansi:
+      enabled: "always"
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            # 1. USER-SERVICE
+            - id: user-service-public
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/health-check,
+                  /user-service/api/users/create,
+                  /user-service/api/users/login,
+                  /user-service/api/users/ranking/study,
+                  /user-service/v3/api-docs,
+                  /user-service/v3/api-docs/**,
+                  /user-service/swagger-ui/**,
+                  /user-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+            - id: user-service-reissue
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/api/users/reissue
+              filters:
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+            - id: user-service-secure
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/user-service/(?<segment>.*),/$\{segment}
+
+            # 2. BOARD-SERVICE
+            - id: board-service-public
+              uri: lb://BOARD-SERVICE
+              predicates:
+                - Path=/board-service/health-check,
+                  /board-service/api/boards/list,
+                  /board-service/api/boards/ranking/view,
+                  /board-service/api/boards/ranking/like,
+                  /board-service/v3/api-docs,
+                  /board-service/v3/api-docs/**,
+                  /board-service/swagger-ui/**,
+                  /board-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+
+            - id: board-service-secure
+              uri: lb://BOARD-SERVICE
+              predicates:
+                - Path=/board-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/board-service/(?<segment>.*),/$\{segment}
+
+            # 3. COMMENT-SERVICE
+            - id: comment-service-public
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comment-service/health-check,
+                  /comment-service/api/comments/getCommentWithBoardId/**,
+                  /comment-service/api/comments/infinite-scroll,
+                  /comment-service/v3/api-docs,
+                  /comment-service/v3/api-docs/**,
+                  /comment-service/swagger-ui/**,
+                  /comment-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
+
+            - id: comment-service-secure
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comment-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/comment-service/(?<segment>.*),/$\{segment}
+
+            # 4. CHAT-SERVICE WebSocket
+            - id: chat-service-websocket
+              uri: lb:ws://CHAT-SERVICE
+              predicates:
+                - Path=/ws/chat/**
+              filters:
+                - RewritePath=/ws/chat/(?<segment>.*),/ws/chat/$\{segment}
+
+            # 4. CHAT-SERVICE HTTP
+            - id: chat-service-public
+              uri: lb://CHAT-SERVICE
+              predicates:
+                - Path=/chat-service/health-check,
+                  /chat-service/v3/api-docs/**,
+                  /chat-service/swagger-ui/**,
+                  /chat-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
+
+            - id: chat-service-secure
+              uri: lb://CHAT-SERVICE
+              predicates:
+                - Path=/chat-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/chat-service/(?<segment>.*),/$\{segment}
+
+            # 5. ROOM-SERVICE WebSocket
+            - id: room-service-websocket
+              uri: lb:ws://ROOM-SERVICE
+              predicates:
+                - Path=/ws/signal/**
+              filters:
+                - RewritePath=/ws/signal/(?<segment>.*),/ws/signal/$\{segment}
+
+            # 5. ROOM-SERVICE HTTP
+            - id: room-service-public
+              uri: lb://ROOM-SERVICE
+              predicates:
+                - Path=/room-service/health-check,
+                  /room-service/api/rooms/list,
+                  /room-service/api/rooms/invite/**,
+                  /room-service/v3/api-docs,
+                  /room-service/v3/api-docs/**,
+                  /room-service/swagger-ui/**,
+                  /room-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/room-service/(?<segment>.*),/$\{segment}
+
+            - id: room-service-secure
+              uri: lb://ROOM-SERVICE
+              predicates:
+                - Path=/room-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/room-service/(?<segment>.*),/$\{segment}
+
+            # 6. GROUPCHAT-SERVICE WebSocket
+            - id: groupChat-service-websocket
+              uri: lb:ws://GROUPCHAT-SERVICE
+              predicates:
+                - Path=/ws/group-chat/**
+              filters:
+                - RewritePath=/ws/group-chat/(?<segment>.*),/ws/group-chat/$\{segment}
+
+            # 6. GROUPCHAT-SERVICE HTTP
+            - id: groupChat-service-public
+              uri: lb://GROUPCHAT-SERVICE
+              predicates:
+                - Path=/groupChat-service/health-check,
+                  /groupChat-service/v3/api-docs/**,
+                  /groupChat-service/swagger-ui/**,
+                  /groupChat-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
+
+            - id: groupChat-service-secure
+              uri: lb://GROUPCHAT-SERVICE
+              predicates:
+                - Path=/groupChat-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/groupChat-service/(?<segment>.*),/$\{segment}
+
+            # 7. ALARM-SERVICE
+            - id: alarm-service-public
+              uri: lb://ALARM-SERVICE
+              predicates:
+                - Path=/alarm-service/health-check,
+                  /alarm-service/api/alarms/subscribe/**,
+                  /alarm-service/v3/api-docs/**,
+                  /alarm-service/swagger-ui/**,
+                  /alarm-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/alarm-service/(?<segment>.*),/$\{segment}
+
+            - id: alarm-service-secure
+              uri: lb://ALARM-SERVICE
+              predicates:
+                - Path=/alarm-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/alarm-service/(?<segment>.*),/$\{segment}
+
+            # 8. STUDYGROUP-SERVICE
+            - id: studyGroup-service-public
+              uri: lb://STUDYGROUP-SERVICE
+              predicates:
+                - Path=/studyGroup-service/health-check,
+                  /studyGroup-service/api/study-groups/list,
+                  /studyGroup-service/api/study-groups/list/category,
+                  /studyGroup-service/api/study-members/*/members,
+                  /studyGroup-service/v3/api-docs,
+                  /studyGroup-service/v3/api-docs/**,
+                  /studyGroup-service/swagger-ui/**,
+                  /studyGroup-service/swagger-ui.html
+              filters:
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/studyGroup-service/(?<segment>.*),/$\{segment}
+
+            - id: studyGroup-service-secure
+              uri: lb://STUDYGROUP-SERVICE
+              predicates:
+                - Path=/studyGroup-service/**
+              filters:
+                - name: AuthorizationHeaderFilter
+                - RemoveRequestHeader=Cookie
+                - RewritePath=/studyGroup-service/(?<segment>.*),/$\{segment}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, httpexchanges
+
+springdoc:
+  api-docs:
+    enabled: true
+
+  swagger-ui:
+    persistAuthorization: true
+    urls:
+      - name: user-service
+        url: /user-service/v3/api-docs
+      - name: board-service
+        url: /board-service/v3/api-docs
+      - name: comment-service
+        url: /comment-service/v3/api-docs
+      - name: chat-service
+        url: /chat-service/v3/api-docs
+      - name: room-service
+        url: /room-service/v3/api-docs
+      - name: groupChat-service
+        url: /groupChat-service/v3/api-docs
+      - name: alarm-service
+        url: /alarm-service/v3/api-docs
+      - name: studyGroup-service
+        url: /studyGroup-service/v3/api-docs

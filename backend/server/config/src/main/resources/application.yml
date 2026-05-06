@@ -1,0 +1,36 @@
+server:
+  port: 8888
+
+encrypt:
+  key: ${ENCRYPT_KEY}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+
+spring:
+  application:
+    name: config-server
+
+  output:
+    ansi:
+      enabled: "always"
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GITHUB_URL}
+          search-paths: StudiOn_Config
+          username: ${GITHUB_USERNAME}
+          password: ${GITHUB_PASSWORD}
+          default-label: main
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, info, httpexchanges

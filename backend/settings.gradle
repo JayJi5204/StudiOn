@@ -1,0 +1,18 @@
+rootProject.name = 'backend'
+
+include 'common'
+
+include 'server'
+include 'server:gateway'
+include 'server:eureka'
+include 'server:config'
+
+include 'service'
+include 'service:user'
+include 'service:board'
+include 'service:comment'
+include 'service:room'
+include 'service:chat'
+include 'service:groupChat'
+include 'service:alarm'
+include 'service:studyGroup'

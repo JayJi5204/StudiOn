@@ -1,0 +1,10 @@
+dependencies {
+    // Config Server
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+
+    // Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Test
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
